@@ -38,9 +38,9 @@ public class GuiLoadSchematic extends GuiScreen {
 
 	public void initGui() {
 		buttonList.add(doneButton = new GuiButton(0, this.width / 2 - 75,
-				this.height - 38, I18n.getStringParams("gui.done")));
+				this.height - 38, I18n.format("gui.done")));
 		slot = new GuiSlotFile(this.mc, this, MyWorldGen.globalSchemDir,
-				this.fontRenderer, new SchematicFilenameFilter());
+				this.fontRendererObj, new SchematicFilenameFilter());
 		slot.registerScrollButtons(1, 2);
 	}
 
@@ -55,10 +55,10 @@ public class GuiLoadSchematic extends GuiScreen {
 				tagToSend.setInteger("direction", direction.ordinal());
 				// We might be able to send the file data directly, but it's better to make sure that it's valid NBT first.
 				try {
-					tagToSend.setCompoundTag("schematic", CompressedStreamTools.readCompressed(new FileInputStream(slot.files[slot.selected])));
+					tagToSend.setTag("schematic", CompressedStreamTools.readCompressed(new FileInputStream(slot.files[slot.selected])));
 					CompressedStreamTools.writeCompressed(tagToSend, bos);
 				} catch (Exception exc) {
-					field_146297_k.displayGuiScreen(new GuiErrorScreen(
+					this.mc.displayGuiScreen(new GuiErrorScreen(
 							exc.getClass().getName(), exc.getLocalizedMessage()));
 					exc.printStackTrace();
 					return;
@@ -68,7 +68,7 @@ public class GuiLoadSchematic extends GuiScreen {
 				packet.data = bos.toByteArray();
 				packet.length = bos.size();
 				player.sendQueue.addToSendQueue(packet);
-				field_146297_k.displayGuiScreen(null);
+				this.mc.displayGuiScreen(null);
 			} else {
 				slot.actionPerformed(button);
 			}

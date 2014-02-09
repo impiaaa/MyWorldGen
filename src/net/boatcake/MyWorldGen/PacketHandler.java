@@ -1,5 +1,7 @@
 package net.boatcake.MyWorldGen;
 
+import ibxm.Player;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

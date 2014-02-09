@@ -12,7 +12,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import cpw.mods.fml.relauncher.Side;
@@ -54,14 +53,14 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 		super(par2Material);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
-		setStepSound(Block.soundStoneFootstep);
-		setUnlocalizedName("anchor");
+		setStepSound(Block.soundTypeStone);
+		setBlockName("anchor");
 		setCreativeTab(MyWorldGen.creativeTab);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_149651_a(IIconRegister iconRegister) { // registerIcons
+	public void registerBlockIcons(IIconRegister iconRegister) {
 		for (int i = 0; i < AnchorType.size; i++) {
 			this.icons[i] = iconRegister.registerIcon("MyWorldGen:"+this.getUnlocalizedName().substring(5)+AnchorType.get(i).name);
 		}
@@ -89,18 +88,18 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 	
 	@Override
 	public boolean matches(int myMeta, TileEntity myTileEntity, World world, int x, int y, int z) {
-		return matchesStatic(myMeta, world.getBlockId(x, y, z), world.getBlockMetadata(x, y, z), world.getBiomeGenForCoords(x, z));
+		return matchesStatic(myMeta, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), world.getBiomeGenForCoords(x, z));
 	}
 
-	public static boolean matchesStatic(int myMeta, int otherBlock, int otherMeta, BiomeGenBase currentBiome) {
+	public static boolean matchesStatic(int myMeta, Block otherBlock, int otherMeta, BiomeGenBase currentBiome) {
 		AnchorType type = AnchorType.get(myMeta);
 		switch (type) {
 		case GROUND:
-			return otherBlockBelow == currentBiome.topBlock;
+			return otherBlock == currentBiome.topBlock;
 		case AIR:
-			return otherBlockBelow instanceof BlockAir || (otherBlockBelow.blockMaterial.isReplaceable() && !otherBlockBelow.blockMaterial.isLiquid());
+			return otherBlock instanceof BlockAir || (otherBlock.getMaterial().isReplaceable() && !otherBlock.getMaterial().isLiquid());
 		default:
-			return !(otherBlockBelow instanceof BlockAir) && type != null && type.material != null && otherBlockBelow.blockMaterial == type.material;
+			return !(otherBlock instanceof BlockAir) && type != null && type.material != null && otherBlock.getMaterial() == type.material;
 		}
 	}
 }

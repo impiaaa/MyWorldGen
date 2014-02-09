@@ -3,6 +3,7 @@ package net.boatcake.MyWorldGen.blocks;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -17,13 +18,13 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 	}
 
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return "container.anchorInventory";
 	}
 
-	public boolean matches(int block) {
+	public boolean matches(Block block) {
 		for (int i = 0; i < inv.length; i++) {
-			if (inv[i] != null && inv[i].itemID == block) {
+			if (inv[i] != null && (inv[i].getItem() instanceof ItemBlock) && (((ItemBlock)inv[i].getItem()).field_150939_a == block)) {
 				return true;
 			}
 		}
@@ -80,26 +81,18 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
-		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this
+		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this
 				&& player.getDistanceSq(xCoord + 0.5, yCoord + 0.5,
 						zCoord + 0.5) < 64;
-	}
-
-	@Override
-	public void openChest() {
-	}
-
-	@Override
-	public void closeChest() {
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound tagCompound) {
 		super.readFromNBT(tagCompound);
 
-		NBTTagList tagList = tagCompound.getTagList("Inventory");
+		NBTTagList tagList = (NBTTagList) tagCompound.getTag("Inventory");
 		for (int i = 0; i < tagList.tagCount(); i++) {
-			NBTTagCompound tag = (NBTTagCompound) tagList.tagAt(i);
+			NBTTagCompound tag = tagList.getCompoundTagAt(i);
 			byte slot = tag.getByte("Slot");
 			if (slot >= 0 && slot < inv.length) {
 				inv[slot] = ItemStack.loadItemStackFromNBT(tag);
@@ -125,12 +118,20 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 	}
 
 	@Override
-	public boolean isInvNameLocalized() {
+	public boolean hasCustomInventoryName() {
 		return false;
 	}
 
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
 		return true;
+	}
+
+	@Override
+	public void openInventory() {
+	}
+
+	@Override
+	public void closeInventory() {
 	}
 }

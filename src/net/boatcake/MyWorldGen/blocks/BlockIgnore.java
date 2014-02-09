@@ -4,7 +4,6 @@ import net.boatcake.MyWorldGen.MyWorldGen;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -16,13 +15,13 @@ public class BlockIgnore extends Block {
 		super(par2Material);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
-		setUnlocalizedName("ignore");
+		setBlockName("ignore");
 		setCreativeTab(MyWorldGen.creativeTab);
 	}
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_149651_a(IIconRegister iconRegister) { // registerIcons
-		this.field_149761_L = iconRegister.registerIcon("MyWorldGen:ignore"); // blockIcon
+	public void registerBlockIcons(IIconRegister iconRegister) {
+		this.blockIcon = iconRegister.registerIcon("MyWorldGen:ignore");
 	}
 	
     public boolean isOpaqueCube() {

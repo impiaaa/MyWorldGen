@@ -18,7 +18,7 @@ public class GuiHandler implements IGuiHandler {
 	public Object getServerGuiElement(int id, EntityPlayer player, World world,
 			int x, int y, int z) {
 		if (id == 2) {
-			TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+			TileEntity tileEntity = world.getTileEntity(x, y, z);
 			if (tileEntity instanceof TileEntityAnchorInventory) {
 				return new ContainerAnchorInventory(player.inventory,
 						(TileEntityAnchorInventory) tileEntity);
@@ -39,7 +39,7 @@ public class GuiHandler implements IGuiHandler {
 							.determineOrientation(world, x, y, z, player)),
 					(EntityClientPlayerMP) player);
 		case 2:
-			TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+			TileEntity tileEntity = world.getTileEntity(x, y, z);
 			if (tileEntity instanceof TileEntityAnchorInventory) {
 				return new GuiAnchorInventory(player.inventory,
 						(TileEntityAnchorInventory) tileEntity);

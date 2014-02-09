@@ -44,10 +44,10 @@ public class GuiSaveSchematic extends GuiScreen {
 		Keyboard.enableRepeatEvents(true);
 		this.buttonList.clear();
 		buttonList.add(saveBtn = new GuiButton(0, this.width / 2 - 100,
-				this.height / 4 + 72, I18n.getStringParams("gui.save")));
+				this.height / 4 + 72, I18n.format("gui.save")));
 		buttonList.add(cancelBtn = new GuiButton(1, this.width / 2 - 100,
-				this.height / 4 + 96, I18n.getStringParams("gui.cancel")));
-		fileNameField = new GuiTextField(this.fontRenderer,
+				this.height / 4 + 96, I18n.format("gui.cancel")));
+		fileNameField = new GuiTextField(this.fontRendererObj,
 				this.width / 2 - 150, 60, 300, 20);
 		fileNameField.setMaxStringLength(32767);
 		fileNameField.setFocused(true);
@@ -103,9 +103,9 @@ public class GuiSaveSchematic extends GuiScreen {
 
 	public void drawScreen(int par1, int par2, float par3) {
 		drawDefaultBackground();
-		drawCenteredString(fontRenderer, I18n.getStringParams("gui.filename"), this.width / 2,
+		drawCenteredString(fontRendererObj, I18n.format("gui.filename"), this.width / 2,
 				20, 0xFFFFFF);
-		drawCenteredString(fontRenderer, I18n.getStringParams("selectWorld.resultFolder")+" "+MyWorldGen.globalSchemDir.getAbsolutePath(), this.width / 2, 97, 0xA0A0A0);
+		drawCenteredString(fontRendererObj, I18n.format("selectWorld.resultFolder")+" "+MyWorldGen.globalSchemDir.getAbsolutePath(), this.width / 2, 97, 0xA0A0A0);
 		fileNameField.drawTextBox();
 		super.drawScreen(par1, par2, par3);
 	}

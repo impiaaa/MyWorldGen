@@ -7,17 +7,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import org.apache.logging.log4j.Level;
-
-import net.boatcake.MyWorldGen.blocks.BlockAnchorInventory;
-import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorItem;
+import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
 import net.boatcake.MyWorldGen.blocks.BlockIgnore;
 import net.boatcake.MyWorldGen.blocks.TileEntityAnchorInventory;
 import net.boatcake.MyWorldGen.items.ItemWandLoad;
@@ -27,8 +22,10 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Configuration;
+
+import org.apache.logging.log4j.Level;
+
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -104,7 +101,7 @@ public class MyWorldGen {
     	GameRegistry.registerBlock(materialAnchorBlock, BlockAnchorItem.class, "anchor");
     	GameRegistry.registerBlock(inventoryAnchorBlock, "anchorInventory");
     	GameRegistry.registerTileEntity(TileEntityAnchorInventory.class, "anchorInventory");
-		GameRegistry.registerWorldGenerator(worldGen);
+		GameRegistry.registerWorldGenerator(worldGen, 3);
 		GameRegistry.registerItem(wandSave, wandSave.getUnlocalizedName());
 		GameRegistry.registerItem(wandLoad, wandLoad.getUnlocalizedName());
     }

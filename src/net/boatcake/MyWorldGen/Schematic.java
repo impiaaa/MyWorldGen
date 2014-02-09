@@ -13,10 +13,9 @@ import net.boatcake.MyWorldGen.blocks.BlockIgnore;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.nbt.NBTBase;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
@@ -32,7 +31,6 @@ import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DungeonHooks;
 import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.network.IGuiHandler;
 
 
 public class Schematic extends WeightedRandom.Item {
@@ -155,7 +153,7 @@ public class Schematic extends WeightedRandom.Item {
 			NBTTagList l = (NBTTagList) tag.getTag("excludeBiomes");
 			excludeBiomes = new ArrayList<String>(l.tagCount());
 			for (int i = 0; i < l.tagCount(); i++) {
-				excludeBiomes.add(((NBTTagString)l.tagAt(i)).data);
+				excludeBiomes.add(l.getStringTagAt(i));
 			}
 		}
 		else {
@@ -166,7 +164,7 @@ public class Schematic extends WeightedRandom.Item {
 			NBTTagList l = (NBTTagList) tag.getTag("onlyIncludeBiomes");
 			onlyIncludeBiomes = new ArrayList<String>(l.tagCount());
 			for (int i = 0; i < l.tagCount(); i++) {
-				onlyIncludeBiomes.add(((NBTTagString)l.tagAt(i)).data);
+				onlyIncludeBiomes.add(l.getStringTagAt(i));
 			}
 		}
 		else {
@@ -198,8 +196,8 @@ public class Schematic extends WeightedRandom.Item {
 			for (int y = y1; y <= y2; y++) {
 				for (int z = z1; z <= z2; z++) {
 					Block block = world.getBlock(x, y, z);
-					blocks[x-x1][y-y1][z-z1] = block.id;
-					idMap.put(block.id, block);
+					blocks[x-x1][y-y1][z-z1] = getBlockId(block);
+					idMap.put(getBlockId(block), block);
 					meta[x-x1][y-y1][z-z1] = world.getBlockMetadata(x, y, z);
 				}
 			}
@@ -208,6 +206,10 @@ public class Schematic extends WeightedRandom.Item {
 			this.entities = getEntities(world, x1, y1, z1, x2, y2, z2);
 			this.tileEntities = getTileEntities(world, x1, y1, z1, x2, y2, z2);
 		}
+	}
+	
+	private int getBlockId(Block block) {
+		return Block.blockRegistry.getIDForObject(block);
 	}
 	
 	public static NBTTagList getEntities(World world, int x1, int y1, int z1, int x2, int y2, int z2) {
@@ -232,12 +234,9 @@ public class Schematic extends WeightedRandom.Item {
 			NBTTagCompound enbt = new NBTTagCompound();
 			((Entity)o).writeToNBT(enbt);
 			NBTTagList posNBT = (NBTTagList) enbt.getTag("Pos");
-			NBTTagDouble coordNBT = (NBTTagDouble) posNBT.tagAt(0);
-			coordNBT.data -= x1;
-			coordNBT = (NBTTagDouble) posNBT.tagAt(1);
-			coordNBT.data -= y1;
-			coordNBT = (NBTTagDouble) posNBT.tagAt(2);
-			coordNBT.data -= z1;
+			posNBT.func_150304_a(0, new NBTTagDouble(posNBT.func_150309_d(0)-x1));
+			posNBT.func_150304_a(1, new NBTTagDouble(posNBT.func_150309_d(1)-y1));
+			posNBT.func_150304_a(2, new NBTTagDouble(posNBT.func_150309_d(2)-z1));
 			entities.appendTag(enbt);
 		}
 		return entities;
@@ -486,9 +485,9 @@ public class Schematic extends WeightedRandom.Item {
 						}
 					}
 					else {
-						Block block = Blocks.blocksList[blocks[x][y][z]];
+						Block block = (Block) Block.blockRegistry.getObject(blocks[x][y][z]);
 						if (!(block instanceof BlockAnchorBase) && !(block instanceof BlockIgnore)) {
-							world.setBlock((int)rotatedCoords.xCoord, (int)rotatedCoords.yCoord, (int)rotatedCoords.zCoord, blocks[x][y][z], meta[x][y][z], 0x2);
+							world.setBlock((int)rotatedCoords.xCoord, (int)rotatedCoords.yCoord, (int)rotatedCoords.zCoord, block, meta[x][y][z], 0x2);
 						}
 					}
 				}
@@ -497,7 +496,7 @@ public class Schematic extends WeightedRandom.Item {
 
 		if (entities != null) {
 			for (int i = 0; i < entities.tagCount(); i++) {
-				NBTTagCompound entityTag = (NBTTagCompound) entities.tagAt(i);
+				NBTTagCompound entityTag = entities.getCompoundTagAt(i);
 				Entity e = EntityList.createEntityFromNBT(entityTag, world);
 				if (e == null) {
 					FMLLog.warning("Not loading entity ID %s", entityTag.getString("id"));
@@ -512,7 +511,7 @@ public class Schematic extends WeightedRandom.Item {
 		
 		if (tileEntities != null) {
 			for (int i = 0; i < tileEntities.tagCount(); i++) {
-				NBTTagCompound tileEntityTag = (NBTTagCompound) tileEntities.tagAt(i);
+				NBTTagCompound tileEntityTag = tileEntities.getCompoundTagAt(i);
 				TileEntity e = TileEntity.createAndLoadEntity(tileEntityTag);
 				if (e == null) {
 					FMLLog.warning("Not loading tile entity ID %s", tileEntityTag.getString("id"));
@@ -537,7 +536,7 @@ public class Schematic extends WeightedRandom.Item {
 					Block block = world.getBlock((int)rotatedCoords.xCoord, (int)rotatedCoords.yCoord, (int)rotatedCoords.zCoord);
 					TileEntity e = world.getTileEntity((int)rotatedCoords.xCoord, (int)rotatedCoords.yCoord, (int)rotatedCoords.zCoord);
 					if (generateChests && !chestType.isEmpty()) {
-						if (block == Blocks.chest || block == Blocks.chestTrapped) {
+						if (block == Blocks.chest || block == Blocks.trapped_chest) {
 			                ChestGenHooks info = ChestGenHooks.getInfo(chestType);
 			                WeightedRandomChestContent.generateChestContents(rand, info.getItems(rand), (TileEntityChest)e, info.getCount(rand));
 						}
@@ -546,7 +545,7 @@ public class Schematic extends WeightedRandom.Item {
 			                WeightedRandomChestContent.generateDispenserContents(rand, info.getItems(rand), (TileEntityDispenser)e, info.getCount(rand));
 						}
 					}
-					if (generateSpawners && block == Blocks.mobSpawner) {
+					if (generateSpawners && block == Blocks.mob_spawner) {
 						DungeonHooks.getRandomDungeonMob(rand);
 					}
 				}
@@ -593,7 +592,7 @@ public class Schematic extends WeightedRandom.Item {
 	
 	public TileEntity getTileEntityAt(int x, int y, int z) {
 		for (int i = 0; i < tileEntities.tagCount(); i++) {
-			NBTTagCompound tileEntityTag = (NBTTagCompound) tileEntities.tagAt(i);
+			NBTTagCompound tileEntityTag = tileEntities.getCompoundTagAt(i);
 			if (tileEntityTag.getInteger("x") == x &&
 					tileEntityTag.getInteger("y") == y &&
 					tileEntityTag.getInteger("z") == z) {
