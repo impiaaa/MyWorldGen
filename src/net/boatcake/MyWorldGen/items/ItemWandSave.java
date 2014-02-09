@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -19,8 +19,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemWandSave extends Item {
 
-	public ItemWandSave(int id) {
-		super(id);
+	public ItemWandSave() {
+		super();
 		setMaxStackSize(0);
 		setUnlocalizedName("wandSave");
 		setCreativeTab(MyWorldGen.creativeTab);
@@ -28,7 +28,7 @@ public class ItemWandSave extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister ir) {
+	public void registerIcons(IIconRegister ir) {
 		this.itemIcon = ir.registerIcon("MyWorldGen:" + (this.getUnlocalizedName().substring(5)));
 	}
 	

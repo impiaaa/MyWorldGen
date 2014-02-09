@@ -8,7 +8,6 @@ import net.boatcake.MyWorldGen.Schematic;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiSlider;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -23,7 +22,6 @@ public class GuiSaveSchematic extends GuiScreen {
 	private GuiTextField fileNameField;
 	private GuiButton saveBtn;
 	private GuiButton cancelBtn;
-	private GuiSlider commonSlider;
 	public Schematic schematicToSave;
 
 	public GuiSaveSchematic() {
@@ -46,9 +44,9 @@ public class GuiSaveSchematic extends GuiScreen {
 		Keyboard.enableRepeatEvents(true);
 		this.buttonList.clear();
 		buttonList.add(saveBtn = new GuiButton(0, this.width / 2 - 100,
-				this.height / 4 + 72, I18n.getString("gui.save")));
+				this.height / 4 + 72, I18n.getStringParams("gui.save")));
 		buttonList.add(cancelBtn = new GuiButton(1, this.width / 2 - 100,
-				this.height / 4 + 96, I18n.getString("gui.cancel")));
+				this.height / 4 + 96, I18n.getStringParams("gui.cancel")));
 		fileNameField = new GuiTextField(this.fontRenderer,
 				this.width / 2 - 150, 60, 300, 20);
 		fileNameField.setMaxStringLength(32767);
@@ -105,9 +103,9 @@ public class GuiSaveSchematic extends GuiScreen {
 
 	public void drawScreen(int par1, int par2, float par3) {
 		drawDefaultBackground();
-		drawCenteredString(fontRenderer, I18n.getString("gui.filename"), this.width / 2,
+		drawCenteredString(fontRenderer, I18n.getStringParams("gui.filename"), this.width / 2,
 				20, 0xFFFFFF);
-		drawCenteredString(fontRenderer, I18n.getString("selectWorld.resultFolder")+" "+MyWorldGen.globalSchemDir.getAbsolutePath(), this.width / 2, 97, 0xA0A0A0);
+		drawCenteredString(fontRenderer, I18n.getStringParams("selectWorld.resultFolder")+" "+MyWorldGen.globalSchemDir.getAbsolutePath(), this.width / 2, 97, 0xA0A0A0);
 		fileNameField.drawTextBox();
 		super.drawScreen(par1, par2, par3);
 	}

@@ -1,7 +1,7 @@
 package net.boatcake.MyWorldGen.items;
 
 import net.boatcake.MyWorldGen.MyWorldGen;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -12,8 +12,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemWandLoad extends Item {
-	public ItemWandLoad(int id) {
-		super(id);
+	public ItemWandLoad() {
+		super();
 		setMaxStackSize(0);
 		setUnlocalizedName("wandLoad");
 		setCreativeTab(MyWorldGen.creativeTab);
@@ -21,7 +21,7 @@ public class ItemWandLoad extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister ir) {
+	public void registerIcons(IIconRegister ir) {
 		this.itemIcon = ir.registerIcon("MyWorldGen:" + (this.getUnlocalizedName().substring(5)));
 	}
 	

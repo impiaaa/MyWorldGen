@@ -9,13 +9,11 @@ import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiSmallButton;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -24,7 +22,7 @@ public class GuiLoadSchematic extends GuiScreen {
 	private World world;
 	private int x, y, z;
 	private GuiSlotFile slot;
-	private GuiSmallButton doneButton;
+	private GuiButton doneButton;
 	private ForgeDirection direction;
 	private EntityClientPlayerMP player;
 	
@@ -39,8 +37,8 @@ public class GuiLoadSchematic extends GuiScreen {
 	}
 
 	public void initGui() {
-		buttonList.add(doneButton = new GuiSmallButton(0, this.width / 2 - 75,
-				this.height - 38, I18n.getString("gui.done")));
+		buttonList.add(doneButton = new GuiButton(0, this.width / 2 - 75,
+				this.height - 38, I18n.getStringParams("gui.done")));
 		slot = new GuiSlotFile(this.mc, this, MyWorldGen.globalSchemDir,
 				this.fontRenderer, new SchematicFilenameFilter());
 		slot.registerScrollButtons(1, 2);
@@ -60,7 +58,7 @@ public class GuiLoadSchematic extends GuiScreen {
 					tagToSend.setCompoundTag("schematic", CompressedStreamTools.readCompressed(new FileInputStream(slot.files[slot.selected])));
 					CompressedStreamTools.writeCompressed(tagToSend, bos);
 				} catch (Exception exc) {
-					mc.displayGuiScreen(new GuiErrorScreen(
+					field_146297_k.displayGuiScreen(new GuiErrorScreen(
 							exc.getClass().getName(), exc.getLocalizedMessage()));
 					exc.printStackTrace();
 					return;
@@ -70,7 +68,7 @@ public class GuiLoadSchematic extends GuiScreen {
 				packet.data = bos.toByteArray();
 				packet.length = bos.size();
 				player.sendQueue.addToSendQueue(packet);
-				mc.displayGuiScreen(null);
+				field_146297_k.displayGuiScreen(null);
 			} else {
 				slot.actionPerformed(button);
 			}

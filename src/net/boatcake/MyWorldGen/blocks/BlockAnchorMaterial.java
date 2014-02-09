@@ -4,12 +4,14 @@ import java.util.List;
 
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -46,10 +48,10 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 			return v[id];
 		}
 	}
-	public Icon[] icons = new Icon[AnchorType.size];
+	public IIcon[] icons = new IIcon[AnchorType.size];
 	
-	public BlockAnchorMaterial(int par1, Material par2Material) {
-		super(par1, par2Material);
+	public BlockAnchorMaterial(Material par2Material) {
+		super(par2Material);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
 		setStepSound(Block.soundStoneFootstep);
@@ -59,7 +61,7 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
+	public void func_149651_a(IIconRegister iconRegister) { // registerIcons
 		for (int i = 0; i < AnchorType.size; i++) {
 			this.icons[i] = iconRegister.registerIcon("MyWorldGen:"+this.getUnlocalizedName().substring(5)+AnchorType.get(i).name);
 		}
@@ -67,16 +69,16 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-    public Icon getIcon(int side, int meta)
+    public IIcon getIcon(int side, int meta)
     {
         return this.icons[meta];
     }
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(int id, CreativeTabs creativeTabs, List subBlockList) {
+	public void getSubBlocks(Item item, CreativeTabs creativeTabs, List subBlockList) {
 		for (int i = 0; i < AnchorType.size; i++) {
-			subBlockList.add(new ItemStack(id, 1, i));
+			subBlockList.add(new ItemStack(item, 1, i));
 		}
 	}
 	
@@ -94,11 +96,11 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 		AnchorType type = AnchorType.get(myMeta);
 		switch (type) {
 		case GROUND:
-			return otherBlock == currentBiome.topBlock;
+			return otherBlockBelow == currentBiome.topBlock;
 		case AIR:
-			return otherBlock == 0 || (Block.blocksList[otherBlock].blockMaterial.isReplaceable() && !Block.blocksList[otherBlock].blockMaterial.isLiquid());
+			return otherBlockBelow instanceof BlockAir || (otherBlockBelow.blockMaterial.isReplaceable() && !otherBlockBelow.blockMaterial.isLiquid());
 		default:
-			return otherBlock != 0 && type != null && type.material != null && Block.blocksList[otherBlock].blockMaterial == type.material;
+			return !(otherBlockBelow instanceof BlockAir) && type != null && type.material != null && otherBlockBelow.blockMaterial == type.material;
 		}
 	}
 }

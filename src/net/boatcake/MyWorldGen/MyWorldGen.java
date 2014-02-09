@@ -9,10 +9,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+
+import org.apache.logging.log4j.Level;
 
 import net.boatcake.MyWorldGen.blocks.BlockAnchorInventory;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
@@ -27,7 +28,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -35,7 +36,6 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
-import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -48,8 +48,9 @@ public class MyWorldGen {
 	public static WorldGenerator worldGen;
 	public static String resourcePath = "assets/myworldgen/worldgen";
 	public static CreativeTabs creativeTab = new CreativeTabs("tabMyWorldGen") {
-		public ItemStack getIconItemStack() {
-			return new ItemStack(materialAnchorBlock, 1, 0);
+		@Override
+		public Item getTabIconItem() {
+			return new BlockAnchorItem(materialAnchorBlock);
 		}
 	};
 	
@@ -71,11 +72,10 @@ public class MyWorldGen {
     	Configuration cfg = new Configuration(event.getSuggestedConfigurationFile());
     	try {
     		cfg.load();
-    		materialAnchorBlock = new BlockAnchorMaterial(cfg.getBlock("anchor", 1575).getInt(1575), Material.rock);
-    		ignoreBlock = new BlockIgnore(cfg.getBlock("ignore", 1576).getInt(1576), Material.circuits);
-    		inventoryAnchorBlock = new BlockAnchorInventory(cfg.getBlock("anchorInventory", 1577).getInt(1577), Material.circuits);
-    		wandSave = new ItemWandSave(cfg.getItem("wandSave", 4175).getInt(4175));
-    		wandLoad = new ItemWandLoad(cfg.getItem("wandLoad", 4176).getInt(4176));
+    		materialAnchorBlock = new BlockAnchorMaterial(Material.rock);
+    		ignoreBlock = new BlockIgnore(Material.circuits);
+    		wandSave = new ItemWandSave();
+    		wandLoad = new ItemWandLoad();
 			globalSchemDir = new File(Minecraft.getMinecraft().mcDataDir,
 									  cfg.get("configuration",
 											  "schematicDirectory",
@@ -91,7 +91,7 @@ public class MyWorldGen {
 									"Increase this if you have structures with complex anchor block layouts. Higher numbers will make longer load times.").getInt(128);
     	}
     	catch (Exception e) {
-    		FMLLog.log(Level.SEVERE, e, "MyWorldGen could not load its configuration");
+    		FMLLog.log(Level.FATAL, e, "MyWorldGen could not load its configuration");
     	}
     	finally {
     		if (cfg.hasChanged()) {
@@ -111,7 +111,7 @@ public class MyWorldGen {
     
     @EventHandler
     public void init(FMLInitializationEvent event) {
-		NetworkRegistry.instance().registerGuiHandler(this, new GuiHandler());
+ 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 		
 		if (!globalSchemDir.isDirectory()) {
 			globalSchemDir.mkdir();

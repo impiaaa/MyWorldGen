@@ -12,10 +12,9 @@ import java.util.Random;
 
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.util.WeightedRandom;
-import net.minecraft.util.WeightedRandomItem;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.IWorldGenerator;
 
@@ -57,15 +56,15 @@ public class WorldGenerator implements IWorldGenerator {
 	public void generate(Random random, int chunkX, int chunkZ, World world,
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
 		if (!schemList.isEmpty() && random.nextBoolean()) {
-			ArrayList applicableSchematics = new ArrayList<WeightedRandomItem>();
+			ArrayList applicableSchematics = new ArrayList<WeightedRandom.Item>();
 			for (Schematic s : schemList.values()) {
 				if (s.matchesBiome(world.getBiomeGenForCoords(chunkX*16, chunkZ*16))) {
 					applicableSchematics.add(s);
 				}
 			}
 			if (!applicableSchematics.isEmpty()) {
-				WeightedRandomItem noStructureItem = new WeightedRandomItem(MyWorldGen.generateNothingWeight);
-				WeightedRandomItem selectedItem = WeightedRandom.getRandomItem(random, applicableSchematics);
+				WeightedRandom.Item noStructureItem = new WeightedRandom.Item(MyWorldGen.generateNothingWeight);
+				WeightedRandom.Item selectedItem = WeightedRandom.getRandomItem(random, applicableSchematics);
 				if (selectedItem != noStructureItem) {
 					Schematic schemToGenerate = (Schematic)selectedItem;
 					for (int i = 0; i < MyWorldGen.generateTries; i++) {
@@ -75,7 +74,7 @@ public class WorldGenerator implements IWorldGenerator {
 						ForgeDirection randomDirection = randomDirections[random.nextInt(4)];
 						if (schemToGenerate.fitsIntoWorldAt(world, x, y, z, randomDirection)) {
 							schemToGenerate.placeInWorld(world, x, y, z, randomDirection, true, true, random);
-							FMLLog.finest("Generated %s at %d, %d, %d; took %d tries", schemToGenerate.name, x, y, z, i+1);
+							FMLLog.finer("Generated %s at %d, %d, %d; took %d tries", schemToGenerate.name, x, y, z, i+1);
 							break;
 						}
 					}

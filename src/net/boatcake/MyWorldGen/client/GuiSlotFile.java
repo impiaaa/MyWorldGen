@@ -30,7 +30,7 @@ public class GuiSlotFile extends GuiSlot {
 	}
 
 	@Override
-	protected void elementClicked(int i, boolean flag) {
+	protected void elementClicked(int i, boolean flag, int var3, int var4)  {
 		selected = i;
 	}
 
@@ -44,7 +44,7 @@ public class GuiSlotFile extends GuiSlot {
 	}
 
 	@Override
-	protected void drawSlot(int i, int j, int k, int l, Tessellator tessellator) {
+	protected void drawSlot(int i, int j, int k, int l, Tessellator tessellator, int var6, int var7) {
 		parent.drawString(fr, files[i].getName(), j + 2, k + 1,
 				0xFFFFFF);
 	}

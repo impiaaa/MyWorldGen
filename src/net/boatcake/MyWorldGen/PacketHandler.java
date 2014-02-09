@@ -11,12 +11,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
-import net.minecraftforge.common.ForgeDirection;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class PacketHandler implements IPacketHandler {
 
@@ -35,7 +31,7 @@ public class PacketHandler implements IPacketHandler {
 					e.printStackTrace();
 					return;
 				}
-				Schematic schematic = new Schematic(packetTag.getCompoundTag("schematic"), "remote:"+playerMP.username);
+				Schematic schematic = new Schematic(packetTag.getCompoundTag("schematic"), "remote:"+playerMP.getDisplayName());
 				int direction = packetTag.getInteger("direction");
 				schematic.placeInWorld(playerMP.worldObj,
 						packetTag.getInteger("x"),
@@ -74,7 +70,7 @@ public class PacketHandler implements IPacketHandler {
 					// Compile a response packet with both the original selection box,
 					// as well as the entity and tile entity data. We'll need the
 					// selection box in order to compile block data later.
-					NBTTagCompound tagToSend = new NBTTagCompound("MWGGetSchem");
+					NBTTagCompound tagToSend = new NBTTagCompound();
 					tagToSend.setInteger("x1", x1);
 					tagToSend.setInteger("y1", y1);
 					tagToSend.setInteger("z1", z1);
@@ -127,8 +123,8 @@ public class PacketHandler implements IPacketHandler {
 					int z2 = packetTag.getInteger("z2");
 					
 					guiSchematic.schematicToSave = new Schematic(playerMP.worldObj, x1, y1, z1, x2, y2, z2);
-					guiSchematic.schematicToSave.entities = packetTag.getTagList("entities");
-					guiSchematic.schematicToSave.tileEntities = packetTag.getTagList("tileEntities");
+					guiSchematic.schematicToSave.entities = (NBTTagList) packetTag.getTag("entities");
+					guiSchematic.schematicToSave.tileEntities = (NBTTagList) packetTag.getTag("tileEntities");
 					guiSchematic.updateSaveButton();
 				}
 				// For step 5, go to GuiSaveSchematic
