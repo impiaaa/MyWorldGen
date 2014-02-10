@@ -27,8 +27,9 @@ public class GuiLoadSchematic extends GuiScreen {
 	private GuiSmallButton doneButton;
 	private ForgeDirection direction;
 	private EntityClientPlayerMP player;
-	
-	public GuiLoadSchematic(World world, int x, int y, int z, ForgeDirection direction, EntityClientPlayerMP player) {
+
+	public GuiLoadSchematic(World world, int x, int y, int z,
+			ForgeDirection direction, EntityClientPlayerMP player) {
 		super();
 		this.world = world;
 		this.x = x;
@@ -55,13 +56,16 @@ public class GuiLoadSchematic extends GuiScreen {
 				tagToSend.setInteger("y", y);
 				tagToSend.setInteger("z", z);
 				tagToSend.setInteger("direction", direction.ordinal());
-				// We might be able to send the file data directly, but it's better to make sure that it's valid NBT first.
+				// We might be able to send the file data directly, but it's
+				// better to make sure that it's valid NBT first.
 				try {
-					tagToSend.setCompoundTag("schematic", CompressedStreamTools.readCompressed(new FileInputStream(slot.files[slot.selected])));
+					tagToSend.setCompoundTag("schematic", CompressedStreamTools
+							.readCompressed(new FileInputStream(
+									slot.files[slot.selected])));
 					CompressedStreamTools.writeCompressed(tagToSend, bos);
 				} catch (Exception exc) {
-					mc.displayGuiScreen(new GuiErrorScreen(
-							exc.getClass().getName(), exc.getLocalizedMessage()));
+					mc.displayGuiScreen(new GuiErrorScreen(exc.getClass()
+							.getName(), exc.getLocalizedMessage()));
 					exc.printStackTrace();
 					return;
 				}
@@ -76,7 +80,7 @@ public class GuiLoadSchematic extends GuiScreen {
 			}
 		}
 	}
-	
+
 	public void drawScreen(int par1, int par2, float par3) {
 		drawDefaultBackground();
 		slot.drawScreen(par1, par2, par3);

@@ -6,7 +6,6 @@ import java.io.IOException;
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -29,31 +28,42 @@ public class ItemWandSave extends Item {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister ir) {
-		this.itemIcon = ir.registerIcon("MyWorldGen:" + (this.getUnlocalizedName().substring(5)));
+		this.itemIcon = ir.registerIcon("MyWorldGen:"
+				+ (this.getUnlocalizedName().substring(5)));
 	}
-	
+
 	@Override
-	public boolean hasEffect(ItemStack stack)
-	{
+	public boolean hasEffect(ItemStack stack) {
 		return stack.hasTagCompound();
 	}
 
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int blockX, int blockY, int blockZ, int side, float hitX, float hitY, float hitZ) {
+	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world,
+			int blockX, int blockY, int blockZ, int side, float hitX,
+			float hitY, float hitZ) {
 		if (world.isRemote) {
 			if (stack.hasTagCompound()) {
-				// Step 2: While the client keeps a local copy of the blocks in the world,
-				// it does not know any entity or tile entity data until it's needed (e.g.,
-				// the contents of a chest aren't sent until the chest is opened; a
-				// villager's trades are not known until the player talks to it). So, we
-				// need to send a request to the server for what entities and tile entities
-				// are within the selected region. For step 3, go to PacketHandler
-				
+				// Step 2: While the client keeps a local copy of the blocks in
+				// the world,
+				// it does not know any entity or tile entity data until it's
+				// needed (e.g.,
+				// the contents of a chest aren't sent until the chest is
+				// opened; a
+				// villager's trades are not known until the player talks to
+				// it). So, we
+				// need to send a request to the server for what entities and
+				// tile entities
+				// are within the selected region. For step 3, go to
+				// PacketHandler
+
 				// Compile the packet with the selection box coordinates
 				NBTTagCompound tagToSend = new NBTTagCompound();
-				tagToSend.setInteger("x1", stack.getTagCompound().getInteger("x"));
-				tagToSend.setInteger("y1", stack.getTagCompound().getInteger("y"));
-				tagToSend.setInteger("z1", stack.getTagCompound().getInteger("z"));
+				tagToSend.setInteger("x1",
+						stack.getTagCompound().getInteger("x"));
+				tagToSend.setInteger("y1",
+						stack.getTagCompound().getInteger("y"));
+				tagToSend.setInteger("z1",
+						stack.getTagCompound().getInteger("z"));
 				tagToSend.setInteger("x2", blockX);
 				tagToSend.setInteger("y2", blockY);
 				tagToSend.setInteger("z2", blockZ);
@@ -69,12 +79,14 @@ public class ItemWandSave extends Item {
 					return false;
 				}
 
-				Packet250CustomPayload packet = new Packet250CustomPayload("MWGGetSchem", bos.toByteArray());
-				((EntityClientPlayerMP)player).sendQueue.addToSendQueue(packet);
-			}
-			else {
+				Packet250CustomPayload packet = new Packet250CustomPayload(
+						"MWGGetSchem", bos.toByteArray());
+				((EntityClientPlayerMP) player).sendQueue
+						.addToSendQueue(packet);
+			} else {
 				// START HERE
-				// Step 1: Find the first corner, and record it to the item data.
+				// Step 1: Find the first corner, and record it to the item
+				// data.
 				NBTTagCompound tag = new NBTTagCompound();
 				tag.setInteger("x", blockX);
 				tag.setInteger("y", blockY);

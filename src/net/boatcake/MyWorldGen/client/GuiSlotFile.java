@@ -45,12 +45,10 @@ public class GuiSlotFile extends GuiSlot {
 
 	@Override
 	protected void drawSlot(int i, int j, int k, int l, Tessellator tessellator) {
-		parent.drawString(fr, files[i].getName(), j + 2, k + 1,
-				0xFFFFFF);
+		parent.drawString(fr, files[i].getName(), j + 2, k + 1, 0xFFFFFF);
 	}
-	
-    protected int getContentHeight()
-    {
-        return this.getSize() * 18;
-    }
+
+	protected int getContentHeight() {
+		return this.getSize() * 18;
+	}
 }

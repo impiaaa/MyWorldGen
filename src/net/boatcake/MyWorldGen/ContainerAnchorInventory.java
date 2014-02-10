@@ -10,20 +10,22 @@ import net.minecraft.item.ItemStack;
 public class ContainerAnchorInventory extends Container {
 	protected TileEntityAnchorInventory tileEntity;
 
-	public ContainerAnchorInventory (InventoryPlayer inventoryPlayer, TileEntityAnchorInventory te){
-        tileEntity = te;
+	public ContainerAnchorInventory(InventoryPlayer inventoryPlayer,
+			TileEntityAnchorInventory te) {
+		tileEntity = te;
 
-        //the Slot constructor takes the IInventory and the slot number in that it binds to
-        //and the x-y coordinates it resides on-screen
+		// the Slot constructor takes the IInventory and the slot number in that
+		// it binds to
+		// and the x-y coordinates it resides on-screen
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
 				addSlotToContainer(new SlotPhantomBlock(tileEntity, j + i * 3,
 						62 + j * 18, 17 + i * 18));
 			}
 		}
-        bindPlayerInventory(inventoryPlayer);
+		bindPlayerInventory(inventoryPlayer);
 	}
-	
+
 	protected void bindPlayerInventory(InventoryPlayer inventoryPlayer) {
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 9; j++) {
@@ -60,7 +62,8 @@ public class ContainerAnchorInventory extends Container {
 			}
 			// places it into the tileEntity is possible since its in the player
 			// inventory
-			else if (!slot.isItemValid(stackInSlot) || !this.mergeItemStack(stackInSlot, 0, 9, false)) {
+			else if (!slot.isItemValid(stackInSlot)
+					|| !this.mergeItemStack(stackInSlot, 0, 9, false)) {
 				return null;
 			}
 
