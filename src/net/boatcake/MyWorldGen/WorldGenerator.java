@@ -74,7 +74,7 @@ public class WorldGenerator implements IWorldGenerator {
 						ForgeDirection randomDirection = randomDirections[random.nextInt(4)];
 						if (schemToGenerate.fitsIntoWorldAt(world, x, y, z, randomDirection)) {
 							schemToGenerate.placeInWorld(world, x, y, z, randomDirection, true, true, random);
-							FMLLog.finer("Generated %s at %d, %d, %d; took %d tries", schemToGenerate.name, x, y, z, i+1);
+							//FMLLog.finer("Generated %s at %d, %d, %d; took %d tries", schemToGenerate.name, x, y, z, i+1);
 							break;
 						}
 					}

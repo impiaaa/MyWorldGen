@@ -11,12 +11,18 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import net.boatcake.MyWorldGen.blocks.BlockAnchorItem;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
 import net.boatcake.MyWorldGen.blocks.BlockIgnore;
 import net.boatcake.MyWorldGen.blocks.TileEntityAnchorInventory;
+import net.boatcake.MyWorldGen.items.BlockAnchorItem;
 import net.boatcake.MyWorldGen.items.ItemWandLoad;
 import net.boatcake.MyWorldGen.items.ItemWandSave;
+import net.boatcake.MyWorldGen.network.MessageGetSchemClient;
+import net.boatcake.MyWorldGen.network.MessageGetSchemServer;
+import net.boatcake.MyWorldGen.network.MessagePlaceSchem;
+import net.boatcake.MyWorldGen.network.PacketHandlerGetSchemClient;
+import net.boatcake.MyWorldGen.network.PacketHandlerGetSchemServer;
+import net.boatcake.MyWorldGen.network.PacketHandlerPlaceSchem;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -31,14 +37,15 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid="MyWorldGen", name="MyWorldGen", version="1.2")
-@NetworkMod(clientSideRequired=false, serverSideRequired=false,
-channels={"MWGPlaceSchem", "MWGGetSchem"}, packetHandler=PacketHandler.class)
 public class MyWorldGen {
     @Instance("MyWorldGen")
 	public static MyWorldGen instance;
@@ -50,6 +57,7 @@ public class MyWorldGen {
 			return new BlockAnchorItem(materialAnchorBlock);
 		}
 	};
+	public static SimpleNetworkWrapper net;
 	
 	// Config options
 	public static Block materialAnchorBlock;
@@ -164,7 +172,14 @@ public class MyWorldGen {
 				e.printStackTrace();
 			}
 		}
-    }
+		
+		FMLInterModComms.sendMessage("OpenBlocks", "donateUrl", "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=UHDDACLRN2T46&lc=US&item_name=MyWorldGen&currency_code=USD&bn=PP-DonationsBF:btn_donate_SM.gif:NonHosted");
+		
+		net = new SimpleNetworkWrapper("MyWorldGen");
+		net.registerMessage(PacketHandlerGetSchemServer.class, MessageGetSchemServer.class, 0, Side.SERVER);
+		net.registerMessage(PacketHandlerGetSchemClient.class, MessageGetSchemClient.class, 1, Side.CLIENT);
+		net.registerMessage(PacketHandlerPlaceSchem.class, MessagePlaceSchem.class, 2, Side.SERVER);
+   }
     
     private static void writeStream(InputStream inStream, String outName) throws IOException {
     	// Used for self-extracting files

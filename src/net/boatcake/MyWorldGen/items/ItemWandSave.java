@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import net.boatcake.MyWorldGen.MyWorldGen;
+import net.boatcake.MyWorldGen.network.MessageGetSchemServer;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,28 +48,18 @@ public class ItemWandSave extends Item {
 				// need to send a request to the server for what entities and tile entities
 				// are within the selected region. For step 3, go to PacketHandler
 				
-				// Compile the packet with the selection box coordinates
-				NBTTagCompound tagToSend = new NBTTagCompound();
-				tagToSend.setInteger("x1", stack.getTagCompound().getInteger("x"));
-				tagToSend.setInteger("y1", stack.getTagCompound().getInteger("y"));
-				tagToSend.setInteger("z1", stack.getTagCompound().getInteger("z"));
-				tagToSend.setInteger("x2", blockX);
-				tagToSend.setInteger("y2", blockY);
-				tagToSend.setInteger("z2", blockZ);
-
 				// Clear the item data, so that we can make a new selection
 				stack.setTagCompound(null);
 
-				ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				try {
-					CompressedStreamTools.writeCompressed(tagToSend, bos);
-				} catch (IOException ex) {
-					ex.printStackTrace();
-					return false;
-				}
+				MessageGetSchemServer message = new MessageGetSchemServer();
+				message.x1 = stack.getTagCompound().getInteger("x");
+				message.y1 = stack.getTagCompound().getInteger("y");
+				message.z1 = stack.getTagCompound().getInteger("z");
+				message.x2 = blockX;
+				message.y2 = blockY;
+				message.z2 = blockZ;
 
-				Packet250CustomPayload packet = new Packet250CustomPayload("MWGGetSchem", bos.toByteArray());
-				((EntityClientPlayerMP)player).sendQueue.addToSendQueue(packet);
+				MyWorldGen.net.sendToServer(message);
 			}
 			else {
 				// START HERE

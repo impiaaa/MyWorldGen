@@ -2,9 +2,12 @@ package net.boatcake.MyWorldGen.client;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.SchematicFilenameFilter;
+import net.boatcake.MyWorldGen.network.MessagePlaceSchem;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
@@ -47,27 +50,20 @@ public class GuiLoadSchematic extends GuiScreen {
 	protected void actionPerformed(GuiButton button) {
 		if (button.enabled) {
 			if (button.id == doneButton.id) {
-				NBTTagCompound tagToSend = new NBTTagCompound();
-				ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				tagToSend.setInteger("x", x);
-				tagToSend.setInteger("y", y);
-				tagToSend.setInteger("z", z);
-				tagToSend.setInteger("direction", direction.ordinal());
-				// We might be able to send the file data directly, but it's better to make sure that it's valid NBT first.
+				MessagePlaceSchem message = new MessagePlaceSchem();
 				try {
-					tagToSend.setTag("schematic", CompressedStreamTools.readCompressed(new FileInputStream(slot.files[slot.selected])));
-					CompressedStreamTools.writeCompressed(tagToSend, bos);
+					message.schematicTag = CompressedStreamTools.readCompressed(new FileInputStream(slot.files[slot.selected]));
 				} catch (Exception exc) {
 					this.mc.displayGuiScreen(new GuiErrorScreen(
 							exc.getClass().getName(), exc.getLocalizedMessage()));
 					exc.printStackTrace();
 					return;
 				}
-				Packet250CustomPayload packet = new Packet250CustomPayload();
-				packet.channel = "MWGPlaceSchem";
-				packet.data = bos.toByteArray();
-				packet.length = bos.size();
-				player.sendQueue.addToSendQueue(packet);
+				message.x = x;
+				message.y = y;
+				message.z = z;
+				message.direction = direction;
+				MyWorldGen.net.sendToServer(message);
 				this.mc.displayGuiScreen(null);
 			} else {
 				slot.actionPerformed(button);

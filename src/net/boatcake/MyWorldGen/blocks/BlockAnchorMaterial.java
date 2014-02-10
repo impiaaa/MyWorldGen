@@ -47,7 +47,7 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 			return v[id];
 		}
 	}
-	public IIcon[] icons = new IIcon[AnchorType.size];
+	public IIcon[] icons;
 	
 	public BlockAnchorMaterial(Material par2Material) {
 		super(par2Material);
@@ -56,13 +56,15 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 		setStepSound(Block.soundTypeStone);
 		setBlockName("anchor");
 		setCreativeTab(MyWorldGen.creativeTab);
+		setBlockTextureName("anchor");
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister iconRegister) {
-		for (int i = 0; i < AnchorType.size; i++) {
-			this.icons[i] = iconRegister.registerIcon("MyWorldGen:"+this.getUnlocalizedName().substring(5)+AnchorType.get(i).name);
+		icons = new IIcon[AnchorType.size];
+		for (int i = 0; i < icons.length; i++) {
+			this.icons[i] = iconRegister.registerIcon(this.getTextureName()+AnchorType.get(i).name);
 		}
 	}
 	

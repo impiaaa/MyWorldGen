@@ -138,7 +138,7 @@ public class Schematic extends WeightedRandom.Item {
 		entities = (NBTTagList) tag.getTag("Entities");
 		tileEntities = (NBTTagList) tag.getTag("TileEntities");
 		
-		if (anchorBlockLocations.isEmpty()) {
+		if (anchorBlockLocations.isEmpty() && name != null) {
 			FMLLog.warning("No anchors found in schematic %s", name);
 		}
 		
