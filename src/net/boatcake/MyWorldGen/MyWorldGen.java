@@ -11,6 +11,7 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import net.boatcake.MyWorldGen.blocks.BlockAnchorInventory;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
 import net.boatcake.MyWorldGen.blocks.BlockIgnore;
 import net.boatcake.MyWorldGen.blocks.TileEntityAnchorInventory;
@@ -79,6 +80,7 @@ public class MyWorldGen {
     		cfg.load();
     		materialAnchorBlock = new BlockAnchorMaterial(Material.rock);
     		ignoreBlock = new BlockIgnore(Material.circuits);
+    		inventoryAnchorBlock = new BlockAnchorInventory(Material.circuits);
     		wandSave = new ItemWandSave();
     		wandLoad = new ItemWandLoad();
 			globalSchemDir = new File(Minecraft.getMinecraft().mcDataDir,

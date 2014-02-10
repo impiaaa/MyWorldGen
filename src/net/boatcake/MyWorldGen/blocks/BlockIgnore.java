@@ -17,11 +17,12 @@ public class BlockIgnore extends Block {
 		setResistance(6000000.0F);
 		setBlockName("ignore");
 		setCreativeTab(MyWorldGen.creativeTab);
+		setBlockTextureName("MyWorldGen:ignore");
 	}
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister iconRegister) {
-		this.blockIcon = iconRegister.registerIcon("MyWorldGen:ignore");
+		this.blockIcon = iconRegister.registerIcon(getTextureName());
 	}
 	
     public boolean isOpaqueCube() {

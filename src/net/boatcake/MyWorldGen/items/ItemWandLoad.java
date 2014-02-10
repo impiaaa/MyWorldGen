@@ -16,12 +16,13 @@ public class ItemWandLoad extends Item {
 		setMaxStackSize(0);
 		setUnlocalizedName("wandLoad");
 		setCreativeTab(MyWorldGen.creativeTab);
+		setTextureName("MyWorldGen:wandLoad");
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister ir) {
-		this.itemIcon = ir.registerIcon("MyWorldGen:" + (this.getUnlocalizedName().substring(5)));
+		this.itemIcon = ir.registerIcon(getIconString());
 	}
 	
 	@Override

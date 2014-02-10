@@ -21,6 +21,7 @@ public class BlockAnchorInventory extends BlockContainer implements BlockAnchorB
 		setStepSound(Block.soundTypeStone);
 		setBlockName("anchorInventory");
 		setCreativeTab(MyWorldGen.creativeTab);
+		setBlockTextureName("MyWorldGen:anchorInventory");
 	}
 
 	@Override
@@ -37,7 +38,7 @@ public class BlockAnchorInventory extends BlockContainer implements BlockAnchorB
     @Override
     public void registerBlockIcons(IIconRegister par1IconRegister)
     {
-        this.blockIcon = par1IconRegister.registerIcon("MyWorldGen:"+this.getUnlocalizedName().substring(5));
+        this.blockIcon = par1IconRegister.registerIcon(getTextureName());
     }
 
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {

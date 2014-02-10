@@ -56,7 +56,7 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 		setStepSound(Block.soundTypeStone);
 		setBlockName("anchor");
 		setCreativeTab(MyWorldGen.creativeTab);
-		setBlockTextureName("anchor");
+		setBlockTextureName("MyWorldGen:anchor");
 	}
 
 	@Override
