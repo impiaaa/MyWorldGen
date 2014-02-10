@@ -63,7 +63,7 @@ public class GuiLoadSchematic extends GuiScreen {
 				message.y = y;
 				message.z = z;
 				message.direction = direction;
-				MyWorldGen.net.sendToServer(message);
+				MyWorldGen.instance.sendToServer(message);
 				this.mc.displayGuiScreen(null);
 			} else {
 				slot.actionPerformed(button);

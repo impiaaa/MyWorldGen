@@ -60,7 +60,7 @@ public class ItemWandSave extends Item {
 				message.y2 = blockY;
 				message.z2 = blockZ;
 
-				MyWorldGen.net.sendToServer(message);
+				MyWorldGen.instance.sendToServer(message);
 			}
 			else {
 				// START HERE
