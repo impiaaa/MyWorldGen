@@ -15,7 +15,6 @@ public class BlockIgnore extends Block {
 		super(par1, par2Material);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
-		setUnlocalizedName("ignore");
 		setCreativeTab(MyWorldGen.creativeTab);
 	}
 

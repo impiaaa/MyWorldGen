@@ -14,15 +14,6 @@ public class ItemWandLoad extends Item {
 	public ItemWandLoad(int id) {
 		super(id);
 		setMaxStackSize(0);
-		setUnlocalizedName("wandLoad");
-		setCreativeTab(MyWorldGen.creativeTab);
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister ir) {
-		this.itemIcon = ir.registerIcon("MyWorldGen:"
-				+ (this.getUnlocalizedName().substring(5)));
 	}
 
 	@Override

@@ -7,14 +7,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import net.boatcake.MyWorldGen.blocks.BlockAnchorInventory;
+import net.boatcake.MyWorldGen.blocks.BlockAnchorInventoryLogic;
+import net.boatcake.MyWorldGen.blocks.BlockAnchorLogic;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
+import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterialLogic;
 import net.boatcake.MyWorldGen.blocks.BlockIgnore;
+import net.boatcake.MyWorldGen.blocks.BlockPlacementIgnore;
+import net.boatcake.MyWorldGen.blocks.BlockPlacementLogic;
 import net.boatcake.MyWorldGen.blocks.TileEntityAnchorInventory;
 import net.boatcake.MyWorldGen.items.BlockAnchorItem;
 import net.boatcake.MyWorldGen.items.ItemWandLoad;
@@ -24,6 +32,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraftforge.common.Configuration;
@@ -40,19 +49,17 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-@Mod(modid = "MyWorldGen", name = "MyWorldGen", version = "1.2")
+@Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.3")
 @NetworkMod(clientSideRequired = false, serverSideRequired = false, channels = {
 		"MWGPlaceSchem", "MWGGetSchem" }, packetHandler = PacketHandler.class)
 public class MyWorldGen {
+	public final static String MODID = "MyWorldGen";
 	@Instance("MyWorldGen")
 	public static MyWorldGen instance;
 	public static WorldGenerator worldGen;
+	public static Logger log;
 	public static String resourcePath = "assets/myworldgen/worldgen";
-	public static CreativeTabs creativeTab = new CreativeTabs("tabMyWorldGen") {
-		public ItemStack getIconItemStack() {
-			return new ItemStack(materialAnchorBlock, 1, 0);
-		}
-	};
+	public static CreativeTabs creativeTab;
 
 	// Config options
 	public static Block materialAnchorBlock;
@@ -65,66 +72,125 @@ public class MyWorldGen {
 	public static int generateTries;
 
 	private File sourceFile;
+	private boolean enableItemsAndBlocks;
+
+	private Block registerBlock(String name, int defaultID,
+			Class<? extends Block> blockClass, Configuration cfg,
+			Class<? extends ItemBlock> itemBlockClass,
+			Class<? extends BlockAnchorLogic> matching)
+			throws RuntimeException, ReflectiveOperationException {
+		Block block = null;
+		int id = cfg.getBlock(name, defaultID).getInt(defaultID);
+		if (id > 0 && enableItemsAndBlocks) {
+			block = blockClass.getConstructor(int.class, Material.class)
+					.newInstance(id, Material.circuits);
+			block.setUnlocalizedName(name);
+			block.setTextureName(this.MODID + ":" + name);
+			block.setCreativeTab(creativeTab);
+			GameRegistry
+					.registerBlock(block,
+							(itemBlockClass == null) ? ItemBlock.class
+									: itemBlockClass, name);
+		}
+		new BlockPlacementIgnore(name);
+		if (matching != null) {
+			matching.getConstructor(String.class).newInstance(name);
+		}
+		return block;
+	}
+
+	private Item registerItem(String name, int defaultID,
+			Class<? extends Item> itemClass, Configuration cfg)
+			throws RuntimeException, ReflectiveOperationException {
+		Item item = null;
+		int id = cfg.getItem(name, defaultID).getInt(defaultID);
+		if (id > 0 && enableItemsAndBlocks) {
+			item = itemClass.getConstructor(int.class).newInstance(id);
+			item.setUnlocalizedName(name);
+			item.setTextureName(this.MODID + ":" + name);
+			item.setCreativeTab(creativeTab);
+			GameRegistry.registerItem(item, name);
+		}
+		return item;
+	}
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+		log = event.getModLog();
 		sourceFile = event.getSourceFile();
 		Configuration cfg = new Configuration(
 				event.getSuggestedConfigurationFile());
-		try {
-			cfg.load();
-			materialAnchorBlock = new BlockAnchorMaterial(cfg.getBlock(
-					"anchor", 1575).getInt(1575), Material.rock);
-			ignoreBlock = new BlockIgnore(cfg.getBlock("ignore", 1576).getInt(
-					1576), Material.circuits);
-			inventoryAnchorBlock = new BlockAnchorInventory(cfg.getBlock(
-					"anchorInventory", 1577).getInt(1577), Material.circuits);
-			wandSave = new ItemWandSave(cfg.getItem("wandSave", 4175).getInt(
-					4175));
-			wandLoad = new ItemWandLoad(cfg.getItem("wandLoad", 4176).getInt(
-					4176));
-			String worldGenDir = cfg.get("configuration", "schematicDirectory",
-					"worldgen", "Subdirectory of .minecraft").getString();
-			switch (event.getSide()) {
-			case CLIENT:
-				globalSchemDir = new File(Minecraft.getMinecraft().mcDataDir,
-						worldGenDir);
-				break;
-			case SERVER:
-				globalSchemDir = DedicatedServer.getServer().getFile(
-						worldGenDir);
-				break;
-			}
+		cfg.load();
 
-			generateNothingWeight = cfg
-					.get("configuration", "generateNothingWeight", 10,
-							"Increase this number to generate fewer structures, decrease to generate more")
-					.getInt(10);
-			generateTries = cfg
-					.get("configuration",
-							"generateTries",
-							128,
-							"Increase this if you have structures with complex anchor block layouts. Higher numbers will make longer load times.")
-					.getInt(128);
-		} catch (Exception e) {
-			FMLLog.log(Level.SEVERE, e,
-					"MyWorldGen could not load its configuration");
-		} finally {
-			if (cfg.hasChanged()) {
-				cfg.save();
-			}
+		enableItemsAndBlocks = cfg
+				.get("configuration",
+						"enableItemsAndBlocks",
+						true,
+						"Turn this off if you're running a server and the clients don't have the mod installed")
+				.getBoolean(true);
+		
+		if (enableItemsAndBlocks && materialAnchorBlock != null) {
+			creativeTab = new CreativeTabs("tabMyWorldGen") {
+				public ItemStack getIconItemStack() {
+					return new ItemStack(materialAnchorBlock, 1, 0);
+				}
+			};
 		}
+
+		try {
+			materialAnchorBlock = registerBlock("anchor", 1575,
+					BlockAnchorMaterial.class, cfg, BlockAnchorItem.class,
+					BlockAnchorMaterialLogic.class);
+			ignoreBlock = registerBlock("ignore", 1576, BlockIgnore.class, cfg,
+					null, null);
+			inventoryAnchorBlock = registerBlock("anchorInventory", 1577,
+					BlockAnchorInventory.class, cfg, null,
+					BlockAnchorInventoryLogic.class);
+			wandSave = registerItem("wandSave", 4175, ItemWandSave.class, cfg);
+			wandLoad = registerItem("wandLoad", 4176, ItemWandLoad.class, cfg);
+		} catch (RuntimeException e) {
+			log.severe("Could not load configuration");
+			e.printStackTrace();
+			return;
+		} catch (ReflectiveOperationException e) {
+			log.severe("Self-reflection failed. Is the mod intact?");
+			e.printStackTrace();
+			return;
+		}
+
+		String worldGenDir = cfg.get("configuration", "schematicDirectory",
+				"worldgen", "Subdirectory of .minecraft").getString();
+
+		switch (event.getSide()) {
+		case CLIENT:
+			globalSchemDir = new File(Minecraft.getMinecraft().mcDataDir,
+					worldGenDir);
+			break;
+		case SERVER:
+			globalSchemDir = DedicatedServer.getServer().getFile(worldGenDir);
+			break;
+		}
+
+		generateNothingWeight = cfg
+				.get("configuration", "generateNothingWeight", 10,
+						"Increase this number to generate fewer structures, decrease to generate more")
+				.getInt(10);
+		generateTries = cfg
+				.get("configuration",
+						"generateTries",
+						128,
+						"Increase this if you have structures with complex anchor block layouts. Higher numbers will make longer load times.")
+				.getInt(128);
+
+		if (cfg.hasChanged()) {
+			cfg.save();
+		}
+
 		worldGen = new WorldGenerator();
 
-		GameRegistry.registerBlock(ignoreBlock, "ignore");
-		GameRegistry.registerBlock(materialAnchorBlock, BlockAnchorItem.class,
-				"anchor");
-		GameRegistry.registerBlock(inventoryAnchorBlock, "anchorInventory");
 		GameRegistry.registerTileEntity(TileEntityAnchorInventory.class,
 				"anchorInventory");
 		GameRegistry.registerWorldGenerator(worldGen);
-		GameRegistry.registerItem(wandSave, wandSave.getUnlocalizedName());
-		GameRegistry.registerItem(wandLoad, wandLoad.getUnlocalizedName());
 	}
 
 	@EventHandler
@@ -169,8 +235,8 @@ public class MyWorldGen {
 		}
 
 		if (event.getSide() == Side.CLIENT) {
-			File resourcePacksDir = new File(Minecraft.getMinecraft().mcDataDir,
-					"resourcepacks");
+			File resourcePacksDir = new File(
+					Minecraft.getMinecraft().mcDataDir, "resourcepacks");
 			for (File resourcePack : resourcePacksDir.listFiles()) {
 				try {
 					ZipFile zf = new ZipFile(resourcePack);
@@ -182,8 +248,9 @@ public class MyWorldGen {
 							if (!ze.isDirectory()
 									&& ze.getName().startsWith(
 											worldGenDir.getName())) {
-								worldGen.addSchemFromStream(zf.getInputStream(ze),
-										new File(resourcePack, ze.getName()));
+								worldGen.addSchemFromStream(zf
+										.getInputStream(ze), new File(
+										resourcePack, ze.getName()));
 							}
 						}
 					}

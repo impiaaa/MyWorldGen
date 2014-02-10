@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.logging.Level;
 
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.util.WeightedRandom;
@@ -91,9 +92,9 @@ public class WorldGenerator implements IWorldGenerator {
 								randomDirection)) {
 							schemToGenerate.placeInWorld(world, x, y, z,
 									randomDirection, true, true, random);
-							FMLLog.finest(
-									"Generated %s at %d, %d, %d; took %d tries",
-									schemToGenerate.name, x, y, z, i + 1);
+							MyWorldGen.log.log(Level.FINEST,
+									"Generated {0} at {1}, {2}, {3}; took {4} tries",
+									new Object[]{schemToGenerate.name, x, y, z, i + 1});
 							break;
 						}
 					}

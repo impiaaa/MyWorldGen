@@ -43,14 +43,12 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 	}
 
 	public Icon[] icons = new Icon[AnchorType.size];
-
+	
 	public BlockAnchorMaterial(int par1, Material par2Material) {
 		super(par1, par2Material);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
 		setStepSound(Block.soundStoneFootstep);
-		setUnlocalizedName("anchor");
-		setCreativeTab(MyWorldGen.creativeTab);
 	}
 
 	@Override
@@ -81,32 +79,5 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 	@Override
 	public int damageDropped(int metadata) {
 		return metadata;
-	}
-
-	@Override
-	public boolean matches(int myMeta, TileEntity myTileEntity, World world,
-			int x, int y, int z) {
-		return matchesStatic(myMeta, world.getBlockId(x, y, z),
-				world.getBlockMetadata(x, y, z),
-				world.getBiomeGenForCoords(x, z));
-	}
-
-	public static boolean matchesStatic(int myMeta, int otherBlock,
-			int otherMeta, BiomeGenBase currentBiome) {
-		AnchorType type = AnchorType.get(myMeta);
-		switch (type) {
-		case GROUND:
-			return otherBlock == currentBiome.topBlock;
-		case AIR:
-			return otherBlock == 0
-					|| (Block.blocksList[otherBlock].blockMaterial
-							.isReplaceable() && !Block.blocksList[otherBlock].blockMaterial
-							.isLiquid());
-		default:
-			return otherBlock != 0
-					&& type != null
-					&& type.material != null
-					&& Block.blocksList[otherBlock].blockMaterial == type.material;
-		}
 	}
 }

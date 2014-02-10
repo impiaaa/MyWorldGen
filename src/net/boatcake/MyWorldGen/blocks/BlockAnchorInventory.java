@@ -13,32 +13,16 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockAnchorInventory extends BlockContainer implements
 		BlockAnchorBase {
-
 	public BlockAnchorInventory(int par1, Material par2Material) {
 		super(par1, par2Material);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
 		setStepSound(Block.soundStoneFootstep);
-		setUnlocalizedName("anchorInventory");
-		setCreativeTab(MyWorldGen.creativeTab);
-	}
-
-	@Override
-	public boolean matches(int myMeta, TileEntity myTileEntity, World world,
-			int x, int y, int z) {
-		return ((TileEntityAnchorInventory) myTileEntity).matches(world
-				.getBlockId(x, y, z));
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World world) {
 		return new TileEntityAnchorInventory();
-	}
-
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
-		this.blockIcon = par1IconRegister.registerIcon("MyWorldGen:"
-				+ this.getUnlocalizedName().substring(5));
 	}
 
 	public boolean onBlockActivated(World world, int x, int y, int z,
