@@ -30,18 +30,15 @@ public class ItemWandSave extends Item {
 			float hitY, float hitZ) {
 		if (world.isRemote) {
 			if (stack.hasTagCompound()) {
-				// Step 2: While the client keeps a local copy of the blocks in
-				// the world,
-				// it does not know any entity or tile entity data until it's
-				// needed (e.g.,
-				// the contents of a chest aren't sent until the chest is
-				// opened; a
-				// villager's trades are not known until the player talks to
-				// it). So, we
-				// need to send a request to the server for what entities and
-				// tile entities
-				// are within the selected region. For step 3, go to
-				// PacketHandler
+				/*
+				 * Step 2: While the client keeps a local copy of the blocks in
+				 * the world, it does not know any entity or tile entity data
+				 * until it's needed (e.g., the contents of a chest aren't sent
+				 * until the chest is opened; a villager's trades are not known
+				 * until the player talks to it). So, we need to send a request
+				 * to the server for what entities and tile entities are within
+				 * the selected region. For step 3, go to PacketHandler
+				 */
 
 				// Compile the packet with the selection box coordinates
 				NBTTagCompound tagToSend = new NBTTagCompound();
@@ -71,9 +68,11 @@ public class ItemWandSave extends Item {
 				((EntityClientPlayerMP) player).sendQueue
 						.addToSendQueue(packet);
 			} else {
-				// START HERE
-				// Step 1: Find the first corner, and record it to the item
-				// data.
+				/*
+				 * START HERE
+				 * Step 1: Find the first corner, and record it to
+				 * the item data.
+				 */
 				NBTTagCompound tag = new NBTTagCompound();
 				tag.setInteger("x", blockX);
 				tag.setInteger("y", blockY);

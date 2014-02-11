@@ -683,10 +683,12 @@ public class Schematic extends WeightedRandomItem {
 			}
 		}
 
-		// Rotate blocks afterward to try to avoid block updates making invalid
-		// configurations (torches on air). Sometimes that still happens though.
-		// Also, some blocks might have their rotation in tile entity data.
-		// Forge devs, can I turn off block updates somehow please? :(
+		/*
+		 * Rotate blocks afterward to try to avoid block updates making invalid
+		 * configurations (torches on air). Sometimes that still happens though.
+		 * Also, some blocks might have their rotation in tile entity data.
+		 * Forge devs, can I turn off block updates somehow please? :(
+		 */
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {

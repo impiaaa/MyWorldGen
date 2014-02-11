@@ -53,10 +53,11 @@ public class PacketHandler implements IPacketHandler {
 				// Step 3: The server receives the selection box from the
 				// client.
 				EntityPlayerMP playerMP = (EntityPlayerMP) player;
-				// First we need to make sure that they're allowed to see chests
-				// etc. I assume being in creative is good enough,
-				// I don't want to implement a permissions system right now.
-				// (though I guess that could be a TODO)
+				/*
+				 * First we need to make sure that they're allowed to see chests
+				 * etc. I assume being in creative is good enough, I don't want
+				 * to implement a permissions system right now.
+				 */
 				if (playerMP.capabilities.isCreativeMode) {
 					// get parameters
 					ByteArrayInputStream inputStream = new ByteArrayInputStream(
@@ -76,11 +77,12 @@ public class PacketHandler implements IPacketHandler {
 					int y2 = packetTag.getInteger("y2");
 					int z2 = packetTag.getInteger("z2");
 
-					// Compile a response packet with both the original
-					// selection box,
-					// as well as the entity and tile entity data. We'll need
-					// the
-					// selection box in order to compile block data later.
+					/*
+					 * Compile a response packet with both the original
+					 * selection box, as well as the entity and tile entity
+					 * data. We'll need the selection box in order to compile
+					 * block data later.
+					 */
 					NBTTagCompound tagToSend = new NBTTagCompound("MWGGetSchem");
 					tagToSend.setInteger("x1", x1);
 					tagToSend.setInteger("y1", y1);
@@ -106,11 +108,11 @@ public class PacketHandler implements IPacketHandler {
 				}
 			} else if (player instanceof EntityClientPlayerMP) {
 				// client
-				// Step 4: The client has received all of the entity and tile
-				// entity data.
-				// Now we need to gather the block data from the client copy,
-				// and then
-				// open a save dialog.
+				/*
+				 * Step 4: The client has received all of the entity and tile
+				 * entity data. Now we need to gather the block data from the
+				 * client copy, and then open a save dialog.
+				 */
 				EntityClientPlayerMP playerMP = (EntityClientPlayerMP) player;
 
 				ByteArrayInputStream inputStream = new ByteArrayInputStream(
@@ -152,5 +154,4 @@ public class PacketHandler implements IPacketHandler {
 			}
 		}
 	}
-
 }
