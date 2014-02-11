@@ -8,10 +8,6 @@ import net.minecraft.world.biome.BiomeGenBase;
 
 public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 
-	public BlockAnchorMaterialLogic(String blockName) {
-		super(blockName);
-	}
-
 	public static boolean matchesStatic(int myMeta, int otherBlock,
 			int otherMeta, BiomeGenBase currentBiome) {
 		AnchorType type = AnchorType.get(myMeta);
@@ -29,6 +25,10 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 					&& type.material != null
 					&& Block.blocksList[otherBlock].blockMaterial == type.material;
 		}
+	}
+
+	public BlockAnchorMaterialLogic(String blockName) {
+		super(blockName);
 	}
 
 	@Override

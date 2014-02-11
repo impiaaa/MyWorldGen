@@ -21,17 +21,6 @@ public class GuiAnchorInventory extends GuiContainer {
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer(int param1, int param2) {
-		// draw text and stuff here
-		// the parameters for drawString are: string, x, y, color
-		fontRenderer.drawString(I18n.getString(tileEntity.getInvName()), 8, 6,
-				0x404040);
-		// draws "Inventory" or your regional equivalent
-		fontRenderer.drawString(I18n.getString("container.inventory"), 8,
-				ySize - 96 + 2, 0x404040);
-	}
-
-	@Override
 	protected void drawGuiContainerBackgroundLayer(float par1, int par2,
 			int par3) {
 		// draw your Gui here, only thing you need to change is the path
@@ -40,5 +29,16 @@ public class GuiAnchorInventory extends GuiContainer {
 		int x = (width - xSize) / 2;
 		int y = (height - ySize) / 2;
 		this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
+	}
+
+	@Override
+	protected void drawGuiContainerForegroundLayer(int param1, int param2) {
+		// draw text and stuff here
+		// the parameters for drawString are: string, x, y, color
+		fontRenderer.drawString(I18n.getString(tileEntity.getInvName()), 8, 6,
+				0x404040);
+		// draws "Inventory" or your regional equivalent
+		fontRenderer.drawString(I18n.getString("container.inventory"), 8,
+				ySize - 96 + 2, 0x404040);
 	}
 }

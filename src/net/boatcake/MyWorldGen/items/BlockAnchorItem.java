@@ -1,7 +1,6 @@
 package net.boatcake.MyWorldGen.items;
 
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
-import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial.AnchorType;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 

@@ -20,10 +20,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiSaveSchematic extends GuiScreen {
-	private GuiTextField fileNameField;
-	private GuiButton saveBtn;
 	private GuiButton cancelBtn;
 	private GuiSlider commonSlider;
+	private GuiTextField fileNameField;
+	private GuiButton saveBtn;
 	public Schematic schematicToSave;
 
 	public GuiSaveSchematic() {
@@ -31,31 +31,7 @@ public class GuiSaveSchematic extends GuiScreen {
 		// The schematicToSave is filled out for us in PacketHandler
 	}
 
-	public void updateScreen() {
-		super.updateScreen();
-		fileNameField.updateCursorCounter();
-	}
-
-	public void onGuiClosed() {
-		super.onGuiClosed();
-		Keyboard.enableRepeatEvents(false);
-	}
-
-	public void initGui() {
-		super.initGui();
-		Keyboard.enableRepeatEvents(true);
-		this.buttonList.clear();
-		buttonList.add(saveBtn = new GuiButton(0, this.width / 2 - 100,
-				this.height / 4 + 72, I18n.getString("gui.save")));
-		buttonList.add(cancelBtn = new GuiButton(1, this.width / 2 - 100,
-				this.height / 4 + 96, I18n.getString("gui.cancel")));
-		fileNameField = new GuiTextField(this.fontRenderer,
-				this.width / 2 - 150, 60, 300, 20);
-		fileNameField.setMaxStringLength(32767);
-		fileNameField.setFocused(true);
-		updateSaveButton();
-	}
-
+	@Override
 	protected void actionPerformed(GuiButton button) {
 		super.actionPerformed(button);
 		if (button.id == saveBtn.id && saveBtn.enabled) {
@@ -83,14 +59,36 @@ public class GuiSaveSchematic extends GuiScreen {
 		}
 	}
 
-	public void updateSaveButton() {
-		// Call this every so often to make sure we have a valid file name and a
-		// valid schematic
-		saveBtn.enabled = fileNameField.getText().trim().length() > 0
-				&& schematicToSave.entities != null
-				&& schematicToSave.tileEntities != null;
+	@Override
+	public void drawScreen(int par1, int par2, float par3) {
+		drawDefaultBackground();
+		drawCenteredString(fontRenderer, I18n.getString("gui.filename"),
+				this.width / 2, 20, 0xFFFFFF);
+		drawCenteredString(fontRenderer,
+				I18n.getString("selectWorld.resultFolder") + " "
+						+ MyWorldGen.globalSchemDir.getAbsolutePath(),
+				this.width / 2, 97, 0xA0A0A0);
+		fileNameField.drawTextBox();
+		super.drawScreen(par1, par2, par3);
 	}
 
+	@Override
+	public void initGui() {
+		super.initGui();
+		Keyboard.enableRepeatEvents(true);
+		this.buttonList.clear();
+		buttonList.add(saveBtn = new GuiButton(0, this.width / 2 - 100,
+				this.height / 4 + 72, I18n.getString("gui.save")));
+		buttonList.add(cancelBtn = new GuiButton(1, this.width / 2 - 100,
+				this.height / 4 + 96, I18n.getString("gui.cancel")));
+		fileNameField = new GuiTextField(this.fontRenderer,
+				this.width / 2 - 150, 60, 300, 20);
+		fileNameField.setMaxStringLength(32767);
+		fileNameField.setFocused(true);
+		updateSaveButton();
+	}
+
+	@Override
 	protected void keyTyped(char character, int keycode) {
 		fileNameField.textboxKeyTyped(character, keycode);
 		updateSaveButton();
@@ -108,15 +106,23 @@ public class GuiSaveSchematic extends GuiScreen {
 		}
 	}
 
-	public void drawScreen(int par1, int par2, float par3) {
-		drawDefaultBackground();
-		drawCenteredString(fontRenderer, I18n.getString("gui.filename"),
-				this.width / 2, 20, 0xFFFFFF);
-		drawCenteredString(fontRenderer,
-				I18n.getString("selectWorld.resultFolder") + " "
-						+ MyWorldGen.globalSchemDir.getAbsolutePath(),
-				this.width / 2, 97, 0xA0A0A0);
-		fileNameField.drawTextBox();
-		super.drawScreen(par1, par2, par3);
+	@Override
+	public void onGuiClosed() {
+		super.onGuiClosed();
+		Keyboard.enableRepeatEvents(false);
+	}
+
+	public void updateSaveButton() {
+		// Call this every so often to make sure we have a valid file name and a
+		// valid schematic
+		saveBtn.enabled = fileNameField.getText().trim().length() > 0
+				&& schematicToSave.entities != null
+				&& schematicToSave.tileEntities != null;
+	}
+
+	@Override
+	public void updateScreen() {
+		super.updateScreen();
+		fileNameField.updateCursorCounter();
 	}
 }

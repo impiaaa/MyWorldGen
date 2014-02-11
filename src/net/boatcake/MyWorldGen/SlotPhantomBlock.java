@@ -12,6 +12,7 @@ public class SlotPhantomBlock extends Slot {
 		super(inventory, slotIndex, posX, posY);
 	}
 
+	@Override
 	public boolean isItemValid(ItemStack stack) {
 		return stack.getItem() instanceof ItemBlock;
 	}

@@ -21,12 +21,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiLoadSchematic extends GuiScreen {
+	private ForgeDirection direction;
+	private GuiSmallButton doneButton;
+	private EntityClientPlayerMP player;
+	private GuiSlotFile slot;
 	private World world;
 	private int x, y, z;
-	private GuiSlotFile slot;
-	private GuiSmallButton doneButton;
-	private ForgeDirection direction;
-	private EntityClientPlayerMP player;
 
 	public GuiLoadSchematic(World world, int x, int y, int z,
 			ForgeDirection direction, EntityClientPlayerMP player) {
@@ -39,14 +39,7 @@ public class GuiLoadSchematic extends GuiScreen {
 		this.player = player;
 	}
 
-	public void initGui() {
-		buttonList.add(doneButton = new GuiSmallButton(0, this.width / 2 - 75,
-				this.height - 38, I18n.getString("gui.done")));
-		slot = new GuiSlotFile(this.mc, this, MyWorldGen.globalSchemDir,
-				this.fontRenderer, new SchematicFilenameFilter());
-		slot.registerScrollButtons(1, 2);
-	}
-
+	@Override
 	protected void actionPerformed(GuiButton button) {
 		if (button.enabled) {
 			if (button.id == doneButton.id) {
@@ -81,9 +74,19 @@ public class GuiLoadSchematic extends GuiScreen {
 		}
 	}
 
+	@Override
 	public void drawScreen(int par1, int par2, float par3) {
 		drawDefaultBackground();
 		slot.drawScreen(par1, par2, par3);
 		super.drawScreen(par1, par2, par3);
+	}
+
+	@Override
+	public void initGui() {
+		buttonList.add(doneButton = new GuiSmallButton(0, this.width / 2 - 75,
+				this.height - 38, I18n.getString("gui.done")));
+		slot = new GuiSlotFile(this.mc, this, MyWorldGen.globalSchemDir,
+				this.fontRenderer, new SchematicFilenameFilter());
+		slot.registerScrollButtons(1, 2);
 	}
 }

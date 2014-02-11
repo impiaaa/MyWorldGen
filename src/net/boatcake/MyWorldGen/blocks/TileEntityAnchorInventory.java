@@ -16,35 +16,7 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 	}
 
 	@Override
-	public String getInvName() {
-		return "container.anchorInventory";
-	}
-
-	public boolean matches(int block) {
-		for (int i = 0; i < inv.length; i++) {
-			if (inv[i] != null && inv[i].itemID == block) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public int getSizeInventory() {
-		return inv.length;
-	}
-
-	@Override
-	public ItemStack getStackInSlot(int slot) {
-		return inv[slot];
-	}
-
-	@Override
-	public void setInventorySlotContents(int slot, ItemStack stack) {
-		inv[slot] = stack;
-		if (stack != null && stack.stackSize > getInventoryStackLimit()) {
-			stack.stackSize = getInventoryStackLimit();
-		}
+	public void closeChest() {
 	}
 
 	@Override
@@ -64,6 +36,26 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 	}
 
 	@Override
+	public int getInventoryStackLimit() {
+		return 64;
+	}
+
+	@Override
+	public String getInvName() {
+		return "container.anchorInventory";
+	}
+
+	@Override
+	public int getSizeInventory() {
+		return inv.length;
+	}
+
+	@Override
+	public ItemStack getStackInSlot(int slot) {
+		return inv[slot];
+	}
+
+	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
 		ItemStack stack = getStackInSlot(slot);
 		if (stack != null) {
@@ -73,8 +65,13 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 	}
 
 	@Override
-	public int getInventoryStackLimit() {
-		return 64;
+	public boolean isInvNameLocalized() {
+		return false;
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+		return true;
 	}
 
 	@Override
@@ -84,12 +81,17 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 						zCoord + 0.5) < 64;
 	}
 
-	@Override
-	public void openChest() {
+	public boolean matches(int block) {
+		for (int i = 0; i < inv.length; i++) {
+			if (inv[i] != null && inv[i].itemID == block) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
-	public void closeChest() {
+	public void openChest() {
 	}
 
 	@Override
@@ -103,6 +105,14 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 			if (slot >= 0 && slot < inv.length) {
 				inv[slot] = ItemStack.loadItemStackFromNBT(tag);
 			}
+		}
+	}
+
+	@Override
+	public void setInventorySlotContents(int slot, ItemStack stack) {
+		inv[slot] = stack;
+		if (stack != null && stack.stackSize > getInventoryStackLimit()) {
+			stack.stackSize = getInventoryStackLimit();
 		}
 	}
 
@@ -121,15 +131,5 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 			}
 		}
 		tagCompound.setTag("Inventory", itemList);
-	}
-
-	@Override
-	public boolean isInvNameLocalized() {
-		return false;
-	}
-
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		return true;
 	}
 }

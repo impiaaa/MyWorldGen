@@ -17,14 +17,13 @@ import net.minecraft.util.WeightedRandomItem;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.ForgeDirection;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.IWorldGenerator;
 
 public class WorldGenerator implements IWorldGenerator {
-	private Map<File, Schematic> schemList;
 	public static ForgeDirection[] randomDirections = new ForgeDirection[] {
 			ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST,
 			ForgeDirection.WEST };
+	private Map<File, Schematic> schemList;
 
 	public WorldGenerator() {
 		schemList = new HashMap<File, Schematic>();
@@ -92,9 +91,12 @@ public class WorldGenerator implements IWorldGenerator {
 								randomDirection)) {
 							schemToGenerate.placeInWorld(world, x, y, z,
 									randomDirection, true, true, random);
-							MyWorldGen.log.log(Level.FINEST,
-									"Generated {0} at {1}, {2}, {3}; took {4} tries",
-									new Object[]{schemToGenerate.name, x, y, z, i + 1});
+							MyWorldGen.log
+									.log(Level.FINEST,
+											"Generated {0} at {1}, {2}, {3}; took {4} tries",
+											new Object[] {
+													schemToGenerate.name, x, y,
+													z, i + 1 });
 							break;
 						}
 					}

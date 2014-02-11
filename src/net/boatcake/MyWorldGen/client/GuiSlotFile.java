@@ -11,9 +11,9 @@ import net.minecraft.client.renderer.Tessellator;
 
 public class GuiSlotFile extends GuiSlot {
 	public File[] files;
-	public int selected;
-	public GuiScreen parent;
 	public FontRenderer fr;
+	public GuiScreen parent;
+	public int selected;
 
 	public GuiSlotFile(Minecraft mc, GuiScreen parent, File file,
 			FontRenderer fr, FilenameFilter filter) {
@@ -25,21 +25,6 @@ public class GuiSlotFile extends GuiSlot {
 	}
 
 	@Override
-	protected int getSize() {
-		return files.length;
-	}
-
-	@Override
-	protected void elementClicked(int i, boolean flag) {
-		selected = i;
-	}
-
-	@Override
-	protected boolean isSelected(int i) {
-		return i == selected;
-	}
-
-	@Override
 	protected void drawBackground() {
 	}
 
@@ -48,7 +33,23 @@ public class GuiSlotFile extends GuiSlot {
 		parent.drawString(fr, files[i].getName(), j + 2, k + 1, 0xFFFFFF);
 	}
 
+	@Override
+	protected void elementClicked(int i, boolean flag) {
+		selected = i;
+	}
+
+	@Override
 	protected int getContentHeight() {
 		return this.getSize() * 18;
+	}
+
+	@Override
+	protected int getSize() {
+		return files.length;
+	}
+
+	@Override
+	protected boolean isSelected(int i) {
+		return i == selected;
 	}
 }
