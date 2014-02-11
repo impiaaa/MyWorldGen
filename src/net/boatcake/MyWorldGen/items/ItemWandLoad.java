@@ -20,16 +20,21 @@ public class ItemWandLoad extends Item {
 	}
 
 	@Override
+	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world,
+			int blockX, int blockY, int blockZ, int side, float hitX,
+			float hitY, float hitZ) {
+		if (world.isRemote) {
+			player.openGui(MyWorldGen.instance, 1, world, blockX
+					+ Facing.offsetsXForSide[side], blockY
+					+ Facing.offsetsYForSide[side], blockZ
+					+ Facing.offsetsZForSide[side]);
+		}
+		return true;
+	}
+
+	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister ir) {
 		this.itemIcon = ir.registerIcon(getIconString());
-	}
-	
-	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int blockX, int blockY, int blockZ, int side, float hitX, float hitY, float hitZ) {
-		if (world.isRemote) {
-			player.openGui(MyWorldGen.instance, 1, world, blockX+Facing.offsetsXForSide[side], blockY+Facing.offsetsYForSide[side], blockZ+Facing.offsetsZForSide[side]);
-		}
-		return true;
 	}
 }

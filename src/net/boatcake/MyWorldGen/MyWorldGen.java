@@ -21,15 +21,13 @@ import net.boatcake.MyWorldGen.items.ItemWandLoad;
 import net.boatcake.MyWorldGen.items.ItemWandSave;
 import net.boatcake.MyWorldGen.network.MWGCodec;
 import net.boatcake.MyWorldGen.network.MWGMessage;
-import net.boatcake.MyWorldGen.network.MessageGetSchemClient;
-import net.boatcake.MyWorldGen.network.MessageGetSchemServer;
-import net.boatcake.MyWorldGen.network.MessagePlaceSchem;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraftforge.common.config.Configuration;
 
@@ -46,92 +44,51 @@ import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(modid = "MyWorldGen", name = "MyWorldGen", version = "1.2")
 public class MyWorldGen {
-	@Instance("MyWorldGen")
-	public static MyWorldGen instance;
-	public static WorldGenerator worldGen;
-	public static String resourcePath = "assets/myworldgen/worldgen";
 	public static CreativeTabs creativeTab = new CreativeTabs("tabMyWorldGen") {
 		@Override
 		public Item getTabIconItem() {
 			return new BlockAnchorItem(materialAnchorBlock);
 		}
 	};
-	public static EnumMap<Side, FMLEmbeddedChannel> net;
-
-	// Config options
-	public static Block materialAnchorBlock;
-	public static Block ignoreBlock;
-	public static Block inventoryAnchorBlock;
-	public static Item wandSave;
-	public static Item wandLoad;
-	public static File globalSchemDir;
 	public static int generateNothingWeight;
 	public static int generateTries;
+	public static File globalSchemDir;
+	public static Block ignoreBlock;
+	@Instance("MyWorldGen")
+	public static MyWorldGen instance;
+	public static Block inventoryAnchorBlock;
+	public static Block materialAnchorBlock;
+	public static EnumMap<Side, FMLEmbeddedChannel> net;
+	public static String resourcePath = "assets/myworldgen/worldgen";
+	public static Item wandLoad;
+	public static Item wandSave;
+	public static WorldGenerator worldGen;
+
+	private static void writeStream(InputStream inStream, String outName)
+			throws IOException {
+		// Used for self-extracting files
+		OutputStream outStream = new FileOutputStream(new File(globalSchemDir,
+				new File(outName).getName()));
+		byte[] buffer = new byte[256];
+		int readLen;
+		while (true) {
+			readLen = inStream.read(buffer, 0, buffer.length);
+			if (readLen <= 0) {
+				break;
+			}
+			outStream.write(buffer, 0, readLen);
+		}
+		inStream.close();
+		outStream.close();
+	}
 
 	private File sourceFile;
-
-	@EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-		sourceFile = event.getSourceFile();
-		Configuration cfg = new Configuration(
-				event.getSuggestedConfigurationFile());
-		try {
-			cfg.load();
-			materialAnchorBlock = new BlockAnchorMaterial(Material.rock);
-			ignoreBlock = new BlockIgnore(Material.circuits);
-			inventoryAnchorBlock = new BlockAnchorInventory(Material.circuits);
-			wandSave = new ItemWandSave();
-			wandLoad = new ItemWandLoad();
-			String worldGenDir = cfg.get("configuration", "schematicDirectory",
-					"worldgen", "Subdirectory of .minecraft").getString();
-			switch (event.getSide()) {
-			case CLIENT:
-				globalSchemDir = new File(Minecraft.getMinecraft().mcDataDir,
-						worldGenDir);
-				break;
-			case SERVER:
-				globalSchemDir = DedicatedServer.getServer().getFile(
-						worldGenDir);
-				break;
-			}
-
-			generateNothingWeight = cfg
-					.get("configuration", "generateNothingWeight", 10,
-							"Increase this number to generate fewer structures, decrease to generate more")
-					.getInt(10);
-			generateTries = cfg
-					.get("configuration",
-							"generateTries",
-							128,
-							"Increase this if you have structures with complex anchor block layouts. Higher numbers will make longer load times.")
-					.getInt(128);
-		} catch (Exception e) {
-			FMLLog.log(Level.FATAL, e,
-					"MyWorldGen could not load its configuration");
-		} finally {
-			if (cfg.hasChanged()) {
-				cfg.save();
-			}
-		}
-		worldGen = new WorldGenerator();
-
-		GameRegistry.registerBlock(ignoreBlock, "ignore");
-		GameRegistry.registerBlock(materialAnchorBlock, BlockAnchorItem.class,
-				"anchor");
-		GameRegistry.registerBlock(inventoryAnchorBlock, "anchorInventory");
-		GameRegistry.registerTileEntity(TileEntityAnchorInventory.class,
-				"anchorInventory");
-		GameRegistry.registerWorldGenerator(worldGen, 3);
-		GameRegistry.registerItem(wandSave, wandSave.getUnlocalizedName());
-		GameRegistry.registerItem(wandLoad, wandLoad.getUnlocalizedName());
-	}
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
@@ -211,36 +168,75 @@ public class MyWorldGen {
 		net = NetworkRegistry.INSTANCE.newChannel("MyWorldGen", new MWGCodec());
 	}
 
-	@SideOnly(Side.CLIENT)
-	public void sendToServer(MWGMessage message) {
-		net.get(Side.CLIENT)
-				.attr(FMLOutboundHandler.FML_MESSAGETARGET)
-				.set(FMLOutboundHandler.OutboundTarget.TOSERVER);
-		net.get(Side.CLIENT).writeAndFlush(message);
-	}
-
-    public void sendTo(MWGMessage message, EntityPlayerMP player) {
-        net.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
-        net.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
-        net.get(Side.SERVER).writeAndFlush(message);
-    }
-    
-	private static void writeStream(InputStream inStream, String outName)
-			throws IOException {
-		// Used for self-extracting files
-		OutputStream outStream = new FileOutputStream(new File(globalSchemDir,
-				new File(outName).getName()));
-		byte[] buffer = new byte[256];
-		int readLen;
-		while (true) {
-			readLen = inStream.read(buffer, 0, buffer.length);
-			if (readLen <= 0) {
+	@EventHandler
+	public void preInit(FMLPreInitializationEvent event) {
+		sourceFile = event.getSourceFile();
+		Configuration cfg = new Configuration(
+				event.getSuggestedConfigurationFile());
+		try {
+			cfg.load();
+			materialAnchorBlock = new BlockAnchorMaterial(Material.rock);
+			ignoreBlock = new BlockIgnore(Material.circuits);
+			inventoryAnchorBlock = new BlockAnchorInventory(Material.circuits);
+			wandSave = new ItemWandSave();
+			wandLoad = new ItemWandLoad();
+			String worldGenDir = cfg.get("configuration", "schematicDirectory",
+					"worldgen", "Subdirectory of .minecraft").getString();
+			switch (event.getSide()) {
+			case CLIENT:
+				globalSchemDir = new File(Minecraft.getMinecraft().mcDataDir,
+						worldGenDir);
+				break;
+			case SERVER:
+				globalSchemDir = MinecraftServer.getServer().getFile(
+						worldGenDir);
 				break;
 			}
-			outStream.write(buffer, 0, readLen);
+
+			generateNothingWeight = cfg
+					.get("configuration", "generateNothingWeight", 10,
+							"Increase this number to generate fewer structures, decrease to generate more")
+					.getInt(10);
+			generateTries = cfg
+					.get("configuration",
+							"generateTries",
+							128,
+							"Increase this if you have structures with complex anchor block layouts. Higher numbers will make longer load times.")
+					.getInt(128);
+		} catch (Exception e) {
+			FMLLog.log(Level.FATAL, e,
+					"MyWorldGen could not load its configuration");
+		} finally {
+			if (cfg.hasChanged()) {
+				cfg.save();
+			}
 		}
-		inStream.close();
-		outStream.close();
+		worldGen = new WorldGenerator();
+
+		GameRegistry.registerBlock(ignoreBlock, "ignore");
+		GameRegistry.registerBlock(materialAnchorBlock, BlockAnchorItem.class,
+				"anchor");
+		GameRegistry.registerBlock(inventoryAnchorBlock, "anchorInventory");
+		GameRegistry.registerTileEntity(TileEntityAnchorInventory.class,
+				"anchorInventory");
+		GameRegistry.registerWorldGenerator(worldGen, 3);
+		GameRegistry.registerItem(wandSave, wandSave.getUnlocalizedName());
+		GameRegistry.registerItem(wandLoad, wandLoad.getUnlocalizedName());
+	}
+
+	public void sendTo(MWGMessage message, EntityPlayerMP player) {
+		net.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
+				.set(FMLOutboundHandler.OutboundTarget.PLAYER);
+		net.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS)
+				.set(player);
+		net.get(Side.SERVER).writeAndFlush(message);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void sendToServer(MWGMessage message) {
+		net.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET)
+				.set(FMLOutboundHandler.OutboundTarget.TOSERVER);
+		net.get(Side.CLIENT).writeAndFlush(message);
 	}
 
 	@EventHandler

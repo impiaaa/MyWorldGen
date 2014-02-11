@@ -5,6 +5,7 @@ import net.minecraft.world.World;
 
 public interface BlockAnchorBase {
 
-	public boolean matches(int myMeta, TileEntity myTileEntity, World world, int x, int y, int z);
+	public boolean matches(int myMeta, TileEntity myTileEntity, World world,
+			int x, int y, int z);
 
 }

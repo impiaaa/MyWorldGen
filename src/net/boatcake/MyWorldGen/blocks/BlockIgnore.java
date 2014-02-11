@@ -19,25 +19,31 @@ public class BlockIgnore extends Block {
 		setCreativeTab(MyWorldGen.creativeTab);
 		setBlockTextureName("MyWorldGen:ignore");
 	}
+
+	@Override
+	public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World,
+			int par2, int par3, int par4) {
+		return null;
+	}
+
+	public boolean isBlockSolidOnSide(World world, int x, int y, int z,
+			ForgeDirection side) {
+		return true;
+	}
+
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
+	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister iconRegister) {
 		this.blockIcon = iconRegister.registerIcon(getTextureName());
 	}
-	
-    public boolean isOpaqueCube() {
-        return false;
-    }
-    
-    public boolean renderAsNormalBlock() {
-        return false;
-    }
-    
-    public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4) {
-        return null;
-    }
-    
-    public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) {
-    	return true;
-    }
+
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
 }

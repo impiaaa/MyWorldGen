@@ -12,7 +12,8 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockAnchorInventory extends BlockContainer implements BlockAnchorBase, ITileEntityProvider {
+public class BlockAnchorInventory extends BlockContainer implements
+		BlockAnchorBase, ITileEntityProvider {
 
 	public BlockAnchorInventory(Material par2Material) {
 		super(par2Material);
@@ -25,23 +26,20 @@ public class BlockAnchorInventory extends BlockContainer implements BlockAnchorB
 	}
 
 	@Override
-	public boolean matches(int myMeta, TileEntity myTileEntity, World world, int x, int y, int z) {
-		return ((TileEntityAnchorInventory)myTileEntity).matches(world.getBlock(x, y, z));
-	}
-
-	@Override
 	public TileEntity createNewTileEntity(World world, int meta) {
 		return new TileEntityAnchorInventory();
 	}
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister par1IconRegister)
-    {
-        this.blockIcon = par1IconRegister.registerIcon(getTextureName());
-    }
+	@Override
+	public boolean matches(int myMeta, TileEntity myTileEntity, World world,
+			int x, int y, int z) {
+		return ((TileEntityAnchorInventory) myTileEntity).matches(world
+				.getBlock(x, y, z));
+	}
 
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
+	@Override
+	public boolean onBlockActivated(World world, int x, int y, int z,
+			EntityPlayer player, int par6, float par7, float par8, float par9) {
 		TileEntity tileEntity = world.getTileEntity(x, y, z);
 		if (tileEntity == null || player.isSneaking()) {
 			return false;
@@ -49,5 +47,11 @@ public class BlockAnchorInventory extends BlockContainer implements BlockAnchorB
 		// code to open gui explained later
 		player.openGui(MyWorldGen.instance, 2, world, x, y, z);
 		return true;
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
+		this.blockIcon = par1IconRegister.registerIcon(getTextureName());
 	}
 }

@@ -19,26 +19,58 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiSaveSchematic extends GuiScreen {
+	private GuiButton cancelBtn;
 	private GuiTextField fileNameField;
 	private GuiButton saveBtn;
-	private GuiButton cancelBtn;
 	public Schematic schematicToSave;
 
 	public GuiSaveSchematic() {
 		super();
 		// The schematicToSave is filled out for us in PacketHandler
 	}
-	
-	public void updateScreen() {
-		super.updateScreen();
-		fileNameField.updateCursorCounter();
+
+	@Override
+	protected void actionPerformed(GuiButton button) {
+		super.actionPerformed(button);
+		if (button.id == saveBtn.id && saveBtn.enabled) {
+			// Step 5: Now that we have the block data and entity and tile
+			// entity data, saving it to a file should be trivial.
+			String name = fileNameField.getText();
+			if (!name.contains(".")) {
+				name += ".schematic";
+			}
+			try {
+				CompressedStreamTools.writeCompressed(schematicToSave.getNBT(),
+						new FileOutputStream(new File(
+								MyWorldGen.globalSchemDir, name)));
+			} catch (Exception exc) {
+				// File does't exist/can't be written
+				// TODO: make this nicer?
+				mc.displayGuiScreen(new GuiErrorScreen(
+						exc.getClass().getName(), exc.getLocalizedMessage()));
+				exc.printStackTrace();
+				return;
+			}
+			mc.displayGuiScreen(null);
+		} else if (button.id == cancelBtn.id) {
+			mc.displayGuiScreen(null);
+		}
 	}
 
-	public void onGuiClosed() {
-		super.onGuiClosed();
-		Keyboard.enableRepeatEvents(false);
+	@Override
+	public void drawScreen(int par1, int par2, float par3) {
+		drawDefaultBackground();
+		drawCenteredString(fontRendererObj, I18n.format("gui.filename"),
+				this.width / 2, 20, 0xFFFFFF);
+		drawCenteredString(fontRendererObj,
+				I18n.format("selectWorld.resultFolder") + " "
+						+ MyWorldGen.globalSchemDir.getAbsolutePath(),
+				this.width / 2, 97, 0xA0A0A0);
+		fileNameField.drawTextBox();
+		super.drawScreen(par1, par2, par3);
 	}
 
+	@Override
 	public void initGui() {
 		super.initGui();
 		Keyboard.enableRepeatEvents(true);
@@ -54,36 +86,7 @@ public class GuiSaveSchematic extends GuiScreen {
 		updateSaveButton();
 	}
 
-	protected void actionPerformed(GuiButton button) {
-		super.actionPerformed(button);
-		if (button.id == saveBtn.id && saveBtn.enabled) {
-			// Step 5: Now that we have the block data and entity and tile
-			// entity data, saving it to a file should be trivial.
-			String name = fileNameField.getText();
-			if (!name.contains(".")) {
-				name += ".schematic";
-			}
-			try {
-				CompressedStreamTools.writeCompressed(schematicToSave.getNBT(), new FileOutputStream(new File(MyWorldGen.globalSchemDir, name)));
-			} catch (Exception exc) {
-				// File does't exist/can't be written
-				// TODO: make this nicer?
-				mc.displayGuiScreen(new GuiErrorScreen(
-						exc.getClass().getName(), exc.getLocalizedMessage()));
-				exc.printStackTrace();
-				return;
-			}
-			mc.displayGuiScreen(null);
-		} else if (button.id == cancelBtn.id) {
-			mc.displayGuiScreen(null);
-		}
-	}
-
-	public void updateSaveButton() {
-		// Call this every so often to make sure we have a valid file name and a valid schematic
-		saveBtn.enabled = fileNameField.getText().trim().length() > 0 && schematicToSave.entities != null && schematicToSave.tileEntities != null;
-	}
-	
+	@Override
 	protected void keyTyped(char character, int keycode) {
 		fileNameField.textboxKeyTyped(character, keycode);
 		updateSaveButton();
@@ -101,12 +104,23 @@ public class GuiSaveSchematic extends GuiScreen {
 		}
 	}
 
-	public void drawScreen(int par1, int par2, float par3) {
-		drawDefaultBackground();
-		drawCenteredString(fontRendererObj, I18n.format("gui.filename"), this.width / 2,
-				20, 0xFFFFFF);
-		drawCenteredString(fontRendererObj, I18n.format("selectWorld.resultFolder")+" "+MyWorldGen.globalSchemDir.getAbsolutePath(), this.width / 2, 97, 0xA0A0A0);
-		fileNameField.drawTextBox();
-		super.drawScreen(par1, par2, par3);
+	@Override
+	public void onGuiClosed() {
+		super.onGuiClosed();
+		Keyboard.enableRepeatEvents(false);
+	}
+
+	public void updateSaveButton() {
+		// Call this every so often to make sure we have a valid file name and a
+		// valid schematic
+		saveBtn.enabled = fileNameField.getText().trim().length() > 0
+				&& schematicToSave.entities != null
+				&& schematicToSave.tileEntities != null;
+	}
+
+	@Override
+	public void updateScreen() {
+		super.updateScreen();
+		fileNameField.updateCursorCounter();
 	}
 }

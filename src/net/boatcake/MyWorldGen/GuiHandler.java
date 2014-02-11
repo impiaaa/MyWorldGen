@@ -15,19 +15,6 @@ import cpw.mods.fml.common.network.IGuiHandler;
 public class GuiHandler implements IGuiHandler {
 
 	@Override
-	public Object getServerGuiElement(int id, EntityPlayer player, World world,
-			int x, int y, int z) {
-		if (id == 2) {
-			TileEntity tileEntity = world.getTileEntity(x, y, z);
-			if (tileEntity instanceof TileEntityAnchorInventory) {
-				return new ContainerAnchorInventory(player.inventory,
-						(TileEntityAnchorInventory) tileEntity);
-			}
-		}
-		return null;
-	}
-
-	@Override
 	public Object getClientGuiElement(int id, EntityPlayer player, World world,
 			int x, int y, int z) {
 		switch (id) {
@@ -48,6 +35,19 @@ public class GuiHandler implements IGuiHandler {
 		default:
 			return null;
 		}
+	}
+
+	@Override
+	public Object getServerGuiElement(int id, EntityPlayer player, World world,
+			int x, int y, int z) {
+		if (id == 2) {
+			TileEntity tileEntity = world.getTileEntity(x, y, z);
+			if (tileEntity instanceof TileEntityAnchorInventory) {
+				return new ContainerAnchorInventory(player.inventory,
+						(TileEntityAnchorInventory) tileEntity);
+			}
+		}
+		return null;
 	}
 
 }

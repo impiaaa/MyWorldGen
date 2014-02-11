@@ -1,5 +1,9 @@
 package net.boatcake.MyWorldGen.network;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+
 import java.io.IOException;
 
 import net.boatcake.MyWorldGen.MyWorldGen;
@@ -10,20 +14,15 @@ import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
-import io.netty.buffer.ByteBufOutputStream;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
 
 public class MessageGetSchemClient implements MWGMessage {
-	public int x1, y1, z1;
-	public int x2, y2, z2;
 	public NBTTagList entitiesTag;
 	public NBTTagList tileEntitiesTag;
-	
+	public int x1, y1, z1;
+	public int x2, y2, z2;
+
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		ByteBufInputStream inputStream = new ByteBufInputStream(buf);
@@ -45,6 +44,34 @@ public class MessageGetSchemClient implements MWGMessage {
 	}
 
 	@Override
+	public MWGMessage handle(EntityPlayer player) {
+		// client
+		/*
+		 * Step 4: The client has received all of the entity and tile entity
+		 * data. Now we need to gather the block data from the client copy, and
+		 * then open a save dialog.
+		 */
+		EntityClientPlayerMP playerMP = Minecraft.getMinecraft().thePlayer;
+
+		// Open the GUI
+		playerMP.openGui(MyWorldGen.instance, 0, playerMP.worldObj, 0, 0, 0);
+
+		// Give the GUI the entity & tile entity information
+		GuiScreen currentScreen = Minecraft.getMinecraft().currentScreen;
+		if (currentScreen instanceof GuiSaveSchematic) {
+			GuiSaveSchematic guiSchematic = (GuiSaveSchematic) currentScreen;
+
+			guiSchematic.schematicToSave = new Schematic(playerMP.worldObj,
+					this.x1, this.y1, this.z1, this.x2, this.y2, this.z2);
+			guiSchematic.schematicToSave.entities = this.entitiesTag;
+			guiSchematic.schematicToSave.tileEntities = this.tileEntitiesTag;
+			guiSchematic.updateSaveButton();
+		}
+		// For step 5, go to GuiSaveSchematic
+		return null;
+	}
+
+	@Override
 	public void toBytes(ByteBuf buf) {
 		NBTTagCompound tagToSend = new NBTTagCompound();
 		tagToSend.setInteger("x1", x1);
@@ -63,30 +90,5 @@ public class MessageGetSchemClient implements MWGMessage {
 			exc.printStackTrace();
 			return;
 		}
-	}
-
-	@Override
-	public MWGMessage handle(EntityPlayer player) {
-		// client
-		// Step 4: The client has received all of the entity and tile entity data.
-		// Now we need to gather the block data from the client copy, and then
-		// open a save dialog.
-		EntityClientPlayerMP playerMP = Minecraft.getMinecraft().thePlayer;
-		
-		// Open the GUI
-		playerMP.openGui(MyWorldGen.instance, 0, playerMP.worldObj, 0, 0, 0);
-		
-		// Give the GUI the entity & tile entity information
-		GuiScreen currentScreen = Minecraft.getMinecraft().currentScreen;
-		if (currentScreen instanceof GuiSaveSchematic) {
-			GuiSaveSchematic guiSchematic = (GuiSaveSchematic) currentScreen;
-			
-			guiSchematic.schematicToSave = new Schematic(playerMP.worldObj, this.x1, this.y1, this.z1, this.x2, this.y2, this.z2);
-			guiSchematic.schematicToSave.entities = this.entitiesTag;
-			guiSchematic.schematicToSave.tileEntities = this.tileEntitiesTag;
-			guiSchematic.updateSaveButton();
-		}
-		// For step 5, go to GuiSaveSchematic
-		return null;
 	}
 }

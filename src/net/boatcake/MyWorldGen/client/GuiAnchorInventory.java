@@ -10,22 +10,14 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 public class GuiAnchorInventory extends GuiContainer {
-    private static final ResourceLocation guiTextures = new ResourceLocation("textures/gui/container/dispenser.png");
-    public TileEntityAnchorInventory tileEntity;
-	public GuiAnchorInventory(InventoryPlayer inventoryPlayer, TileEntityAnchorInventory te) {
+	private static final ResourceLocation guiTextures = new ResourceLocation(
+			"textures/gui/container/dispenser.png");
+	public TileEntityAnchorInventory tileEntity;
+
+	public GuiAnchorInventory(InventoryPlayer inventoryPlayer,
+			TileEntityAnchorInventory te) {
 		super(new ContainerAnchorInventory(inventoryPlayer, te));
 		tileEntity = te;
-	}
-
-	@Override
-	protected void drawGuiContainerForegroundLayer(int param1, int param2) {
-		// draw text and stuff here
-		// the parameters for drawString are: string, x, y, color
-		fontRendererObj.drawString(I18n.format(tileEntity.getInventoryName()), 8, 6, 0x404040);
-		// draws "Inventory" or your regional equivalent
-		fontRendererObj.drawString(
-				I18n.format("container.inventory"), 8,
-				ySize - 96 + 2, 0x404040);
 	}
 
 	@Override
@@ -37,5 +29,16 @@ public class GuiAnchorInventory extends GuiContainer {
 		int x = (width - xSize) / 2;
 		int y = (height - ySize) / 2;
 		this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
+	}
+
+	@Override
+	protected void drawGuiContainerForegroundLayer(int param1, int param2) {
+		// draw text and stuff here
+		// the parameters for drawString are: string, x, y, color
+		fontRendererObj.drawString(I18n.format(tileEntity.getInventoryName()),
+				8, 6, 0x404040);
+		// draws "Inventory" or your regional equivalent
+		fontRendererObj.drawString(I18n.format("container.inventory"), 8,
+				ySize - 96 + 2, 0x404040);
 	}
 }

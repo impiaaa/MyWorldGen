@@ -19,26 +19,13 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 	public enum AnchorType {
-		GROUND(0, "Ground", null),
-		AIR(1, "Air", null),
-		STONE(2, "Stone", Material.rock),
-		WATER(3, "Water", Material.water),
-		LAVA(4, "Lava", Material.lava),
-		DIRT(5, "Dirt", Material.ground),
-		WOOD(6, "Wood", Material.wood),
-		LEAVES(7, "Leaves", Material.leaves),
-		SAND(8, "Sand", Material.sand);
-		public final int id;
-		public final String name;
-		public final Material material;
+		AIR(1, "Air", null), DIRT(5, "Dirt", Material.ground), GROUND(0,
+				"Ground", null), LAVA(4, "Lava", Material.lava), LEAVES(7,
+				"Leaves", Material.leaves), SAND(8, "Sand", Material.sand), STONE(
+				2, "Stone", Material.rock), WATER(3, "Water", Material.water), WOOD(
+				6, "Wood", Material.wood);
 		private static final AnchorType[] v = values();
 		public static final int size = v.length;
-		
-		private AnchorType(int id, String name, Material mat) {
-			this.id = id;
-			this.name = name;
-			this.material = mat;
-		}
 
 		public static AnchorType get(int id) {
 			if (id > AnchorType.class.getEnumConstants().length) {
@@ -46,9 +33,38 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 			}
 			return v[id];
 		}
+
+		public final int id;
+		public final Material material;
+
+		public final String name;
+
+		private AnchorType(int id, String name, Material mat) {
+			this.id = id;
+			this.name = name;
+			this.material = mat;
+		}
 	}
+
+	public static boolean matchesStatic(int myMeta, Block otherBlock,
+			int otherMeta, BiomeGenBase currentBiome) {
+		AnchorType type = AnchorType.get(myMeta);
+		switch (type) {
+		case GROUND:
+			return otherBlock == currentBiome.topBlock;
+		case AIR:
+			return otherBlock instanceof BlockAir
+					|| (otherBlock.getMaterial().isReplaceable() && !otherBlock
+							.getMaterial().isLiquid());
+		default:
+			return !(otherBlock instanceof BlockAir) && type != null
+					&& type.material != null
+					&& otherBlock.getMaterial() == type.material;
+		}
+	}
+
 	public IIcon[] icons;
-	
+
 	public BlockAnchorMaterial(Material par2Material) {
 		super(par2Material);
 		setBlockUnbreakable();
@@ -60,48 +76,40 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister iconRegister) {
-		icons = new IIcon[AnchorType.size];
-		for (int i = 0; i < icons.length; i++) {
-			this.icons[i] = iconRegister.registerIcon(this.getTextureName()+AnchorType.get(i).name);
-		}
+	public int damageDropped(int metadata) {
+		return metadata;
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
-    public IIcon getIcon(int side, int meta)
-    {
-        return this.icons[meta];
-    }
-	
+	public IIcon getIcon(int side, int meta) {
+		return this.icons[meta];
+	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTabs, List subBlockList) {
+	public void getSubBlocks(Item item, CreativeTabs creativeTabs,
+			List subBlockList) {
 		for (int i = 0; i < AnchorType.size; i++) {
 			subBlockList.add(new ItemStack(item, 1, i));
 		}
 	}
-	
+
 	@Override
-	public int damageDropped (int metadata) {
-		return metadata;
-	}
-	
-	@Override
-	public boolean matches(int myMeta, TileEntity myTileEntity, World world, int x, int y, int z) {
-		return matchesStatic(myMeta, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), world.getBiomeGenForCoords(x, z));
+	public boolean matches(int myMeta, TileEntity myTileEntity, World world,
+			int x, int y, int z) {
+		return matchesStatic(myMeta, world.getBlock(x, y, z),
+				world.getBlockMetadata(x, y, z),
+				world.getBiomeGenForCoords(x, z));
 	}
 
-	public static boolean matchesStatic(int myMeta, Block otherBlock, int otherMeta, BiomeGenBase currentBiome) {
-		AnchorType type = AnchorType.get(myMeta);
-		switch (type) {
-		case GROUND:
-			return otherBlock == currentBiome.topBlock;
-		case AIR:
-			return otherBlock instanceof BlockAir || (otherBlock.getMaterial().isReplaceable() && !otherBlock.getMaterial().isLiquid());
-		default:
-			return !(otherBlock instanceof BlockAir) && type != null && type.material != null && otherBlock.getMaterial() == type.material;
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerBlockIcons(IIconRegister iconRegister) {
+		icons = new IIcon[AnchorType.size];
+		for (int i = 0; i < icons.length; i++) {
+			this.icons[i] = iconRegister.registerIcon(this.getTextureName()
+					+ AnchorType.get(i).name);
 		}
 	}
 }
