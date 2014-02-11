@@ -15,9 +15,6 @@ public class BlockIgnore extends Block {
 		super(par2Material);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
-		setBlockName("ignore");
-		setCreativeTab(MyWorldGen.creativeTab);
-		setBlockTextureName("MyWorldGen:ignore");
 	}
 
 	@Override
@@ -34,12 +31,6 @@ public class BlockIgnore extends Block {
 	@Override
 	public boolean isOpaqueCube() {
 		return false;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister iconRegister) {
-		this.blockIcon = iconRegister.registerIcon(getTextureName());
 	}
 
 	@Override

@@ -191,14 +191,16 @@ public class Schematic extends WeightedRandom.Item {
 	public ArrayList<String> excludeBiomes;
 	public short height;
 	public Map<Integer, Block> idMap;
-
 	public short length;
+	public Map<Integer, BlockAnchorLogic> matchingMap;
 
 	private int meta[][][];
 
 	public String name;
 
 	public ArrayList<String> onlyIncludeBiomes;
+
+	public Map<Integer, BlockPlacementLogic> placingMap;
 
 	public NBTTagList tileEntities;
 
@@ -220,31 +222,56 @@ public class Schematic extends WeightedRandom.Item {
 		length = tag.getShort("Length");
 
 		idMap = new HashMap<Integer, Block>(2);
+		matchingMap = new HashMap<Integer, BlockAnchorLogic>();
+		placingMap = new HashMap<Integer, BlockPlacementLogic>();
 
 		if (tag.hasKey("MWGIDMap")) {
 			NBTTagCompound mapTag = tag.getCompoundTag("MWGIDMap");
 			for (Object o : mapTag.func_150296_c()) {
-				String unlocalizedName = (String) o; // "title."+?
-				idMap.put(mapTag.getInteger(unlocalizedName),
-						Block.getBlockFromName(unlocalizedName));
+				String blockName = (String) o;
+				String unlocalizedName = "tile." + blockName;
+				int id = mapTag.getInteger(blockName);
+				idMap.put(id, Block.getBlockFromName(blockName));
+				if (!idMap.containsKey(id)
+						&& !BlockAnchorLogic.isAnchorBlock(blockName)
+						&& !BlockPlacementLogic.placementLogicExists(blockName)) {
+					MyWorldGen.log.log(Level.WARNING,
+							"Can't find a block named {0}", unlocalizedName);
+				}
+				if (BlockAnchorLogic.isAnchorBlock(blockName)) {
+					matchingMap.put(id, BlockAnchorLogic.get(blockName));
+				}
+				if (BlockPlacementLogic.placementLogicExists(blockName)) {
+					placingMap.put(id, BlockPlacementLogic.get(blockName));
+				}
 			}
 		} else {
 			if (tag.hasKey("ignoreBlockId")) {
-				idMap.put(tag.getInteger("ignoreBlockId"),
-						MyWorldGen.ignoreBlock);
+				if (MyWorldGen.ignoreBlock != null) {
+					idMap.put(tag.getInteger("ignoreBlockId"),
+							MyWorldGen.ignoreBlock);
+				}
+				placingMap.put(tag.getInteger("ignoreBlockId"),
+						BlockPlacementLogic.get("ignore"));
 			} else {
-				FMLLog.warning(
-						"Schematic file %s has no ignoreBlockId tag, defaulting to ID from config",
-						name);
+				MyWorldGen.log
+						.log(Level.WARNING,
+								"Schematic file {0} has no ignoreBlockId tag, defaulting to ID from config",
+								name);
 			}
 
 			if (tag.hasKey("anchorBlockId")) {
-				idMap.put(tag.getInteger("anchorBlockId"),
-						MyWorldGen.materialAnchorBlock);
+				int id = tag.getInteger("anchorBlockId");
+				if (MyWorldGen.materialAnchorBlock != null) {
+					idMap.put(id, MyWorldGen.materialAnchorBlock);
+				}
+				placingMap.put(id, BlockPlacementLogic.get("anchor"));
+				matchingMap.put(id, BlockAnchorLogic.get("anchor"));
 			} else {
-				FMLLog.warning(
-						"Schematic file %s has no anchorBlockId tag, defaulting to ID from config",
-						name);
+				MyWorldGen.log
+						.log(Level.WARNING,
+								"Schematic file {0} has no anchorBlockId tag, defaulting to ID from config",
+								name);
 			}
 		}
 
@@ -269,8 +296,7 @@ public class Schematic extends WeightedRandom.Item {
 						blocks[x][y][z] |= (blockUpperBits[blockIdx >> 1] << ((blockIdx % 2 == 0) ? 4
 								: 8)) & 0xF00;
 					}
-					if (idMap.containsKey(blocks[x][y][z])
-							&& idMap.get(blocks[x][y][z]) instanceof BlockAnchorBase) {
+					if (matchingMap.containsKey(blocks[x][y][z])) {
 						anchorBlockLocations.add(new Integer[] { x, y, z });
 					}
 				}
@@ -280,8 +306,9 @@ public class Schematic extends WeightedRandom.Item {
 		entities = (NBTTagList) tag.getTag("Entities");
 		tileEntities = (NBTTagList) tag.getTag("TileEntities");
 
-		if (anchorBlockLocations.isEmpty() && name != null) {
-			FMLLog.warning("No anchors found in schematic %s", name);
+		if (anchorBlockLocations.isEmpty()) {
+			MyWorldGen.log.log(Level.WARNING,
+					"No anchors found in schematic {0}", name);
 		}
 
 		if (tag.hasKey("chestType")) {
@@ -321,6 +348,8 @@ public class Schematic extends WeightedRandom.Item {
 		entities = null;
 		tileEntities = null;
 		idMap = new HashMap<Integer, Block>();
+		matchingMap = new HashMap<Integer, BlockAnchorLogic>();
+		placingMap = new HashMap<Integer, BlockPlacementLogic>();
 		anchorBlockLocations = new ArrayList<Integer[]>();
 		chestType = ChestGenHooks.DUNGEON_CHEST;
 		excludeBiomes = new ArrayList<String>();
@@ -397,10 +426,10 @@ public class Schematic extends WeightedRandom.Item {
 			Block otherBlockAbove = world.getBlock(midX, midY + 1, midZ);
 			int otherMetaAbove = world.getBlockMetadata(midX, midY + 1, midZ);
 			BiomeGenBase biome = world.getBiomeGenForCoords(midX, midZ);
-			return BlockAnchorMaterial.matchesStatic(
+			return BlockAnchorMaterialLogic.matchesStatic(
 					BlockAnchorMaterial.AnchorType.GROUND.id, otherBlockBelow,
 					otherMetaBelow, biome)
-					&& BlockAnchorMaterial.matchesStatic(
+					&& BlockAnchorMaterialLogic.matchesStatic(
 							BlockAnchorMaterial.AnchorType.AIR.id,
 							otherBlockAbove, otherMetaAbove, biome);
 		} else {
@@ -409,11 +438,10 @@ public class Schematic extends WeightedRandom.Item {
 				Vec3 rotatedCoords = rotateCoords(Vec3.createVectorHelper(
 						origCoords[0], origCoords[1], origCoords[2]), offset,
 						rotationAxis, rotationCount);
-				BlockAnchorBase mappedBlock = (BlockAnchorBase) idMap
-						.get(blocks[origCoords[0]][origCoords[1]][origCoords[2]]);
 				if (!world.blockExists((int) rotatedCoords.xCoord,
 						(int) rotatedCoords.yCoord, (int) rotatedCoords.zCoord)
-						|| !mappedBlock
+						|| !(matchingMap
+								.get(blocks[origCoords[0]][origCoords[1]][origCoords[2]]))
 								.matches(
 										meta[origCoords[0]][origCoords[1]][origCoords[2]],
 										getTileEntityAt(origCoords[0],
@@ -542,25 +570,23 @@ public class Schematic extends WeightedRandom.Item {
 					Vec3 rotatedCoords = rotateCoords(
 							Vec3.createVectorHelper(x, y, z), offset,
 							rotationAxis, rotationCount);
-					if (idMap.containsKey(blocks[x][y][z])) {
+					if (placingMap.containsKey(blocks[x][y][z])) {
+						placingMap.get(blocks[x][y][z]).affectWorld(
+								meta[x][y][z], getTileEntityAt(x, y, z), world,
+								x, y, z);
+					} else if (idMap.containsKey(blocks[x][y][z])) {
 						Block block = idMap.get(blocks[x][y][z]);
-						if (!(block instanceof BlockAnchorBase)
-								&& !(block instanceof BlockIgnore)) {
-							world.setBlock((int) rotatedCoords.xCoord,
-									(int) rotatedCoords.yCoord,
-									(int) rotatedCoords.zCoord, block,
-									meta[x][y][z], 0x2);
-						}
+						world.setBlock((int) rotatedCoords.xCoord,
+								(int) rotatedCoords.yCoord,
+								(int) rotatedCoords.zCoord, block,
+								meta[x][y][z], 0x2);
 					} else {
 						Block block = (Block) Block.blockRegistry
 								.getObject(blocks[x][y][z]);
-						if (!(block instanceof BlockAnchorBase)
-								&& !(block instanceof BlockIgnore)) {
-							world.setBlock((int) rotatedCoords.xCoord,
-									(int) rotatedCoords.yCoord,
-									(int) rotatedCoords.zCoord, block,
-									meta[x][y][z], 0x2);
-						}
+						world.setBlock((int) rotatedCoords.xCoord,
+								(int) rotatedCoords.yCoord,
+								(int) rotatedCoords.zCoord, block,
+								meta[x][y][z], 0x2);
 					}
 				}
 			}
@@ -571,7 +597,8 @@ public class Schematic extends WeightedRandom.Item {
 				NBTTagCompound entityTag = entities.getCompoundTagAt(i);
 				Entity e = EntityList.createEntityFromNBT(entityTag, world);
 				if (e == null) {
-					FMLLog.warning("Not loading entity ID %s",
+					MyWorldGen.log.log(Level.WARNING,
+							"Not loading entity ID {0}",
 							entityTag.getString("id"));
 				} else {
 					Vec3 newCoords = rotateCoords(
@@ -590,7 +617,8 @@ public class Schematic extends WeightedRandom.Item {
 				NBTTagCompound tileEntityTag = tileEntities.getCompoundTagAt(i);
 				TileEntity e = TileEntity.createAndLoadEntity(tileEntityTag);
 				if (e == null) {
-					FMLLog.warning("Not loading tile entity ID %s",
+					MyWorldGen.log.log(Level.WARNING,
+							"Not loading tile entity ID {0}",
 							tileEntityTag.getString("id"));
 				} else {
 					Vec3 newCoords = rotateCoords(Vec3.createVectorHelper(
@@ -655,8 +683,14 @@ public class Schematic extends WeightedRandom.Item {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
+					Block block;
 					if (idMap.containsKey(blocks[x][y][z])) {
-						Block block = idMap.get(blocks[x][y][z]);
+						block = idMap.get(blocks[x][y][z]);
+					}
+					else {
+						block = Block.blockRegistry.getObject(blocks[x][y][z]);
+					}
+					if (block != null) {
 						Vec3 rotatedCoords = rotateCoords(
 								Vec3.createVectorHelper(x, y, z), offset,
 								rotationAxis, rotationCount);

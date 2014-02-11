@@ -14,9 +14,6 @@ public class ItemWandLoad extends Item {
 	public ItemWandLoad() {
 		super();
 		setMaxStackSize(0);
-		setUnlocalizedName("wandLoad");
-		setCreativeTab(MyWorldGen.creativeTab);
-		setTextureName("MyWorldGen:wandLoad");
 	}
 
 	@Override
@@ -30,11 +27,5 @@ public class ItemWandLoad extends Item {
 					+ Facing.offsetsZForSide[side]);
 		}
 		return true;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister ir) {
-		this.itemIcon = ir.registerIcon(getIconString());
 	}
 }

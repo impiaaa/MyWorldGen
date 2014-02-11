@@ -46,23 +46,6 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 		}
 	}
 
-	public static boolean matchesStatic(int myMeta, Block otherBlock,
-			int otherMeta, BiomeGenBase currentBiome) {
-		AnchorType type = AnchorType.get(myMeta);
-		switch (type) {
-		case GROUND:
-			return otherBlock == currentBiome.topBlock;
-		case AIR:
-			return otherBlock instanceof BlockAir
-					|| (otherBlock.getMaterial().isReplaceable() && !otherBlock
-							.getMaterial().isLiquid());
-		default:
-			return !(otherBlock instanceof BlockAir) && type != null
-					&& type.material != null
-					&& otherBlock.getMaterial() == type.material;
-		}
-	}
-
 	public IIcon[] icons;
 
 	public BlockAnchorMaterial(Material par2Material) {
@@ -70,9 +53,6 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
 		setStepSound(Block.soundTypeStone);
-		setBlockName("anchor");
-		setCreativeTab(MyWorldGen.creativeTab);
-		setBlockTextureName("MyWorldGen:anchor");
 	}
 
 	@Override
@@ -93,14 +73,6 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 		for (int i = 0; i < AnchorType.size; i++) {
 			subBlockList.add(new ItemStack(item, 1, i));
 		}
-	}
-
-	@Override
-	public boolean matches(int myMeta, TileEntity myTileEntity, World world,
-			int x, int y, int z) {
-		return matchesStatic(myMeta, world.getBlock(x, y, z),
-				world.getBlockMetadata(x, y, z),
-				world.getBiomeGenForCoords(x, z));
 	}
 
 	@Override

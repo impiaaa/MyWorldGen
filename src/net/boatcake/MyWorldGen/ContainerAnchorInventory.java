@@ -14,8 +14,10 @@ public class ContainerAnchorInventory extends Container {
 			TileEntityAnchorInventory te) {
 		tileEntity = te;
 
-		// the Slot constructor takes the IInventory and the slot number in that
-		// it binds to and the x-y coordinates it resides on-screen
+		/*
+		 * the Slot constructor takes the IInventory and the slot number in that
+		 * it binds to and the x-y coordinates it resides on-screen
+		 */
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
 				addSlotToContainer(new SlotPhantomBlock(tileEntity, j + i * 3,

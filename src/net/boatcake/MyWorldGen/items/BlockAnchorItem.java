@@ -14,13 +14,6 @@ public class BlockAnchorItem extends ItemBlock {
 		super(block);
 		this.setMaxDamage(0);
 		setHasSubtypes(true);
-		setTextureName("MyWorldGen:anchor");
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIconFromDamage(int par1) {
-		return this.field_150939_a.func_149735_b(2, par1 & 15);
 	}
 
 	@Override

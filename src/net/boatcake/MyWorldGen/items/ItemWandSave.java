@@ -16,9 +16,6 @@ public class ItemWandSave extends Item {
 	public ItemWandSave() {
 		super();
 		setMaxStackSize(0);
-		setUnlocalizedName("wandSave");
-		setCreativeTab(MyWorldGen.creativeTab);
-		setTextureName("MyWorldGen:wandSave");
 	}
 
 	@Override
@@ -67,11 +64,5 @@ public class ItemWandSave extends Item {
 			}
 		}
 		return true;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister ir) {
-		this.itemIcon = ir.registerIcon(getIconString());
 	}
 }

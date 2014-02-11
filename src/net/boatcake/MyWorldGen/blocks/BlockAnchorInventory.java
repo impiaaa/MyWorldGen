@@ -20,21 +20,11 @@ public class BlockAnchorInventory extends BlockContainer implements
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
 		setStepSound(Block.soundTypeStone);
-		setBlockName("anchorInventory");
-		setCreativeTab(MyWorldGen.creativeTab);
-		setBlockTextureName("MyWorldGen:anchorInventory");
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int meta) {
 		return new TileEntityAnchorInventory();
-	}
-
-	@Override
-	public boolean matches(int myMeta, TileEntity myTileEntity, World world,
-			int x, int y, int z) {
-		return ((TileEntityAnchorInventory) myTileEntity).matches(world
-				.getBlock(x, y, z));
 	}
 
 	@Override
@@ -47,11 +37,5 @@ public class BlockAnchorInventory extends BlockContainer implements
 		// code to open gui explained later
 		player.openGui(MyWorldGen.instance, 2, world, x, y, z);
 		return true;
-	}
-
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		this.blockIcon = par1IconRegister.registerIcon(getTextureName());
 	}
 }

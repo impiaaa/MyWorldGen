@@ -89,8 +89,12 @@ public class WorldGenerator implements IWorldGenerator {
 								randomDirection)) {
 							schemToGenerate.placeInWorld(world, x, y, z,
 									randomDirection, true, true, random);
-							// FMLLog.finer("Generated %s at %d, %d, %d; took %d tries",
-							// schemToGenerate.name, x, y, z, i+1);
+							MyWorldGen.log
+									.log(Level.FINEST,
+											"Generated {0} at {1}, {2}, {3}; took {4} tries",
+											new Object[] {
+													schemToGenerate.name, x, y,
+													z, i + 1 });
 							break;
 						}
 					}
