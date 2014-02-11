@@ -7,9 +7,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import net.boatcake.MyWorldGen.blocks.BlockAnchorBase;
+import net.boatcake.MyWorldGen.blocks.BlockAnchorLogic;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
-import net.boatcake.MyWorldGen.blocks.BlockIgnore;
+import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterialLogic;
+import net.boatcake.MyWorldGen.blocks.BlockPlacementLogic;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -30,7 +31,8 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DungeonHooks;
 import net.minecraftforge.common.util.ForgeDirection;
-import cpw.mods.fml.common.FMLLog;
+
+import org.apache.logging.log4j.Level;
 
 public class Schematic extends WeightedRandom.Item {
 	public static ForgeDirection axisForDirection(
@@ -193,17 +195,11 @@ public class Schematic extends WeightedRandom.Item {
 	public Map<Integer, Block> idMap;
 	public short length;
 	public Map<Integer, BlockAnchorLogic> matchingMap;
-
 	private int meta[][][];
-
 	public String name;
-
 	public ArrayList<String> onlyIncludeBiomes;
-
 	public Map<Integer, BlockPlacementLogic> placingMap;
-
 	public NBTTagList tileEntities;
-
 	public short width;
 
 	public Schematic() {
@@ -235,7 +231,7 @@ public class Schematic extends WeightedRandom.Item {
 				if (!idMap.containsKey(id)
 						&& !BlockAnchorLogic.isAnchorBlock(blockName)
 						&& !BlockPlacementLogic.placementLogicExists(blockName)) {
-					MyWorldGen.log.log(Level.WARNING,
+					MyWorldGen.log.log(Level.WARN,
 							"Can't find a block named {0}", unlocalizedName);
 				}
 				if (BlockAnchorLogic.isAnchorBlock(blockName)) {
@@ -255,7 +251,7 @@ public class Schematic extends WeightedRandom.Item {
 						BlockPlacementLogic.get("ignore"));
 			} else {
 				MyWorldGen.log
-						.log(Level.WARNING,
+						.log(Level.WARN,
 								"Schematic file {0} has no ignoreBlockId tag, defaulting to ID from config",
 								name);
 			}
@@ -269,7 +265,7 @@ public class Schematic extends WeightedRandom.Item {
 				matchingMap.put(id, BlockAnchorLogic.get("anchor"));
 			} else {
 				MyWorldGen.log
-						.log(Level.WARNING,
+						.log(Level.WARN,
 								"Schematic file {0} has no anchorBlockId tag, defaulting to ID from config",
 								name);
 			}
@@ -307,7 +303,7 @@ public class Schematic extends WeightedRandom.Item {
 		tileEntities = (NBTTagList) tag.getTag("TileEntities");
 
 		if (anchorBlockLocations.isEmpty()) {
-			MyWorldGen.log.log(Level.WARNING,
+			MyWorldGen.log.log(Level.WARN,
 					"No anchors found in schematic {0}", name);
 		}
 
@@ -597,7 +593,7 @@ public class Schematic extends WeightedRandom.Item {
 				NBTTagCompound entityTag = entities.getCompoundTagAt(i);
 				Entity e = EntityList.createEntityFromNBT(entityTag, world);
 				if (e == null) {
-					MyWorldGen.log.log(Level.WARNING,
+					MyWorldGen.log.log(Level.WARN,
 							"Not loading entity ID {0}",
 							entityTag.getString("id"));
 				} else {
@@ -617,7 +613,7 @@ public class Schematic extends WeightedRandom.Item {
 				NBTTagCompound tileEntityTag = tileEntities.getCompoundTagAt(i);
 				TileEntity e = TileEntity.createAndLoadEntity(tileEntityTag);
 				if (e == null) {
-					MyWorldGen.log.log(Level.WARNING,
+					MyWorldGen.log.log(Level.WARN,
 							"Not loading tile entity ID {0}",
 							tileEntityTag.getString("id"));
 				} else {
@@ -688,7 +684,7 @@ public class Schematic extends WeightedRandom.Item {
 						block = idMap.get(blocks[x][y][z]);
 					}
 					else {
-						block = Block.blockRegistry.getObject(blocks[x][y][z]);
+						block = (Block) Block.blockRegistry.getObject(blocks[x][y][z]);
 					}
 					if (block != null) {
 						Vec3 rotatedCoords = rotateCoords(

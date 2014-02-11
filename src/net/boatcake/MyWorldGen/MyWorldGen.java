@@ -13,8 +13,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import net.boatcake.MyWorldGen.blocks.BlockAnchorInventory;
+import net.boatcake.MyWorldGen.blocks.BlockAnchorInventoryLogic;
+import net.boatcake.MyWorldGen.blocks.BlockAnchorLogic;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
+import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterialLogic;
 import net.boatcake.MyWorldGen.blocks.BlockIgnore;
+import net.boatcake.MyWorldGen.blocks.BlockPlacementIgnore;
 import net.boatcake.MyWorldGen.blocks.TileEntityAnchorInventory;
 import net.boatcake.MyWorldGen.items.BlockAnchorItem;
 import net.boatcake.MyWorldGen.items.ItemWandLoad;
@@ -27,13 +31,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraftforge.common.config.Configuration;
 
-import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -92,6 +95,8 @@ public class MyWorldGen {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
+		MWGCodec codec = new MWGCodec();
+		net = NetworkRegistry.INSTANCE.newChannel("MyWorldGen", codec);
 
 		if (!globalSchemDir.isDirectory()) {
 			globalSchemDir.mkdir();
@@ -162,8 +167,6 @@ public class MyWorldGen {
 						"OpenBlocks",
 						"donateUrl",
 						"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=UHDDACLRN2T46&lc=US&item_name=MyWorldGen&currency_code=USD&bn=PP-DonationsBF:btn_donate_SM.gif:NonHosted");
-
-		net = NetworkRegistry.INSTANCE.newChannel("MyWorldGen", new MWGCodec());
 	}
 
 	@EventHandler
@@ -180,12 +183,15 @@ public class MyWorldGen {
 						true,
 						"Turn this off if you're running a server and the clients don't have the mod installed")
 				.getBoolean(true);
+		if (!enableItemsAndBlocks) {
+			log.info("Skipping block & item registration");
+		}
 
 		if (enableItemsAndBlocks && materialAnchorBlock != null) {
 			creativeTab = new CreativeTabs("tabMyWorldGen") {
 				@Override
-				public ItemStack getIconItemStack() {
-					return new ItemStack(materialAnchorBlock, 1, 0);
+				public Item getTabIconItem() {
+					return ItemBlock.getItemFromBlock(materialAnchorBlock);
 				}
 			};
 		}
@@ -202,11 +208,11 @@ public class MyWorldGen {
 			wandSave = registerItem("wandSave", ItemWandSave.class, cfg);
 			wandLoad = registerItem("wandLoad", ItemWandLoad.class, cfg);
 		} catch (RuntimeException e) {
-			log.severe("Could not load configuration");
+			log.fatal("Could not load configuration");
 			e.printStackTrace();
 			return;
 		} catch (ReflectiveOperationException e) {
-			log.severe("Self-reflection failed. Is the mod intact?");
+			log.fatal("Self-reflection failed. Is the mod intact?");
 			e.printStackTrace();
 			return;
 		}
@@ -255,8 +261,8 @@ public class MyWorldGen {
 		if (enableItemsAndBlocks) {
 			block = blockClass.getConstructor(Material.class)
 					.newInstance(Material.circuits);
-			block.setUnlocalizedName(name);
-			block.setTextureName(MyWorldGen.MODID + ":" + name);
+			block.setBlockName(name);
+			block.setBlockTextureName(MyWorldGen.MODID + ":" + name);
 			block.setCreativeTab(creativeTab);
 			GameRegistry
 					.registerBlock(block,

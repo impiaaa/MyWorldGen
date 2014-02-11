@@ -6,6 +6,8 @@ import io.netty.buffer.ByteBufOutputStream;
 
 import java.io.IOException;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.Schematic;
 import net.boatcake.MyWorldGen.client.GuiSaveSchematic;
@@ -45,6 +47,9 @@ public class MessageGetSchemClient implements MWGMessage {
 
 	@Override
 	public MWGMessage handle(EntityPlayer player) {
+		if (FMLCommonHandler.instance().getSide() != Side.CLIENT) {
+			return null;
+		}
 		// client
 		/*
 		 * Step 4: The client has received all of the entity and tile entity

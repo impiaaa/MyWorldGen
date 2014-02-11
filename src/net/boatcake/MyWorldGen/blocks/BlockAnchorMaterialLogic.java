@@ -2,28 +2,27 @@ package net.boatcake.MyWorldGen.blocks;
 
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial.AnchorType;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
 public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 
-	public static boolean matchesStatic(int myMeta, int otherBlock,
+	public static boolean matchesStatic(int myMeta, Block otherBlock,
 			int otherMeta, BiomeGenBase currentBiome) {
 		AnchorType type = AnchorType.get(myMeta);
 		switch (type) {
 		case GROUND:
 			return otherBlock == currentBiome.topBlock;
 		case AIR:
-			return otherBlock == 0
-					|| (Block.blocksList[otherBlock].blockMaterial
-							.isReplaceable() && !Block.blocksList[otherBlock].blockMaterial
-							.isLiquid());
+			return otherBlock instanceof BlockAir
+					|| (otherBlock.getMaterial().isReplaceable() && !otherBlock
+							.getMaterial().isLiquid());
 		default:
-			return otherBlock != 0
-					&& type != null
+			return !(otherBlock instanceof BlockAir) && type != null
 					&& type.material != null
-					&& Block.blocksList[otherBlock].blockMaterial == type.material;
+					&& otherBlock.getMaterial() == type.material;
 		}
 	}
 
@@ -34,7 +33,7 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 	@Override
 	public boolean matches(int myMeta, TileEntity myTileEntity, World world,
 			int x, int y, int z) {
-		return matchesStatic(myMeta, world.getBlockId(x, y, z),
+		return matchesStatic(myMeta, world.getBlock(x, y, z),
 				world.getBlockMetadata(x, y, z),
 				world.getBiomeGenForCoords(x, z));
 	}

@@ -13,7 +13,7 @@ public class BlockAnchorInventoryLogic extends BlockAnchorLogic {
 	public boolean matches(int myMeta, TileEntity myTileEntity, World world,
 			int x, int y, int z) {
 		return ((TileEntityAnchorInventory) myTileEntity).matches(world
-				.getBlockId(x, y, z));
+				.getBlock(x, y, z));
 	}
 
 }
