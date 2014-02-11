@@ -243,8 +243,7 @@ public class Schematic extends WeightedRandomItem {
 				}
 				if (!idMap.containsKey(id)
 						&& !BlockAnchorLogic.isAnchorBlock(blockName)
-						&& !BlockPlacementLogic.placementLogicExists(idTag
-								.getName())) {
+						&& !BlockPlacementLogic.placementLogicExists(blockName)) {
 					MyWorldGen.log.log(Level.WARNING,
 							"Can't find a block named {0}", unlocalizedName);
 				}
@@ -590,7 +589,6 @@ public class Schematic extends WeightedRandomItem {
 								(int) rotatedCoords.zCoord, block.blockID,
 								meta[x][y][z], 0x2);
 					} else {
-						Block block = Block.blocksList[blocks[x][y][z]];
 						world.setBlock((int) rotatedCoords.xCoord,
 								(int) rotatedCoords.yCoord,
 								(int) rotatedCoords.zCoord, blocks[x][y][z],

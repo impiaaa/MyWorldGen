@@ -15,7 +15,6 @@ public class BlockIgnore extends Block {
 		super(par1, par2Material);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
-		setCreativeTab(MyWorldGen.creativeTab);
 	}
 
 	@Override
@@ -33,12 +32,6 @@ public class BlockIgnore extends Block {
 	@Override
 	public boolean isOpaqueCube() {
 		return false;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
-		this.blockIcon = iconRegister.registerIcon("MyWorldGen:ignore");
 	}
 
 	@Override
