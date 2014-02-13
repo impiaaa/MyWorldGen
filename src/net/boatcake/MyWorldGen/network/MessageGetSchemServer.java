@@ -57,6 +57,12 @@ public class MessageGetSchemServer implements MWGMessage {
 			response.tileEntitiesTag = Schematic.getTileEntities(
 					playerMP.worldObj, this.x1, this.y1, this.z1, this.x2,
 					this.y2, this.z2);
+			response.x1 = x1;
+			response.y1 = y1;
+			response.z1 = z1;
+			response.x2 = x2;
+			response.y2 = y2;
+			response.z2 = z2;
 			return response;
 		}
 		return null;

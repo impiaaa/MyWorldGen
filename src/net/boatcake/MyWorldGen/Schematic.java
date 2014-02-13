@@ -225,14 +225,15 @@ public class Schematic extends WeightedRandom.Item {
 			NBTTagCompound mapTag = tag.getCompoundTag("MWGIDMap");
 			for (Object o : mapTag.func_150296_c()) {
 				String blockName = (String) o;
-				String unlocalizedName = "tile." + blockName;
 				int id = mapTag.getInteger(blockName);
-				idMap.put(id, Block.getBlockFromName(blockName));
-				if (!idMap.containsKey(id)
-						&& !BlockAnchorLogic.isAnchorBlock(blockName)
+				Block block = Block.getBlockFromName(blockName);
+				if (block != null) {
+					idMap.put(id, block);
+				}
+				else if(!BlockAnchorLogic.isAnchorBlock(blockName)
 						&& !BlockPlacementLogic.placementLogicExists(blockName)) {
 					MyWorldGen.log.log(Level.WARN,
-							"Can't find a block named {0}", unlocalizedName);
+							"Can't find a block named {}", blockName);
 				}
 				if (BlockAnchorLogic.isAnchorBlock(blockName)) {
 					matchingMap.put(id, BlockAnchorLogic.get(blockName));
@@ -252,7 +253,7 @@ public class Schematic extends WeightedRandom.Item {
 			} else {
 				MyWorldGen.log
 						.log(Level.WARN,
-								"Schematic file {0} has no ignoreBlockId tag, defaulting to ID from config",
+								"Schematic file {} has no ignoreBlockId tag, defaulting to ID from config",
 								name);
 			}
 
@@ -266,7 +267,7 @@ public class Schematic extends WeightedRandom.Item {
 			} else {
 				MyWorldGen.log
 						.log(Level.WARN,
-								"Schematic file {0} has no anchorBlockId tag, defaulting to ID from config",
+								"Schematic file {} has no anchorBlockId tag, defaulting to ID from config",
 								name);
 			}
 		}
@@ -302,9 +303,9 @@ public class Schematic extends WeightedRandom.Item {
 		entities = (NBTTagList) tag.getTag("Entities");
 		tileEntities = (NBTTagList) tag.getTag("TileEntities");
 
-		if (anchorBlockLocations.isEmpty()) {
+		if (anchorBlockLocations.isEmpty() && name != null) {
 			MyWorldGen.log.log(Level.WARN,
-					"No anchors found in schematic {0}", name);
+					"No anchors found in schematic {}", name);
 		}
 
 		if (tag.hasKey("chestType")) {
@@ -594,7 +595,7 @@ public class Schematic extends WeightedRandom.Item {
 				Entity e = EntityList.createEntityFromNBT(entityTag, world);
 				if (e == null) {
 					MyWorldGen.log.log(Level.WARN,
-							"Not loading entity ID {0}",
+							"Not loading entity ID {}",
 							entityTag.getString("id"));
 				} else {
 					Vec3 newCoords = rotateCoords(
@@ -614,7 +615,7 @@ public class Schematic extends WeightedRandom.Item {
 				TileEntity e = TileEntity.createAndLoadEntity(tileEntityTag);
 				if (e == null) {
 					MyWorldGen.log.log(Level.WARN,
-							"Not loading tile entity ID {0}",
+							"Not loading tile entity ID {}",
 							tileEntityTag.getString("id"));
 				} else {
 					Vec3 newCoords = rotateCoords(Vec3.createVectorHelper(

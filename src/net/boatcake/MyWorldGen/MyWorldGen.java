@@ -30,6 +30,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.server.MinecraftServer;
@@ -186,11 +187,11 @@ public class MyWorldGen {
 			log.info("Skipping block & item registration");
 		}
 
-		if (enableItemsAndBlocks && materialAnchorBlock != null) {
+		if (enableItemsAndBlocks) {
 			creativeTab = new CreativeTabs("tabMyWorldGen") {
 				@Override
 				public Item getTabIconItem() {
-					return ItemBlock.getItemFromBlock(materialAnchorBlock);
+					return ItemBlock.getItemFromBlock(materialAnchorBlock == null ? Blocks.grass : materialAnchorBlock);
 				}
 			};
 		}

@@ -38,9 +38,6 @@ public class ItemWandSave extends Item {
 				 * to the server for what entities and tile entities are within
 				 * the selected region. For step 3, go to PacketHandler
 				 */
-				// Clear the item data, so that we can make a new selection
-				stack.setTagCompound(null);
-
 				MessageGetSchemServer message = new MessageGetSchemServer();
 				message.x1 = stack.getTagCompound().getInteger("x");
 				message.y1 = stack.getTagCompound().getInteger("y");
@@ -48,6 +45,9 @@ public class ItemWandSave extends Item {
 				message.x2 = blockX;
 				message.y2 = blockY;
 				message.z2 = blockZ;
+
+				// Clear the item data, so that we can make a new selection
+				stack.setTagCompound(null);
 
 				MyWorldGen.instance.sendToServer(message);
 			} else {
