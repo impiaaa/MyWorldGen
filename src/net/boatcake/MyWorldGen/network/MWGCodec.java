@@ -3,7 +3,6 @@ package net.boatcake.MyWorldGen.network;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.boatcake.MyWorldGen.MyWorldGen;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
@@ -26,7 +25,7 @@ public class MWGCodec extends FMLIndexedMessageToMessageCodec<MWGMessage> {
 		EntityPlayer player = null;
 		switch (FMLCommonHandler.instance().getEffectiveSide()) {
 		case CLIENT:
-			player = Minecraft.getMinecraft().thePlayer;
+			player = null;
 			break;
 		case SERVER:
 			INetHandler netHandler = ctx.channel()

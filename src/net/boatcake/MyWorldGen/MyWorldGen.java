@@ -95,8 +95,7 @@ public class MyWorldGen {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
-		MWGCodec codec = new MWGCodec();
-		net = NetworkRegistry.INSTANCE.newChannel("MyWorldGen", codec);
+		net = NetworkRegistry.INSTANCE.newChannel("MyWorldGen", new MWGCodec());
 
 		if (!globalSchemDir.isDirectory()) {
 			globalSchemDir.mkdir();

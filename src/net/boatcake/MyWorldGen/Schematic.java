@@ -578,7 +578,7 @@ public class Schematic extends WeightedRandom.Item {
 								meta[x][y][z], 0x2);
 					} else {
 						Block block = (Block) Block.blockRegistry
-								.getObject(blocks[x][y][z]);
+								.getObjectById(blocks[x][y][z]);
 						world.setBlock((int) rotatedCoords.xCoord,
 								(int) rotatedCoords.yCoord,
 								(int) rotatedCoords.zCoord, block,
@@ -684,7 +684,7 @@ public class Schematic extends WeightedRandom.Item {
 						block = idMap.get(blocks[x][y][z]);
 					}
 					else {
-						block = (Block) Block.blockRegistry.getObject(blocks[x][y][z]);
+						block = (Block) Block.blockRegistry.getObjectById(blocks[x][y][z]);
 					}
 					if (block != null) {
 						Vec3 rotatedCoords = rotateCoords(
