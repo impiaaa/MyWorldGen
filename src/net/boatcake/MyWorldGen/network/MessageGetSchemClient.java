@@ -6,8 +6,6 @@ import io.netty.buffer.ByteBufOutputStream;
 
 import java.io.IOException;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.Schematic;
 import net.boatcake.MyWorldGen.client.GuiSaveSchematic;
@@ -18,6 +16,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 
 public class MessageGetSchemClient implements MWGMessage {
 	public NBTTagList entitiesTag;

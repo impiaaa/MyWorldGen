@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
+import org.apache.logging.log4j.Level;
+
 import net.boatcake.MyWorldGen.blocks.BlockAnchorLogic;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterialLogic;
@@ -31,8 +33,6 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DungeonHooks;
 import net.minecraftforge.common.util.ForgeDirection;
-
-import org.apache.logging.log4j.Level;
 
 public class Schematic extends WeightedRandom.Item {
 	public static ForgeDirection axisForDirection(
@@ -382,8 +382,9 @@ public class Schematic extends WeightedRandom.Item {
 			for (int y = y1; y <= y2; y++) {
 				for (int z = z1; z <= z2; z++) {
 					Block block = world.getBlock(x, y, z);
-					blocks[x - x1][y - y1][z - z1] = getBlockId(block);
-					idMap.put(getBlockId(block), block);
+					int id = Block.getIdFromBlock(block);
+					blocks[x - x1][y - y1][z - z1] = id;
+					idMap.put(id, block);
 					meta[x - x1][y - y1][z - z1] = world.getBlockMetadata(x, y,
 							z);
 				}
@@ -453,10 +454,6 @@ public class Schematic extends WeightedRandom.Item {
 		}
 	}
 
-	private int getBlockId(Block block) {
-		return Block.blockRegistry.getIDForObject(block);
-	}
-
 	public NBTTagCompound getNBT() {
 		// http://www.minecraftwiki.net/wiki/Schematic_file_format
 		NBTTagCompound base = new NBTTagCompound();
@@ -499,9 +496,7 @@ public class Schematic extends WeightedRandom.Item {
 
 		NBTTagCompound idMapTag = new NBTTagCompound();
 		for (Entry<Integer, Block> entry : idMap.entrySet()) {
-			String unlocalizedName = entry.getValue().getUnlocalizedName();
-			// getUnlocalizedName always adds a tile. to the beginning
-			idMapTag.setInteger(unlocalizedName.substring(5), entry.getKey());
+			idMapTag.setInteger(Block.blockRegistry.getNameForObject(entry.getValue()), entry.getKey());
 		}
 		base.setTag("MWGIDMap", idMapTag);
 
@@ -578,8 +573,7 @@ public class Schematic extends WeightedRandom.Item {
 								(int) rotatedCoords.zCoord, block,
 								meta[x][y][z], 0x2);
 					} else {
-						Block block = (Block) Block.blockRegistry
-								.getObjectById(blocks[x][y][z]);
+						Block block = (Block) Block.getBlockById(blocks[x][y][z]);
 						world.setBlock((int) rotatedCoords.xCoord,
 								(int) rotatedCoords.yCoord,
 								(int) rotatedCoords.zCoord, block,
@@ -685,7 +679,7 @@ public class Schematic extends WeightedRandom.Item {
 						block = idMap.get(blocks[x][y][z]);
 					}
 					else {
-						block = (Block) Block.blockRegistry.getObjectById(blocks[x][y][z]);
+						block = Block.getBlockById(blocks[x][y][z]);
 					}
 					if (block != null) {
 						Vec3 rotatedCoords = rotateCoords(

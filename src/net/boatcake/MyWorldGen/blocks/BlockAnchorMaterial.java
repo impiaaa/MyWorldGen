@@ -2,18 +2,13 @@ package net.boatcake.MyWorldGen.blocks;
 
 import java.util.List;
 
-import net.boatcake.MyWorldGen.MyWorldGen;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -24,19 +19,18 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 				"Leaves", Material.leaves), SAND(8, "Sand", Material.sand), STONE(
 				2, "Stone", Material.rock), WATER(3, "Water", Material.water), WOOD(
 				6, "Wood", Material.wood);
-		private static final AnchorType[] v = values();
-		public static final int size = v.length;
 
 		public static AnchorType get(int id) {
-			if (id > AnchorType.class.getEnumConstants().length) {
-				return null;
+			for (AnchorType a : AnchorType.values()) {
+				if (a.id == id) {
+					return a;
+				}
 			}
-			return v[id];
+			return null;
 		}
 
 		public final int id;
 		public final Material material;
-
 		public final String name;
 
 		private AnchorType(int id, String name, Material mat) {
@@ -70,18 +64,18 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item item, CreativeTabs creativeTabs,
 			List subBlockList) {
-		for (int i = 0; i < AnchorType.size; i++) {
-			subBlockList.add(new ItemStack(item, 1, i));
+		for (AnchorType a : AnchorType.values()) {
+			subBlockList.add(new ItemStack(item, 1, a.id));
 		}
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister iconRegister) {
-		icons = new IIcon[AnchorType.size];
-		for (int i = 0; i < icons.length; i++) {
-			this.icons[i] = iconRegister.registerIcon(this.getTextureName()
-					+ AnchorType.get(i).name);
+		icons = new IIcon[16];
+		for (AnchorType a : AnchorType.values()) {
+			this.icons[a.id] = iconRegister.registerIcon(this.getTextureName()
+					+ a.name);
 		}
 	}
 }

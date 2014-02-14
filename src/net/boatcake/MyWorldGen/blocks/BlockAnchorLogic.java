@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.IBlockAccess;
 
 public abstract class BlockAnchorLogic {
 	private static Map<String, BlockAnchorLogic> blockNameToLogic = new HashMap<String, BlockAnchorLogic>();
@@ -22,5 +22,5 @@ public abstract class BlockAnchorLogic {
 	}
 
 	public abstract boolean matches(int myMeta, TileEntity myTileEntity,
-			World world, int x, int y, int z);
+			IBlockAccess world, int x, int y, int z);
 }

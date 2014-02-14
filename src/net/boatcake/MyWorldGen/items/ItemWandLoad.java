@@ -1,14 +1,11 @@
 package net.boatcake.MyWorldGen.items;
 
 import net.boatcake.MyWorldGen.MyWorldGen;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Facing;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemWandLoad extends Item {
 	public ItemWandLoad() {

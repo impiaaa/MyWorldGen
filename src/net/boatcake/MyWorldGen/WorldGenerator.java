@@ -10,14 +10,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.util.ForgeDirection;
-
-import org.apache.logging.log4j.Level;
-
 import cpw.mods.fml.common.IWorldGenerator;
 
 public class WorldGenerator implements IWorldGenerator {
@@ -93,8 +92,8 @@ public class WorldGenerator implements IWorldGenerator {
 							schemToGenerate.placeInWorld(world, x, y, z,
 									randomDirection, true, true, random);
 							MyWorldGen.log
-									.log(Level.INFO,
-											"Generated {0} at {1}, {2}, {3}; took {4} tries",
+									.log(Level.OFF,
+											"Generated {} at {}, {}, {}; took {} tries",
 											new Object[] {
 													schemToGenerate.name, x, y,
 													z, i + 1 });

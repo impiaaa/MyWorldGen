@@ -43,6 +43,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
@@ -249,7 +250,7 @@ public class MyWorldGen {
 
 		GameRegistry.registerTileEntity(TileEntityAnchorInventory.class,
 				"anchorInventory");
-		GameRegistry.registerWorldGenerator(worldGen, 3);
+		GameRegistry.registerWorldGenerator(worldGen, 0);
 	}
 
 	private Block registerBlock(String name,
@@ -308,5 +309,10 @@ public class MyWorldGen {
 	@EventHandler
 	public void serverStart(FMLServerAboutToStartEvent event) {
 		worldGen.addSchematicsFromDirectory(globalSchemDir);
+	}
+	
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent e) {
+		//JUnitCore.runClasses(TestAnchors.class);
 	}
 }
