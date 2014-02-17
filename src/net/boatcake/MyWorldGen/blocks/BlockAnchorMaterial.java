@@ -18,19 +18,18 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 				"Leaves", Material.leaves), SAND(8, "Sand", Material.sand), STONE(
 				2, "Stone", Material.rock), WATER(3, "Water", Material.water), WOOD(
 				6, "Wood", Material.wood);
-		private static final AnchorType[] v = values();
-		public static final int size = v.length;
 
 		public static AnchorType get(int id) {
-			if (id > AnchorType.class.getEnumConstants().length) {
-				return null;
+			for (AnchorType a : AnchorType.values()) {
+				if (a.id == id) {
+					return a;
+				}
 			}
-			return v[id];
+			return null;
 		}
 
 		public final int id;
 		public final Material material;
-
 		public final String name;
 
 		private AnchorType(int id, String name, Material mat) {
@@ -40,7 +39,7 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 		}
 	}
 
-	public Icon[] icons = new Icon[AnchorType.size];
+	public Icon[] icons;
 
 	public BlockAnchorMaterial(int par1, Material par2Material) {
 		super(par1, par2Material);
@@ -64,18 +63,18 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(int id, CreativeTabs creativeTabs,
 			List subBlockList) {
-		for (int i = 0; i < AnchorType.size; i++) {
-			subBlockList.add(new ItemStack(id, 1, i));
+		for (AnchorType a : AnchorType.values()) {
+			subBlockList.add(new ItemStack(id, 1, a.id));
 		}
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister iconRegister) {
-		for (int i = 0; i < AnchorType.size; i++) {
-			this.icons[i] = iconRegister.registerIcon("MyWorldGen:"
-					+ this.getUnlocalizedName().substring(5)
-					+ AnchorType.get(i).name);
+		icons = new Icon[16];
+		for (AnchorType a : AnchorType.values()) {
+			this.icons[a.id] = iconRegister.registerIcon(this.getTextureName()
+					+ a.name);
 		}
 	}
 }

@@ -36,13 +36,13 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 	}
 
 	@Override
-	public int getInventoryStackLimit() {
-		return 64;
+	public String getInvName() {
+		return "container.anchorInventory";
 	}
 
 	@Override
-	public String getInvName() {
-		return "container.anchorInventory";
+	public int getInventoryStackLimit() {
+		return 64;
 	}
 
 	@Override

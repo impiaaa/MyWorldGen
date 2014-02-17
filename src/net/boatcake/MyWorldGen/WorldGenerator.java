@@ -92,7 +92,7 @@ public class WorldGenerator implements IWorldGenerator {
 							schemToGenerate.placeInWorld(world, x, y, z,
 									randomDirection, true, true, random);
 							MyWorldGen.log
-									.log(Level.FINEST,
+									.log(Level.OFF,
 											"Generated {0} at {1}, {2}, {3}; took {4} tries",
 											new Object[] {
 													schemToGenerate.name, x, y,

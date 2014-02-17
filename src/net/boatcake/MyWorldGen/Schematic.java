@@ -32,6 +32,8 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DungeonHooks;
 import net.minecraftforge.common.ForgeDirection;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public class Schematic extends WeightedRandomItem {
 	public static ForgeDirection axisForDirection(
@@ -51,6 +53,29 @@ public class Schematic extends WeightedRandomItem {
 		case UNKNOWN:
 		default:
 			return ForgeDirection.UNKNOWN;
+		}
+	}
+
+	private static Block getBlockFromName(String blockName) {
+		int colon = blockName.indexOf(':');
+		Block block = null;
+		String name = blockName;
+		if (colon != -1) {
+			String modId = blockName.substring(0, colon);
+			name = blockName.substring(colon);
+			block = GameRegistry.findBlock(modId, name);
+		}
+		if (block == null) {
+			String unlocalizedName = "tile." + name;
+			for (Block block1 : Block.blocksList) {
+				if (block1 != null
+						&& unlocalizedName.equals(block1.getUnlocalizedName())) {
+					return block1;
+				}
+			}
+			return null;
+		} else {
+			return block;
 		}
 	}
 
@@ -88,6 +113,15 @@ public class Schematic extends WeightedRandomItem {
 			entities.appendTag(enbt);
 		}
 		return entities;
+	}
+
+	private static String getNameForBlock(Block block) {
+		UniqueIdentifier uid = GameRegistry.findUniqueIdentifierFor(block);
+		if (uid == null) {
+			return block.getUnlocalizedName().substring(5);
+		} else {
+			return uid.modId + ":" + uid.name;
+		}
 	}
 
 	public static NBTTagList getTileEntities(World world, int x1, int y1,
@@ -195,13 +229,9 @@ public class Schematic extends WeightedRandomItem {
 	public Map<Integer, Block> idMap;
 	public short length;
 	public Map<Integer, BlockAnchorLogic> matchingMap;
-
 	private int meta[][][];
-
 	public String name;
-
 	public ArrayList<String> onlyIncludeBiomes;
-
 	public Map<Integer, BlockPlacementLogic> placingMap;
 
 	public NBTTagList tileEntities;
@@ -230,22 +260,15 @@ public class Schematic extends WeightedRandomItem {
 		if (tag.hasKey("MWGIDMap")) {
 			NBTTagCompound mapTag = tag.getCompoundTag("MWGIDMap");
 			for (Object o : mapTag.getTags()) {
-				NBTTagInt idTag = (NBTTagInt) o;
-				String blockName = idTag.getName();
-				String unlocalizedName = "tile." + blockName;
-				int id = idTag.data;
-				for (Block block : Block.blocksList) {
-					if (block != null
-							&& unlocalizedName.equals(block
-									.getUnlocalizedName())) {
-						idMap.put(id, block);
-					}
-				}
-				if (!idMap.containsKey(id)
-						&& !BlockAnchorLogic.isAnchorBlock(blockName)
+				String blockName = ((NBTTagInt) o).getName();
+				int id = ((NBTTagInt) o).data;
+				Block block = getBlockFromName(blockName);
+				if (block != null) {
+					idMap.put(id, block);
+				} else if (!BlockAnchorLogic.isAnchorBlock(blockName)
 						&& !BlockPlacementLogic.placementLogicExists(blockName)) {
 					MyWorldGen.log.log(Level.WARNING,
-							"Can't find a block named {0}", unlocalizedName);
+							"Can't find a block named {0}", blockName);
 				}
 				if (BlockAnchorLogic.isAnchorBlock(blockName)) {
 					matchingMap.put(id, BlockAnchorLogic.get(blockName));
@@ -393,10 +416,11 @@ public class Schematic extends WeightedRandomItem {
 		for (int x = x1; x <= x2; x++) {
 			for (int y = y1; y <= y2; y++) {
 				for (int z = z1; z <= z2; z++) {
-					int blockId = world.getBlockId(x, y, z);
-					blocks[x - x1][y - y1][z - z1] = blockId;
-					if (Block.blocksList[blockId] != null) {
-						idMap.put(blockId, Block.blocksList[blockId]);
+					int id = world.getBlockId(x, y, z);
+					Block block = Block.blocksList[id];
+					blocks[x - x1][y - y1][z - z1] = id;
+					if (block != null) {
+						idMap.put(id, block);
 					}
 					meta[x - x1][y - y1][z - z1] = world.getBlockMetadata(x, y,
 							z);
@@ -509,9 +533,8 @@ public class Schematic extends WeightedRandomItem {
 
 		NBTTagCompound idMapTag = new NBTTagCompound();
 		for (Entry<Integer, Block> entry : idMap.entrySet()) {
-			String unlocalizedName = entry.getValue().getUnlocalizedName();
-			// getUnlocalizedName always adds a tile. to the beginning
-			idMapTag.setInteger(unlocalizedName.substring(5), entry.getKey());
+			idMapTag.setInteger(getNameForBlock(entry.getValue()),
+					entry.getKey());
 		}
 		base.setTag("MWGIDMap", idMapTag);
 

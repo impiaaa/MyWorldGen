@@ -38,6 +38,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.network.NetworkMod;
@@ -160,7 +161,6 @@ public class MyWorldGen {
 						"OpenBlocks",
 						"donateUrl",
 						"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=UHDDACLRN2T46&lc=US&item_name=MyWorldGen&currency_code=USD&bn=PP-DonationsBF:btn_donate_SM.gif:NonHosted");
-
 	}
 
 	@EventHandler
@@ -177,12 +177,15 @@ public class MyWorldGen {
 						true,
 						"Turn this off if you're running a server and the clients don't have the mod installed")
 				.getBoolean(true);
+		if (!enableItemsAndBlocks) {
+			log.info("Skipping block & item registration");
+		}
 
-		if (enableItemsAndBlocks && materialAnchorBlock != null) {
+		if (enableItemsAndBlocks) {
 			creativeTab = new CreativeTabs("tabMyWorldGen") {
 				@Override
 				public ItemStack getIconItemStack() {
-					return new ItemStack(materialAnchorBlock, 1, 0);
+					return new ItemStack(materialAnchorBlock == null ? Block.grass : materialAnchorBlock);
 				}
 			};
 		}
@@ -286,5 +289,10 @@ public class MyWorldGen {
 	@EventHandler
 	public void serverStart(FMLServerAboutToStartEvent event) {
 		worldGen.addSchematicsFromDirectory(globalSchemDir);
+	}
+	
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent e) {
+		//JUnitCore.runClasses(TestAnchors.class);
 	}
 }
