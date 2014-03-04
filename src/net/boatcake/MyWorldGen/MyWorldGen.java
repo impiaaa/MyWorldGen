@@ -46,7 +46,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-@Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.3")
+@Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.3", dependencies = "after:OpenBlocks")
 @NetworkMod(clientSideRequired = false, serverSideRequired = false, channels = {
 		"MWGPlaceSchem", "MWGGetSchem" }, packetHandler = PacketHandler.class)
 public class MyWorldGen {
