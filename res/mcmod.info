@@ -1,15 +1,11 @@
-{
-  "modinfoversion": 2,
-  "modlist": [{
+[{
     "modid": "MyWorldGen",
     "name": "MyWorldGen",
     "description": "Your world, your way.",
-    "version": "1.2",
-    "mcversion": "1.6.4",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
     "url": "http://www.minecraftforum.net/topic/1902599-",
     "authors": ["impiaaa"],
     "logoFile": "pack.png",
-    "requiredMods": ["Forge"],
-    "useDependencyInformation": "true"
-  }]
-}
+}]
+
