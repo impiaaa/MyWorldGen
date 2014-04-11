@@ -13,9 +13,9 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.0"
-group= "net.boatcake.bronze" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "bronzestuff"
+version = "1.3"
+group= "net.boatcake.myworldgen" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "MyWorldGen"
 
 minecraft {
 	version = "1.6.4-9.11.1.964"
