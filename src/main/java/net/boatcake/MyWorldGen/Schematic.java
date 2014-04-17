@@ -12,18 +12,19 @@ import net.boatcake.MyWorldGen.blocks.BlockAnchorLogic;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterialLogic;
 import net.boatcake.MyWorldGen.blocks.BlockPlacementLogic;
+import net.boatcake.MyWorldGen.utils.BlockUtils;
+import net.boatcake.MyWorldGen.utils.DirectionUtils;
+import net.boatcake.MyWorldGen.utils.WorldUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.util.WeightedRandomItem;
@@ -32,193 +33,8 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DungeonHooks;
 import net.minecraftforge.common.ForgeDirection;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public class Schematic extends WeightedRandomItem {
-	public static ForgeDirection axisForDirection(
-			ForgeDirection rotationDirection) {
-		switch (rotationDirection) {
-		case UP:
-			return ForgeDirection.EAST;
-		case WEST:
-			return ForgeDirection.UP;
-		case NORTH:
-			return ForgeDirection.UP;
-		case DOWN:
-			return ForgeDirection.WEST;
-		case EAST:
-			return ForgeDirection.DOWN;
-		case SOUTH:
-		case UNKNOWN:
-		default:
-			return ForgeDirection.UNKNOWN;
-		}
-	}
-
-	private static Block getBlockFromName(String blockName) {
-		int colon = blockName.indexOf(':');
-		Block block = null;
-		String name = blockName;
-		if (colon != -1) {
-			String modId = blockName.substring(0, colon);
-			name = blockName.substring(colon);
-			block = GameRegistry.findBlock(modId, name);
-		}
-		if (block == null) {
-			String unlocalizedName = "tile." + name;
-			for (Block block1 : Block.blocksList) {
-				if (block1 != null
-						&& unlocalizedName.equals(block1.getUnlocalizedName())) {
-					return block1;
-				}
-			}
-			return null;
-		} else {
-			return block;
-		}
-	}
-
-	public static NBTTagList getEntities(World world, int x1, int y1, int z1,
-			int x2, int y2, int z2) {
-		assert !world.isRemote;
-		if (x1 > x2) {
-			int t = x1;
-			x1 = x2;
-			x2 = t;
-		}
-		if (y1 > y2) {
-			int t = y1;
-			y1 = y2;
-			y2 = t;
-		}
-		if (z1 > z2) {
-			int t = z1;
-			z1 = z2;
-			z2 = t;
-		}
-		NBTTagList entities = new NBTTagList();
-		for (Object o : world.getEntitiesWithinAABB(Entity.class, AxisAlignedBB
-				.getBoundingBox(x1 - 0.5, y1 - 0.5, z1 - 0.5, x2 + 0.5,
-						y2 + 0.5, z2 + 0.5))) {
-			NBTTagCompound enbt = new NBTTagCompound();
-			((Entity) o).writeToNBT(enbt);
-			NBTTagList posNBT = enbt.getTagList("Pos");
-			NBTTagDouble coordNBT = (NBTTagDouble) posNBT.tagAt(0);
-			coordNBT.data -= x1;
-			coordNBT = (NBTTagDouble) posNBT.tagAt(1);
-			coordNBT.data -= y1;
-			coordNBT = (NBTTagDouble) posNBT.tagAt(2);
-			coordNBT.data -= z1;
-			entities.appendTag(enbt);
-		}
-		return entities;
-	}
-
-	private static String getNameForBlock(Block block) {
-		UniqueIdentifier uid = GameRegistry.findUniqueIdentifierFor(block);
-		if (uid == null) {
-			return block.getUnlocalizedName().substring(5);
-		} else {
-			return uid.modId + ":" + uid.name;
-		}
-	}
-
-	public static NBTTagList getTileEntities(World world, int x1, int y1,
-			int z1, int x2, int y2, int z2) {
-		assert !world.isRemote;
-		if (x1 > x2) {
-			int t = x1;
-			x1 = x2;
-			x2 = t;
-		}
-		if (y1 > y2) {
-			int t = y1;
-			y1 = y2;
-			y2 = t;
-		}
-		if (z1 > z2) {
-			int t = z1;
-			z1 = z2;
-			z2 = t;
-		}
-		NBTTagList tileEntities = new NBTTagList();
-		for (int x = x1; x <= x2; x++) {
-			for (int y = y1; y <= y2; y++) {
-				for (int z = z1; z <= z2; z++) {
-					if (world.blockHasTileEntity(x, y, z)) {
-						TileEntity tileEntity = world.getBlockTileEntity(x, y,
-								z);
-						NBTTagCompound tenbt = new NBTTagCompound();
-						tileEntity.writeToNBT(tenbt);
-						tenbt.setInteger("x", tenbt.getInteger("x") - x1);
-						tenbt.setInteger("y", tenbt.getInteger("y") - y1);
-						tenbt.setInteger("z", tenbt.getInteger("z") - z1);
-						tileEntities.appendTag(tenbt);
-					}
-				}
-			}
-		}
-		return tileEntities;
-	}
-
-	public static float pitchOffsetForDirection(ForgeDirection rotationDirection) {
-		switch (rotationDirection) {
-		case UP:
-			return 90;
-		case WEST:
-			return 0;
-		case NORTH:
-			return 0;
-		case DOWN:
-			return -90;
-		case EAST:
-			return 0;
-		case SOUTH:
-		case UNKNOWN:
-		default:
-			return 0;
-		}
-	}
-
-	public static int rotationCountForDirection(ForgeDirection rotationDirection) {
-		switch (rotationDirection) {
-		case UP:
-			return 1;
-		case WEST:
-			return 1;
-		case NORTH:
-			return 2;
-		case DOWN:
-			return 1;
-		case EAST:
-			return 1;
-		case SOUTH:
-		case UNKNOWN:
-		default:
-			return 0;
-		}
-	}
-
-	public static float yawOffsetForDirection(ForgeDirection rotationDirection) {
-		switch (rotationDirection) {
-		case UP:
-			return 0;
-		case WEST:
-			return 90;
-		case NORTH:
-			return 180;
-		case DOWN:
-			return 0;
-		case EAST:
-			return -90;
-		case SOUTH:
-		case UNKNOWN:
-		default:
-			return 0;
-		}
-	}
-
 	// cache of the x,y,z locations of all anchor blocks
 	private ArrayList<Integer[]> anchorBlockLocations;
 	private int blocks[][][];
@@ -262,7 +78,7 @@ public class Schematic extends WeightedRandomItem {
 			for (Object o : mapTag.getTags()) {
 				String blockName = ((NBTTagInt) o).getName();
 				int id = ((NBTTagInt) o).data;
-				Block block = getBlockFromName(blockName);
+				Block block = BlockUtils.getBlockFromName(blockName);
 				if (block != null) {
 					idMap.put(id, block);
 				} else if (!BlockAnchorLogic.isAnchorBlock(blockName)
@@ -428,8 +244,8 @@ public class Schematic extends WeightedRandomItem {
 			}
 		}
 		if (!world.isRemote) {
-			this.entities = getEntities(world, x1, y1, z1, x2, y2, z2);
-			this.tileEntities = getTileEntities(world, x1, y1, z1, x2, y2, z2);
+			this.entities = WorldUtils.getEntities(world, x1, y1, z1, x2, y2, z2);
+			this.tileEntities = WorldUtils.getTileEntities(world, x1, y1, z1, x2, y2, z2);
 		}
 	}
 
@@ -446,11 +262,11 @@ public class Schematic extends WeightedRandomItem {
 			ForgeDirection rotationDirection) {
 		// used for world generation to determine if all anchor blocks in the
 		// schematic match up with the world
-		ForgeDirection rotationAxis = axisForDirection(rotationDirection);
-		int rotationCount = rotationCountForDirection(rotationDirection);
+		ForgeDirection rotationAxis = DirectionUtils.axisForDirection(rotationDirection);
+		int rotationCount = DirectionUtils.rotationCountForDirection(rotationDirection);
 		Vec3 offset = Vec3.createVectorHelper(atX, atY, atZ);
 		if (anchorBlockLocations.isEmpty()) {
-			Vec3 middle = rotateCoords(
+			Vec3 middle = DirectionUtils.rotateCoords(
 					Vec3.createVectorHelper(width / 2, 0, length / 2), offset,
 					rotationAxis, rotationCount);
 			int midX = (int) middle.xCoord;
@@ -470,7 +286,7 @@ public class Schematic extends WeightedRandomItem {
 		} else {
 			for (int i = 0; i < anchorBlockLocations.size(); i++) {
 				Integer[] origCoords = anchorBlockLocations.get(i);
-				Vec3 rotatedCoords = rotateCoords(Vec3.createVectorHelper(
+				Vec3 rotatedCoords = DirectionUtils.rotateCoords(Vec3.createVectorHelper(
 						origCoords[0], origCoords[1], origCoords[2]), offset,
 						rotationAxis, rotationCount);
 				if (!world.blockExists((int) rotatedCoords.xCoord,
@@ -533,7 +349,7 @@ public class Schematic extends WeightedRandomItem {
 
 		NBTTagCompound idMapTag = new NBTTagCompound();
 		for (Entry<Integer, Block> entry : idMap.entrySet()) {
-			idMapTag.setInteger(getNameForBlock(entry.getValue()),
+			idMapTag.setInteger(BlockUtils.getNameForBlock(entry.getValue()),
 					entry.getKey());
 		}
 		base.setTag("MWGIDMap", idMapTag);
@@ -590,15 +406,15 @@ public class Schematic extends WeightedRandomItem {
 	public void placeInWorld(World world, int atX, int atY, int atZ,
 			ForgeDirection rotationDirection, boolean generateChests,
 			boolean generateSpawners, Random rand) {
-		ForgeDirection rotationAxis = axisForDirection(rotationDirection);
-		int rotationCount = rotationCountForDirection(rotationDirection);
-		float pitchOffset = pitchOffsetForDirection(rotationDirection);
-		float yawOffset = yawOffsetForDirection(rotationDirection);
+		ForgeDirection rotationAxis = DirectionUtils.axisForDirection(rotationDirection);
+		int rotationCount = DirectionUtils.rotationCountForDirection(rotationDirection);
+		float pitchOffset = DirectionUtils.pitchOffsetForDirection(rotationDirection);
+		float yawOffset = DirectionUtils.yawOffsetForDirection(rotationDirection);
 		Vec3 offset = Vec3.createVectorHelper(atX, atY, atZ);
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
-					Vec3 rotatedCoords = rotateCoords(
+					Vec3 rotatedCoords = DirectionUtils.rotateCoords(
 							Vec3.createVectorHelper(x, y, z), offset,
 							rotationAxis, rotationCount);
 					if (placingMap.containsKey(blocks[x][y][z])) {
@@ -630,7 +446,7 @@ public class Schematic extends WeightedRandomItem {
 							"Not loading entity ID {0}",
 							entityTag.getString("id"));
 				} else {
-					Vec3 newCoords = rotateCoords(
+					Vec3 newCoords = DirectionUtils.rotateCoords(
 							Vec3.createVectorHelper(e.posX, e.posY, e.posZ),
 							offset, rotationAxis, rotationCount);
 					e.setPositionAndRotation(newCoords.xCoord,
@@ -651,7 +467,7 @@ public class Schematic extends WeightedRandomItem {
 							"Not loading tile entity ID {0}",
 							tileEntityTag.getString("id"));
 				} else {
-					Vec3 newCoords = rotateCoords(Vec3.createVectorHelper(
+					Vec3 newCoords = DirectionUtils.rotateCoords(Vec3.createVectorHelper(
 							e.xCoord, e.yCoord, e.zCoord), offset,
 							rotationAxis, rotationCount);
 					e.xCoord = (int) newCoords.xCoord;
@@ -669,7 +485,7 @@ public class Schematic extends WeightedRandomItem {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
-					Vec3 rotatedCoords = rotateCoords(
+					Vec3 rotatedCoords = DirectionUtils.rotateCoords(
 							Vec3.createVectorHelper(x, y, z), offset,
 							rotationAxis, rotationCount);
 					int blockId = world.getBlockId((int) rotatedCoords.xCoord,
@@ -714,7 +530,7 @@ public class Schematic extends WeightedRandomItem {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
 					if (Block.blocksList[blocks[x][y][z]] != null) {
-						Vec3 rotatedCoords = rotateCoords(
+						Vec3 rotatedCoords = DirectionUtils.rotateCoords(
 								Vec3.createVectorHelper(x, y, z), offset,
 								rotationAxis, rotationCount);
 						for (int i = 0; i < rotationCount; i++) {
@@ -727,47 +543,5 @@ public class Schematic extends WeightedRandomItem {
 				}
 			}
 		}
-	}
-
-	private Vec3 rotateCoords(Vec3 coords, Vec3 at,
-			ForgeDirection rotationAxis, int rotationCount) {
-		double worldX = coords.xCoord;
-		double worldY = coords.yCoord;
-		double worldZ = coords.zCoord;
-		for (int i = 0; i < rotationCount; i++) {
-			if (rotationAxis.offsetX == 1) {
-				double temp = worldY;
-				worldY = -worldZ;
-				worldZ = temp;
-			} else if (rotationAxis.offsetX == -1) {
-				double temp = worldY;
-				worldY = worldZ;
-				worldZ = -temp;
-			}
-			if (rotationAxis.offsetY == 1) {
-				double temp = worldX;
-				worldX = -worldZ;
-				worldZ = temp;
-			} else if (rotationAxis.offsetY == -1) {
-				double temp = worldX;
-				worldX = worldZ;
-				worldZ = -temp;
-			}
-			if (rotationAxis.offsetZ == 1) {
-				double temp = worldX;
-				worldX = -worldY;
-				worldY = temp;
-			} else if (rotationAxis.offsetZ == -1) {
-				double temp = worldX;
-				worldX = worldY;
-				worldY = -temp;
-			}
-		}
-
-		worldX += at.xCoord;
-		worldY += at.yCoord;
-		worldZ += at.zCoord;
-
-		return Vec3.createVectorHelper(worldX, worldY, worldZ);
 	}
 }

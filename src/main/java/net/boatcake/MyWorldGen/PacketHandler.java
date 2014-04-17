@@ -50,62 +50,6 @@ public class PacketHandler implements IPacketHandler {
 		} else if (packet.channel.equals("MWGGetSchem")) {
 			if (player instanceof EntityPlayerMP) {
 				// server
-				// Step 3: The server receives the selection box from the
-				// client.
-				EntityPlayerMP playerMP = (EntityPlayerMP) player;
-				/*
-				 * First we need to make sure that they're allowed to see chests
-				 * etc. I assume being in creative is good enough, I don't want
-				 * to implement a permissions system right now.
-				 */
-				if (playerMP.capabilities.isCreativeMode) {
-					// get parameters
-					ByteArrayInputStream inputStream = new ByteArrayInputStream(
-							packet.data);
-					NBTTagCompound packetTag;
-					try {
-						packetTag = CompressedStreamTools
-								.readCompressed(inputStream);
-					} catch (IOException e) {
-						e.printStackTrace();
-						return;
-					}
-					int x1 = packetTag.getInteger("x1");
-					int y1 = packetTag.getInteger("y1");
-					int z1 = packetTag.getInteger("z1");
-					int x2 = packetTag.getInteger("x2");
-					int y2 = packetTag.getInteger("y2");
-					int z2 = packetTag.getInteger("z2");
-
-					/*
-					 * Compile a response packet with both the original
-					 * selection box, as well as the entity and tile entity
-					 * data. We'll need the selection box in order to compile
-					 * block data later.
-					 */
-					NBTTagCompound tagToSend = new NBTTagCompound("MWGGetSchem");
-					tagToSend.setInteger("x1", x1);
-					tagToSend.setInteger("y1", y1);
-					tagToSend.setInteger("z1", z1);
-					tagToSend.setInteger("x2", x2);
-					tagToSend.setInteger("y2", y2);
-					tagToSend.setInteger("z2", z2);
-					tagToSend.setTag("entities", Schematic.getEntities(
-							playerMP.worldObj, x1, y1, z1, x2, y2, z2));
-					tagToSend.setTag("tileEntities", Schematic.getTileEntities(
-							playerMP.worldObj, x1, y1, z1, x2, y2, z2));
-
-					ByteArrayOutputStream bos = new ByteArrayOutputStream();
-					try {
-						CompressedStreamTools.writeCompressed(tagToSend, bos);
-					} catch (IOException exc) {
-						exc.printStackTrace();
-						return;
-					}
-					Packet250CustomPayload packetToSend = new Packet250CustomPayload(
-							"MWGGetSchem", bos.toByteArray());
-					PacketDispatcher.sendPacketToPlayer(packetToSend, player);
-				}
 			} else if (player instanceof EntityClientPlayerMP) {
 				// client
 				/*

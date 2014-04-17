@@ -3,10 +3,7 @@ package net.boatcake.MyWorldGen;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -23,6 +20,7 @@ import net.boatcake.MyWorldGen.blocks.TileEntityAnchorInventory;
 import net.boatcake.MyWorldGen.items.BlockAnchorItem;
 import net.boatcake.MyWorldGen.items.ItemWandLoad;
 import net.boatcake.MyWorldGen.items.ItemWandSave;
+import net.boatcake.MyWorldGen.utils.FileUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -66,24 +64,6 @@ public class MyWorldGen {
 	public static Item wandSave;
 	public static WorldGenerator worldGen;
 
-	private static void writeStream(InputStream inStream, String outName)
-			throws IOException {
-		// Used for self-extracting files
-		OutputStream outStream = new FileOutputStream(new File(globalSchemDir,
-				new File(outName).getName()));
-		byte[] buffer = new byte[256];
-		int readLen;
-		while (true) {
-			readLen = inStream.read(buffer, 0, buffer.length);
-			if (readLen <= 0) {
-				break;
-			}
-			outStream.write(buffer, 0, readLen);
-		}
-		inStream.close();
-		outStream.close();
-	}
-
 	private boolean enableItemsAndBlocks;
 
 	private File sourceFile;
@@ -106,7 +86,7 @@ public class MyWorldGen {
 						if (!ze.isDirectory()
 								&& ze.getName().startsWith(
 										worldGenDir.getName())) {
-							writeStream(zf.getInputStream(ze), ze.getName());
+							FileUtils.writeStream(zf.getInputStream(ze), ze.getName());
 						}
 					}
 				}
@@ -118,7 +98,7 @@ public class MyWorldGen {
 				if (f.isDirectory()) {
 					for (String s : f.list()) {
 						try {
-							writeStream(new FileInputStream(new File(f, s)), s);
+							FileUtils.writeStream(new FileInputStream(new File(f, s)), s);
 						} catch (Throwable e1) {
 							e1.printStackTrace();
 						}

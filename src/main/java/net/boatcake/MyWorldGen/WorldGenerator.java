@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 
+import net.boatcake.MyWorldGen.utils.DirectionUtils;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomItem;
@@ -20,9 +21,6 @@ import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.IWorldGenerator;
 
 public class WorldGenerator implements IWorldGenerator {
-	public static ForgeDirection[] randomDirections = new ForgeDirection[] {
-			ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST,
-			ForgeDirection.WEST };
 	private Map<File, Schematic> schemList;
 
 	public WorldGenerator() {
@@ -85,7 +83,7 @@ public class WorldGenerator implements IWorldGenerator {
 						int x = random.nextInt(16) + chunkX * 16;
 						int y = random.nextInt(world.getHeight());
 						int z = random.nextInt(16) + chunkZ * 16;
-						ForgeDirection randomDirection = randomDirections[random
+						ForgeDirection randomDirection = DirectionUtils.randomDirections[random
 								.nextInt(4)];
 						if (schemToGenerate.fitsIntoWorldAt(world, x, y, z,
 								randomDirection)) {

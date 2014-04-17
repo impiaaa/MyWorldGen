@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 public class ItemWandLoad extends Item {
 	public ItemWandLoad(int id) {
 		super(id);
-		setMaxStackSize(0);
+		setMaxStackSize(1);
 	}
 
 	@Override
