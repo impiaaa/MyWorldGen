@@ -75,8 +75,7 @@ public class WorldGenerator implements IWorldGenerator {
 			if (!applicableSchematics.isEmpty()) {
 				WeightedRandomItem noStructureItem = new WeightedRandomItem(
 						MyWorldGen.generateNothingWeight);
-				WeightedRandomItem selectedItem = WeightedRandom.getRandomItem(
-						random, applicableSchematics);
+				WeightedRandomItem selectedItem = WeightedRandom.getRandomItem(random, applicableSchematics);
 				if (selectedItem != noStructureItem) {
 					Schematic schemToGenerate = (Schematic) selectedItem;
 					for (int i = 0; i < MyWorldGen.generateTries; i++) {

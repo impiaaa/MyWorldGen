@@ -1,14 +1,10 @@
 package net.boatcake.MyWorldGen.blocks;
 
-import net.boatcake.MyWorldGen.MyWorldGen;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockIgnore extends Block {
 	public BlockIgnore(int par1, Material par2Material) {

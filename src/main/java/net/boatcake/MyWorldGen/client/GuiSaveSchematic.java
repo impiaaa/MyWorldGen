@@ -8,7 +8,6 @@ import net.boatcake.MyWorldGen.Schematic;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiSlider;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -21,7 +20,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class GuiSaveSchematic extends GuiScreen {
 	private GuiButton cancelBtn;
-	private GuiSlider commonSlider;
 	private GuiTextField fileNameField;
 	private GuiButton saveBtn;
 	public Schematic schematicToSave;

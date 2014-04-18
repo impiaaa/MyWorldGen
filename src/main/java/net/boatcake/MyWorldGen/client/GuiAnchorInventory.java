@@ -35,8 +35,7 @@ public class GuiAnchorInventory extends GuiContainer {
 	protected void drawGuiContainerForegroundLayer(int param1, int param2) {
 		// draw text and stuff here
 		// the parameters for drawString are: string, x, y, color
-		fontRenderer.drawString(I18n.getString(tileEntity.getInvName()), 8, 6,
-				0x404040);
+		fontRenderer.drawString(I18n.getString(tileEntity.getInvName()), 8, 6, 0x404040);
 		// draws "Inventory" or your regional equivalent
 		fontRenderer.drawString(I18n.getString("container.inventory"), 8,
 				ySize - 96 + 2, 0x404040);

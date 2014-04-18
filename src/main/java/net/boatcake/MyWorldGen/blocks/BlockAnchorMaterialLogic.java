@@ -16,9 +16,8 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 			return otherBlock == currentBiome.topBlock;
 		case AIR:
 			return otherBlock == 0
-					|| (Block.blocksList[otherBlock].blockMaterial
-							.isReplaceable() && !Block.blocksList[otherBlock].blockMaterial
-							.isLiquid());
+					|| (Block.blocksList[otherBlock].blockMaterial.isReplaceable()
+						&& !Block.blocksList[otherBlock].blockMaterial.isLiquid());
 		default:
 			return otherBlock != 0
 					&& type != null

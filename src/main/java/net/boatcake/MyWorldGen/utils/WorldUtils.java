@@ -33,7 +33,7 @@ public class WorldUtils {
 				.getBoundingBox(x1 - 0.5, y1 - 0.5, z1 - 0.5, x2 + 0.5,
 						y2 + 0.5, z2 + 0.5))) {
 			NBTTagCompound enbt = new NBTTagCompound();
-			((Entity) o).writeToNBT(enbt);
+			((Entity) o).writeToNBTOptional(enbt);
 			NBTTagList posNBT = enbt.getTagList("Pos");
 			NBTTagDouble coordNBT = (NBTTagDouble) posNBT.tagAt(0);
 			coordNBT.data -= x1;

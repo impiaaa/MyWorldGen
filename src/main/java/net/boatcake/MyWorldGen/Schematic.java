@@ -49,9 +49,7 @@ public class Schematic extends WeightedRandomItem {
 	public String name;
 	public ArrayList<String> onlyIncludeBiomes;
 	public Map<Integer, BlockPlacementLogic> placingMap;
-
 	public NBTTagList tileEntities;
-
 	public short width;
 
 	public Schematic() {
@@ -349,8 +347,7 @@ public class Schematic extends WeightedRandomItem {
 
 		NBTTagCompound idMapTag = new NBTTagCompound();
 		for (Entry<Integer, Block> entry : idMap.entrySet()) {
-			idMapTag.setInteger(BlockUtils.getNameForBlock(entry.getValue()),
-					entry.getKey());
+			idMapTag.setInteger(BlockUtils.getNameForBlock(entry.getValue()), entry.getKey());
 		}
 		base.setTag("MWGIDMap", idMapTag);
 
@@ -379,8 +376,7 @@ public class Schematic extends WeightedRandomItem {
 
 	public TileEntity getTileEntityAt(int x, int y, int z) {
 		for (int i = 0; i < tileEntities.tagCount(); i++) {
-			NBTTagCompound tileEntityTag = (NBTTagCompound) tileEntities
-					.tagAt(i);
+			NBTTagCompound tileEntityTag = (NBTTagCompound) tileEntities.tagAt(i);
 			if (tileEntityTag.getInteger("x") == x
 					&& tileEntityTag.getInteger("y") == y
 					&& tileEntityTag.getInteger("z") == z) {
@@ -534,8 +530,8 @@ public class Schematic extends WeightedRandomItem {
 								Vec3.createVectorHelper(x, y, z), offset,
 								rotationAxis, rotationCount);
 						for (int i = 0; i < rotationCount; i++) {
-							Block.blocksList[blocks[x][y][z]].rotateBlock(
-									world, (int) rotatedCoords.xCoord,
+							Block.blocksList[blocks[x][y][z]].rotateBlock(world,
+									(int) rotatedCoords.xCoord,
 									(int) rotatedCoords.yCoord,
 									(int) rotatedCoords.zCoord, rotationAxis);
 						}
