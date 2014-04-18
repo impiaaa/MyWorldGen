@@ -3,6 +3,7 @@ package net.boatcake.MyWorldGen.blocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -19,7 +20,8 @@ public class BlockIgnore extends Block {
 		return null;
 	}
 
-	public boolean isBlockSolidOnSide(World world, int x, int y, int z,
+	@Override
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z,
 			ForgeDirection side) {
 		return true;
 	}

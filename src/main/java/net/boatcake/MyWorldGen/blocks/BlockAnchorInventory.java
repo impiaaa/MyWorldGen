@@ -20,7 +20,7 @@ public class BlockAnchorInventory extends BlockContainer implements
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int meta) {
+	public TileEntity createNewTileEntity(World world, int var2) {
 		return new TileEntityAnchorInventory();
 	}
 
@@ -35,4 +35,5 @@ public class BlockAnchorInventory extends BlockContainer implements
 		player.openGui(MyWorldGen.instance, 2, world, x, y, z);
 		return true;
 	}
+
 }

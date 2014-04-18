@@ -3,10 +3,7 @@ package net.boatcake.MyWorldGen;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
@@ -24,12 +21,12 @@ import net.boatcake.MyWorldGen.items.BlockAnchorItem;
 import net.boatcake.MyWorldGen.items.ItemWandLoad;
 import net.boatcake.MyWorldGen.items.ItemWandSave;
 import net.boatcake.MyWorldGen.network.MWGCodec;
-import net.boatcake.MyWorldGen.network.MWGMessage;
+import net.boatcake.MyWorldGen.utils.FileUtils;
+import net.boatcake.MyWorldGen.utils.NetUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -47,13 +44,11 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
-import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.3")
+@Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.3", dependencies = "after:OpenBlocks")
 public class MyWorldGen {
 	public static CreativeTabs creativeTab;
 	public static int generateNothingWeight;
@@ -66,29 +61,10 @@ public class MyWorldGen {
 	public static Logger log;
 	public static Block materialAnchorBlock;
 	public final static String MODID = "MyWorldGen";
-	public static EnumMap<Side, FMLEmbeddedChannel> net;
 	public static String resourcePath = "assets/myworldgen/worldgen";
 	public static Item wandLoad;
 	public static Item wandSave;
 	public static WorldGenerator worldGen;
-
-	private static void writeStream(InputStream inStream, String outName)
-			throws IOException {
-		// Used for self-extracting files
-		OutputStream outStream = new FileOutputStream(new File(globalSchemDir,
-				new File(outName).getName()));
-		byte[] buffer = new byte[256];
-		int readLen;
-		while (true) {
-			readLen = inStream.read(buffer, 0, buffer.length);
-			if (readLen <= 0) {
-				break;
-			}
-			outStream.write(buffer, 0, readLen);
-		}
-		inStream.close();
-		outStream.close();
-	}
 
 	private boolean enableItemsAndBlocks;
 
@@ -97,7 +73,7 @@ public class MyWorldGen {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
-		net = NetworkRegistry.INSTANCE.newChannel("MyWorldGen", new MWGCodec());
+		NetUtils.net = NetworkRegistry.INSTANCE.newChannel("MyWorldGen", new MWGCodec());
 
 		if (!globalSchemDir.isDirectory()) {
 			globalSchemDir.mkdir();
@@ -113,7 +89,7 @@ public class MyWorldGen {
 						if (!ze.isDirectory()
 								&& ze.getName().startsWith(
 										worldGenDir.getName())) {
-							writeStream(zf.getInputStream(ze), ze.getName());
+							FileUtils.writeStream(zf.getInputStream(ze), ze.getName());
 						}
 					}
 				}
@@ -125,7 +101,7 @@ public class MyWorldGen {
 				if (f.isDirectory()) {
 					for (String s : f.list()) {
 						try {
-							writeStream(new FileInputStream(new File(f, s)), s);
+							FileUtils.writeStream(new FileInputStream(new File(f, s)), s);
 						} catch (Throwable e1) {
 							e1.printStackTrace();
 						}
@@ -289,21 +265,6 @@ public class MyWorldGen {
 			GameRegistry.registerItem(item, name);
 		}
 		return item;
-	}
-
-	public void sendTo(MWGMessage message, EntityPlayerMP player) {
-		net.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
-				.set(FMLOutboundHandler.OutboundTarget.PLAYER);
-		net.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS)
-				.set(player);
-		net.get(Side.SERVER).writeAndFlush(message);
-	}
-
-	@SideOnly(Side.CLIENT)
-	public void sendToServer(MWGMessage message) {
-		net.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET)
-				.set(FMLOutboundHandler.OutboundTarget.TOSERVER);
-		net.get(Side.CLIENT).writeAndFlush(message);
 	}
 
 	@EventHandler

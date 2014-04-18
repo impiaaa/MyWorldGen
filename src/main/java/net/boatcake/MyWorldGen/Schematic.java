@@ -7,24 +7,22 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import org.apache.logging.log4j.Level;
-
 import net.boatcake.MyWorldGen.blocks.BlockAnchorLogic;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterialLogic;
 import net.boatcake.MyWorldGen.blocks.BlockPlacementLogic;
+import net.boatcake.MyWorldGen.utils.DirectionUtils;
+import net.boatcake.MyWorldGen.utils.WorldUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomChestContent;
@@ -34,157 +32,9 @@ import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DungeonHooks;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import org.apache.logging.log4j.Level;
+
 public class Schematic extends WeightedRandom.Item {
-	public static ForgeDirection axisForDirection(
-			ForgeDirection rotationDirection) {
-		switch (rotationDirection) {
-		case UP:
-			return ForgeDirection.EAST;
-		case WEST:
-			return ForgeDirection.UP;
-		case NORTH:
-			return ForgeDirection.UP;
-		case DOWN:
-			return ForgeDirection.WEST;
-		case EAST:
-			return ForgeDirection.DOWN;
-		case SOUTH:
-		case UNKNOWN:
-		default:
-			return ForgeDirection.UNKNOWN;
-		}
-	}
-
-	public static NBTTagList getEntities(World world, int x1, int y1, int z1,
-			int x2, int y2, int z2) {
-		assert !world.isRemote;
-		if (x1 > x2) {
-			int t = x1;
-			x1 = x2;
-			x2 = t;
-		}
-		if (y1 > y2) {
-			int t = y1;
-			y1 = y2;
-			y2 = t;
-		}
-		if (z1 > z2) {
-			int t = z1;
-			z1 = z2;
-			z2 = t;
-		}
-		NBTTagList entities = new NBTTagList();
-		for (Object o : world.getEntitiesWithinAABB(Entity.class, AxisAlignedBB
-				.getBoundingBox(x1 - 0.5, y1 - 0.5, z1 - 0.5, x2 + 0.5,
-						y2 + 0.5, z2 + 0.5))) {
-			NBTTagCompound enbt = new NBTTagCompound();
-			((Entity) o).writeToNBT(enbt);
-			NBTTagList posNBT = (NBTTagList) enbt.getTag("Pos");
-			posNBT.func_150304_a(0, new NBTTagDouble(posNBT.func_150309_d(0)
-					- x1));
-			posNBT.func_150304_a(1, new NBTTagDouble(posNBT.func_150309_d(1)
-					- y1));
-			posNBT.func_150304_a(2, new NBTTagDouble(posNBT.func_150309_d(2)
-					- z1));
-			entities.appendTag(enbt);
-		}
-		return entities;
-	}
-
-	public static NBTTagList getTileEntities(World world, int x1, int y1,
-			int z1, int x2, int y2, int z2) {
-		assert !world.isRemote;
-		if (x1 > x2) {
-			int t = x1;
-			x1 = x2;
-			x2 = t;
-		}
-		if (y1 > y2) {
-			int t = y1;
-			y1 = y2;
-			y2 = t;
-		}
-		if (z1 > z2) {
-			int t = z1;
-			z1 = z2;
-			z2 = t;
-		}
-		NBTTagList tileEntities = new NBTTagList();
-		for (int x = x1; x <= x2; x++) {
-			for (int y = y1; y <= y2; y++) {
-				for (int z = z1; z <= z2; z++) {
-					TileEntity tileEntity = world.getTileEntity(x, y, z);
-					if (tileEntity != null) {
-						NBTTagCompound tenbt = new NBTTagCompound();
-						tileEntity.writeToNBT(tenbt);
-						tenbt.setInteger("x", tenbt.getInteger("x") - x1);
-						tenbt.setInteger("y", tenbt.getInteger("y") - y1);
-						tenbt.setInteger("z", tenbt.getInteger("z") - z1);
-						tileEntities.appendTag(tenbt);
-					}
-				}
-			}
-		}
-		return tileEntities;
-	}
-
-	public static float pitchOffsetForDirection(ForgeDirection rotationDirection) {
-		switch (rotationDirection) {
-		case UP:
-			return 90;
-		case WEST:
-			return 0;
-		case NORTH:
-			return 0;
-		case DOWN:
-			return -90;
-		case EAST:
-			return 0;
-		case SOUTH:
-		case UNKNOWN:
-		default:
-			return 0;
-		}
-	}
-
-	public static int rotationCountForDirection(ForgeDirection rotationDirection) {
-		switch (rotationDirection) {
-		case UP:
-			return 1;
-		case WEST:
-			return 1;
-		case NORTH:
-			return 2;
-		case DOWN:
-			return 1;
-		case EAST:
-			return 1;
-		case SOUTH:
-		case UNKNOWN:
-		default:
-			return 0;
-		}
-	}
-
-	public static float yawOffsetForDirection(ForgeDirection rotationDirection) {
-		switch (rotationDirection) {
-		case UP:
-			return 0;
-		case WEST:
-			return 90;
-		case NORTH:
-			return 180;
-		case DOWN:
-			return 0;
-		case EAST:
-			return -90;
-		case SOUTH:
-		case UNKNOWN:
-		default:
-			return 0;
-		}
-	}
-
 	// cache of the x,y,z locations of all anchor blocks
 	private ArrayList<Integer[]> anchorBlockLocations;
 	private int blocks[][][];
@@ -391,8 +241,8 @@ public class Schematic extends WeightedRandom.Item {
 			}
 		}
 		if (!world.isRemote) {
-			this.entities = getEntities(world, x1, y1, z1, x2, y2, z2);
-			this.tileEntities = getTileEntities(world, x1, y1, z1, x2, y2, z2);
+			this.entities = WorldUtils.getEntities(world, x1, y1, z1, x2, y2, z2);
+			this.tileEntities = WorldUtils.getTileEntities(world, x1, y1, z1, x2, y2, z2);
 		}
 	}
 
@@ -409,8 +259,8 @@ public class Schematic extends WeightedRandom.Item {
 			ForgeDirection rotationDirection) {
 		// used for world generation to determine if all anchor blocks in the
 		// schematic match up with the world
-		ForgeDirection rotationAxis = axisForDirection(rotationDirection);
-		int rotationCount = rotationCountForDirection(rotationDirection);
+		ForgeDirection rotationAxis = DirectionUtils.axisForDirection(rotationDirection);
+		int rotationCount = DirectionUtils.rotationCountForDirection(rotationDirection);
 		Vec3 offset = Vec3.createVectorHelper(atX, atY, atZ);
 		if (anchorBlockLocations.isEmpty()) {
 			Vec3 middle = rotateCoords(
@@ -551,10 +401,10 @@ public class Schematic extends WeightedRandom.Item {
 	public void placeInWorld(World world, int atX, int atY, int atZ,
 			ForgeDirection rotationDirection, boolean generateChests,
 			boolean generateSpawners, Random rand) {
-		ForgeDirection rotationAxis = axisForDirection(rotationDirection);
-		int rotationCount = rotationCountForDirection(rotationDirection);
-		float pitchOffset = pitchOffsetForDirection(rotationDirection);
-		float yawOffset = yawOffsetForDirection(rotationDirection);
+		ForgeDirection rotationAxis = DirectionUtils.axisForDirection(rotationDirection);
+		int rotationCount = DirectionUtils.rotationCountForDirection(rotationDirection);
+		float pitchOffset = DirectionUtils.pitchOffsetForDirection(rotationDirection);
+		float yawOffset = DirectionUtils.yawOffsetForDirection(rotationDirection);
 		Vec3 offset = Vec3.createVectorHelper(atX, atY, atZ);
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {

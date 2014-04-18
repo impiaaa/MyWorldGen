@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.SchematicFilenameFilter;
 import net.boatcake.MyWorldGen.network.MessagePlaceSchem;
+import net.boatcake.MyWorldGen.utils.NetUtils;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
@@ -55,7 +56,7 @@ public class GuiLoadSchematic extends GuiScreen {
 				message.y = y;
 				message.z = z;
 				message.direction = direction;
-				MyWorldGen.instance.sendToServer(message);
+				NetUtils.sendToServer(message);
 				this.mc.displayGuiScreen(null);
 			} else {
 				slot.actionPerformed(button);

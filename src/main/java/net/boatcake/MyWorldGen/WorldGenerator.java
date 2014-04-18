@@ -12,6 +12,7 @@ import java.util.Random;
 
 import org.apache.logging.log4j.Level;
 
+import net.boatcake.MyWorldGen.utils.DirectionUtils;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
@@ -85,7 +86,7 @@ public class WorldGenerator implements IWorldGenerator {
 						int x = random.nextInt(16) + chunkX * 16;
 						int y = random.nextInt(world.getHeight());
 						int z = random.nextInt(16) + chunkZ * 16;
-						ForgeDirection randomDirection = randomDirections[random
+						ForgeDirection randomDirection = DirectionUtils.randomDirections[random
 								.nextInt(4)];
 						if (schemToGenerate.fitsIntoWorldAt(world, x, y, z,
 								randomDirection)) {

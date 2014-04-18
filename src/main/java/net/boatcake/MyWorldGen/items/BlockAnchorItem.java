@@ -6,7 +6,6 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
 public class BlockAnchorItem extends ItemBlock {
-
 	public BlockAnchorItem(Block block) {
 		super(block);
 		this.setMaxDamage(0);

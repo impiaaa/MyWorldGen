@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBufOutputStream;
 import java.io.IOException;
 
 import net.boatcake.MyWorldGen.Schematic;
+import net.boatcake.MyWorldGen.utils.WorldUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -52,9 +53,9 @@ public class MessageGetSchemServer implements MWGMessage {
 			 * selection box in order to compile block data later.
 			 */
 			MessageGetSchemClient response = new MessageGetSchemClient();
-			response.entitiesTag = Schematic.getEntities(playerMP.worldObj,
+			response.entitiesTag = WorldUtils.getEntities(playerMP.worldObj,
 					this.x1, this.y1, this.z1, this.x2, this.y2, this.z2);
-			response.tileEntitiesTag = Schematic.getTileEntities(
+			response.tileEntitiesTag = WorldUtils.getTileEntities(
 					playerMP.worldObj, this.x1, this.y1, this.z1, this.x2,
 					this.y2, this.z2);
 			response.x1 = x1;
