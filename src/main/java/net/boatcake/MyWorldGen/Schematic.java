@@ -93,17 +93,19 @@ public class Schematic extends WeightedRandomItem {
 			}
 		} else {
 			if (tag.hasKey("ignoreBlockId")) {
+				int id = tag.getInteger("ignoreBlockId");
 				if (MyWorldGen.ignoreBlock != null) {
-					idMap.put(tag.getInteger("ignoreBlockId"),
-							MyWorldGen.ignoreBlock);
+					idMap.put(id, MyWorldGen.ignoreBlock);
 				}
-				placingMap.put(tag.getInteger("ignoreBlockId"),
-						BlockPlacementLogic.get("ignore"));
+				placingMap.put(id, BlockPlacementLogic.get("ignore"));
 			} else {
 				MyWorldGen.log
 						.log(Level.WARNING,
 								"Schematic file {0} has no ignoreBlockId tag, defaulting to ID from config",
 								name);
+				if (MyWorldGen.ignoreBlock != null) {
+					placingMap.put(MyWorldGen.ignoreBlock.blockID, BlockPlacementLogic.get("ignore"));
+				}
 			}
 
 			if (tag.hasKey("anchorBlockId")) {
@@ -118,6 +120,10 @@ public class Schematic extends WeightedRandomItem {
 						.log(Level.WARNING,
 								"Schematic file {0} has no anchorBlockId tag, defaulting to ID from config",
 								name);
+				if (MyWorldGen.materialAnchorBlock != null) {
+					placingMap.put(MyWorldGen.materialAnchorBlock.blockID, BlockPlacementLogic.get("anchor"));
+					matchingMap.put(MyWorldGen.materialAnchorBlock.blockID, BlockAnchorLogic.get("anchor"));
+				}
 			}
 		}
 

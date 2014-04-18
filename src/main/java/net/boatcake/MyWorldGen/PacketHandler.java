@@ -1,7 +1,6 @@
 package net.boatcake.MyWorldGen;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import net.boatcake.MyWorldGen.client.GuiSaveSchematic;
@@ -15,7 +14,6 @@ import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 
 public class PacketHandler implements IPacketHandler {
