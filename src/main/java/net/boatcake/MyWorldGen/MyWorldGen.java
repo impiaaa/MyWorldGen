@@ -166,7 +166,7 @@ public class MyWorldGen {
 			creativeTab = new CreativeTabs("tabMyWorldGen") {
 				@Override
 				public Item getTabIconItem() {
-					return ItemBlock.getItemFromBlock(materialAnchorBlock == null ? Blocks.grass : materialAnchorBlock);
+					return Item.getItemFromBlock(materialAnchorBlock == null ? Blocks.grass : materialAnchorBlock);
 				}
 			};
 		}

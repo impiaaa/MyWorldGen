@@ -6,7 +6,6 @@ import io.netty.buffer.ByteBufOutputStream;
 
 import java.io.IOException;
 
-import net.boatcake.MyWorldGen.Schematic;
 import net.boatcake.MyWorldGen.utils.WorldUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

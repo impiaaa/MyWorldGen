@@ -2,12 +2,12 @@ package net.boatcake.MyWorldGen.utils;
 
 import java.util.EnumMap;
 
+import net.boatcake.MyWorldGen.network.MWGMessage;
+import net.minecraft.entity.player.EntityPlayerMP;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.boatcake.MyWorldGen.network.MWGMessage;
-import net.minecraft.entity.player.EntityPlayerMP;
 
 public class NetUtils {
 	public static EnumMap<Side, FMLEmbeddedChannel> net;

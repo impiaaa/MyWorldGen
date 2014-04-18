@@ -34,6 +34,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import org.apache.logging.log4j.Level;
 
+import cpw.mods.fml.common.registry.GameData;
+
 public class Schematic extends WeightedRandom.Item {
 	// cache of the x,y,z locations of all anchor blocks
 	private ArrayList<Integer[]> anchorBlockLocations;
@@ -94,17 +96,19 @@ public class Schematic extends WeightedRandom.Item {
 			}
 		} else {
 			if (tag.hasKey("ignoreBlockId")) {
+				int id = tag.getInteger("ignoreBlockId");
 				if (MyWorldGen.ignoreBlock != null) {
-					idMap.put(tag.getInteger("ignoreBlockId"),
-							MyWorldGen.ignoreBlock);
+					idMap.put(id, MyWorldGen.ignoreBlock);
 				}
-				placingMap.put(tag.getInteger("ignoreBlockId"),
-						BlockPlacementLogic.get("ignore"));
+				placingMap.put(id, BlockPlacementLogic.get("ignore"));
 			} else {
 				MyWorldGen.log
 						.log(Level.WARN,
 								"Schematic file {} has no ignoreBlockId tag, defaulting to ID from config",
 								name);
+				if (MyWorldGen.ignoreBlock != null) {
+					placingMap.put(GameData.getBlockRegistry().getId(MyWorldGen.ignoreBlock), BlockPlacementLogic.get("ignore"));
+				}
 			}
 
 			if (tag.hasKey("anchorBlockId")) {
@@ -119,6 +123,10 @@ public class Schematic extends WeightedRandom.Item {
 						.log(Level.WARN,
 								"Schematic file {} has no anchorBlockId tag, defaulting to ID from config",
 								name);
+				if (MyWorldGen.materialAnchorBlock != null) {
+					placingMap.put(GameData.getBlockRegistry().getId(MyWorldGen.materialAnchorBlock), BlockPlacementLogic.get("anchor"));
+					matchingMap.put(GameData.getBlockRegistry().getId(MyWorldGen.materialAnchorBlock), BlockAnchorLogic.get("anchor"));
+				}
 			}
 		}
 
@@ -423,7 +431,7 @@ public class Schematic extends WeightedRandom.Item {
 								(int) rotatedCoords.zCoord, block,
 								meta[x][y][z], 0x2);
 					} else {
-						Block block = (Block) Block.getBlockById(blocks[x][y][z]);
+						Block block = Block.getBlockById(blocks[x][y][z]);
 						world.setBlock((int) rotatedCoords.xCoord,
 								(int) rotatedCoords.yCoord,
 								(int) rotatedCoords.zCoord, block,
