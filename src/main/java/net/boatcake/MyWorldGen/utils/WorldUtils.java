@@ -33,14 +33,11 @@ public class WorldUtils {
 				.getBoundingBox(x1 - 0.5, y1 - 0.5, z1 - 0.5, x2 + 0.5,
 						y2 + 0.5, z2 + 0.5))) {
 			NBTTagCompound enbt = new NBTTagCompound();
-			((Entity) o).writeToNBT(enbt);
+			((Entity) o).writeToNBTOptional(enbt);
 			NBTTagList posNBT = (NBTTagList) enbt.getTag("Pos");
-			posNBT.func_150304_a(0, new NBTTagDouble(posNBT.func_150309_d(0)
-					- x1));
-			posNBT.func_150304_a(1, new NBTTagDouble(posNBT.func_150309_d(1)
-					- y1));
-			posNBT.func_150304_a(2, new NBTTagDouble(posNBT.func_150309_d(2)
-					- z1));
+			posNBT.func_150304_a(0, new NBTTagDouble(posNBT.func_150309_d(0) - x1));
+			posNBT.func_150304_a(1, new NBTTagDouble(posNBT.func_150309_d(1) - y1));
+			posNBT.func_150304_a(2, new NBTTagDouble(posNBT.func_150309_d(2) - z1));
 			entities.appendTag(enbt);
 		}
 		return entities;

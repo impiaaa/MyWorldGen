@@ -21,9 +21,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.IWorldGenerator;
 
 public class WorldGenerator implements IWorldGenerator {
-	public static ForgeDirection[] randomDirections = new ForgeDirection[] {
-			ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST,
-			ForgeDirection.WEST };
 	private Map<File, Schematic> schemList;
 
 	public WorldGenerator() {
@@ -78,8 +75,7 @@ public class WorldGenerator implements IWorldGenerator {
 			if (!applicableSchematics.isEmpty()) {
 				WeightedRandom.Item noStructureItem = new WeightedRandom.Item(
 						MyWorldGen.generateNothingWeight);
-				WeightedRandom.Item selectedItem = WeightedRandom
-						.getRandomItem(random, applicableSchematics);
+				WeightedRandom.Item selectedItem = WeightedRandom.getRandomItem(random, applicableSchematics);
 				if (selectedItem != noStructureItem) {
 					Schematic schemToGenerate = (Schematic) selectedItem;
 					for (int i = 0; i < MyWorldGen.generateTries; i++) {

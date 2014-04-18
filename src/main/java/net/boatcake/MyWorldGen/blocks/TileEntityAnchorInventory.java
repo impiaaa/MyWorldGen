@@ -85,8 +85,7 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 
 	public boolean matches(Block block) {
 		for (int i = 0; i < inv.length; i++) {
-			if (inv[i] != null && (inv[i].getItem() instanceof ItemBlock)
-					&& (((ItemBlock) inv[i].getItem()).field_150939_a == block)) {
+			if (inv[i] != null && (inv[i].getItem() instanceof ItemBlock) && ((ItemBlock) inv[i].getItem()).field_150939_a == block) {
 				return true;
 			}
 		}

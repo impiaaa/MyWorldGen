@@ -1,25 +1,12 @@
 package net.boatcake.MyWorldGen.items;
 
-import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.network.MessageGetSchemClient;
-import net.boatcake.MyWorldGen.network.MessageGetSchemServer;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import net.boatcake.MyWorldGen.utils.NetUtils;
 import net.boatcake.MyWorldGen.utils.WorldUtils;
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 

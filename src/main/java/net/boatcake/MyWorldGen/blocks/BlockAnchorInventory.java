@@ -35,5 +35,4 @@ public class BlockAnchorInventory extends BlockContainer implements
 		player.openGui(MyWorldGen.instance, 2, world, x, y, z);
 		return true;
 	}
-
 }

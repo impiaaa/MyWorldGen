@@ -3,8 +3,6 @@ package net.boatcake.MyWorldGen.client;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import org.lwjgl.input.Keyboard;
-
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.Schematic;
 import net.minecraft.client.gui.GuiButton;
@@ -13,6 +11,9 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompressedStreamTools;
+
+import org.lwjgl.input.Keyboard;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

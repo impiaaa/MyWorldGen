@@ -42,6 +42,12 @@ public class GuiLoadSchematic extends GuiScreen {
 		if (button.enabled) {
 			if (button.id == doneButton.id) {
 				MessagePlaceSchem message = new MessagePlaceSchem();
+				message.x = x;
+				message.y = y;
+				message.z = z;
+				message.direction = direction;
+				// We might be able to send the file data directly, but it's
+				// better to make sure that it's valid NBT first.
 				try {
 					message.schematicTag = CompressedStreamTools
 							.readCompressed(new FileInputStream(
@@ -52,10 +58,6 @@ public class GuiLoadSchematic extends GuiScreen {
 					exc.printStackTrace();
 					return;
 				}
-				message.x = x;
-				message.y = y;
-				message.z = z;
-				message.direction = direction;
 				NetUtils.sendToServer(message);
 				this.mc.displayGuiScreen(null);
 			} else {

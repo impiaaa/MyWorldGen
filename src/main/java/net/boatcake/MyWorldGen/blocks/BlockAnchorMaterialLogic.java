@@ -17,10 +17,11 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 			return otherBlock == currentBiome.topBlock;
 		case AIR:
 			return otherBlock instanceof BlockAir
-					|| (otherBlock.getMaterial().isReplaceable() && !otherBlock
-							.getMaterial().isLiquid());
+					|| (otherBlock.getMaterial().isReplaceable()
+						&& !otherBlock.getMaterial().isLiquid());
 		default:
-			return !(otherBlock instanceof BlockAir) && type != null
+			return !(otherBlock instanceof BlockAir)
+					&& type != null
 					&& type.material != null
 					&& otherBlock.getMaterial() == type.material;
 		}

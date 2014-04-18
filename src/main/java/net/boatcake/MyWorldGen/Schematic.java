@@ -263,7 +263,7 @@ public class Schematic extends WeightedRandom.Item {
 		int rotationCount = DirectionUtils.rotationCountForDirection(rotationDirection);
 		Vec3 offset = Vec3.createVectorHelper(atX, atY, atZ);
 		if (anchorBlockLocations.isEmpty()) {
-			Vec3 middle = rotateCoords(
+			Vec3 middle = DirectionUtils.rotateCoords(
 					Vec3.createVectorHelper(width / 2, 0, length / 2), offset,
 					rotationAxis, rotationCount);
 			int midX = (int) middle.xCoord;
@@ -283,7 +283,7 @@ public class Schematic extends WeightedRandom.Item {
 		} else {
 			for (int i = 0; i < anchorBlockLocations.size(); i++) {
 				Integer[] origCoords = anchorBlockLocations.get(i);
-				Vec3 rotatedCoords = rotateCoords(Vec3.createVectorHelper(
+				Vec3 rotatedCoords = DirectionUtils.rotateCoords(Vec3.createVectorHelper(
 						origCoords[0], origCoords[1], origCoords[2]), offset,
 						rotationAxis, rotationCount);
 				if (!world.blockExists((int) rotatedCoords.xCoord,
@@ -409,7 +409,7 @@ public class Schematic extends WeightedRandom.Item {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
-					Vec3 rotatedCoords = rotateCoords(
+					Vec3 rotatedCoords = DirectionUtils.rotateCoords(
 							Vec3.createVectorHelper(x, y, z), offset,
 							rotationAxis, rotationCount);
 					if (placingMap.containsKey(blocks[x][y][z])) {
@@ -442,7 +442,7 @@ public class Schematic extends WeightedRandom.Item {
 							"Not loading entity ID {}",
 							entityTag.getString("id"));
 				} else {
-					Vec3 newCoords = rotateCoords(
+					Vec3 newCoords = DirectionUtils.rotateCoords(
 							Vec3.createVectorHelper(e.posX, e.posY, e.posZ),
 							offset, rotationAxis, rotationCount);
 					e.setPositionAndRotation(newCoords.xCoord,
@@ -462,7 +462,7 @@ public class Schematic extends WeightedRandom.Item {
 							"Not loading tile entity ID {}",
 							tileEntityTag.getString("id"));
 				} else {
-					Vec3 newCoords = rotateCoords(Vec3.createVectorHelper(
+					Vec3 newCoords = DirectionUtils.rotateCoords(Vec3.createVectorHelper(
 							e.xCoord, e.yCoord, e.zCoord), offset,
 							rotationAxis, rotationCount);
 					e.xCoord = (int) newCoords.xCoord;
@@ -480,7 +480,7 @@ public class Schematic extends WeightedRandom.Item {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
-					Vec3 rotatedCoords = rotateCoords(
+					Vec3 rotatedCoords = DirectionUtils.rotateCoords(
 							Vec3.createVectorHelper(x, y, z), offset,
 							rotationAxis, rotationCount);
 					Block block = world.getBlock((int) rotatedCoords.xCoord,
@@ -532,7 +532,7 @@ public class Schematic extends WeightedRandom.Item {
 						block = Block.getBlockById(blocks[x][y][z]);
 					}
 					if (block != null) {
-						Vec3 rotatedCoords = rotateCoords(
+						Vec3 rotatedCoords = DirectionUtils.rotateCoords(
 								Vec3.createVectorHelper(x, y, z), offset,
 								rotationAxis, rotationCount);
 						for (int i = 0; i < rotationCount; i++) {
@@ -545,47 +545,5 @@ public class Schematic extends WeightedRandom.Item {
 				}
 			}
 		}
-	}
-
-	private Vec3 rotateCoords(Vec3 coords, Vec3 at,
-			ForgeDirection rotationAxis, int rotationCount) {
-		double worldX = coords.xCoord;
-		double worldY = coords.yCoord;
-		double worldZ = coords.zCoord;
-		for (int i = 0; i < rotationCount; i++) {
-			if (rotationAxis.offsetX == 1) {
-				double temp = worldY;
-				worldY = -worldZ;
-				worldZ = temp;
-			} else if (rotationAxis.offsetX == -1) {
-				double temp = worldY;
-				worldY = worldZ;
-				worldZ = -temp;
-			}
-			if (rotationAxis.offsetY == 1) {
-				double temp = worldX;
-				worldX = -worldZ;
-				worldZ = temp;
-			} else if (rotationAxis.offsetY == -1) {
-				double temp = worldX;
-				worldX = worldZ;
-				worldZ = -temp;
-			}
-			if (rotationAxis.offsetZ == 1) {
-				double temp = worldX;
-				worldX = -worldY;
-				worldY = temp;
-			} else if (rotationAxis.offsetZ == -1) {
-				double temp = worldX;
-				worldX = worldY;
-				worldY = -temp;
-			}
-		}
-
-		worldX += at.xCoord;
-		worldY += at.yCoord;
-		worldZ += at.zCoord;
-
-		return Vec3.createVectorHelper(worldX, worldY, worldZ);
 	}
 }
