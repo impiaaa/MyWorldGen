@@ -100,7 +100,7 @@ public class Schematic extends WeightedRandom.Item {
 					idMap.put(id, MyWorldGen.ignoreBlock);
 				}
 				placingMap.put(id,
-						BlockPlacementLogic.get(MyWorldGen.MODID + "ignore"));
+						BlockPlacementLogic.get(MyWorldGen.MODID + ":ignore"));
 			} else {
 				MyWorldGen.log
 						.log(Level.WARN,
@@ -111,10 +111,10 @@ public class Schematic extends WeightedRandom.Item {
 							GameData.getBlockRegistry().getId(
 									MyWorldGen.ignoreBlock),
 							BlockPlacementLogic
-									.get(MyWorldGen.MODID + "ignore"));
+									.get(MyWorldGen.MODID + ":ignore"));
 				}
 				placingMap.put(MyWorldGen.ignoreBlockId,
-						BlockPlacementLogic.get(MyWorldGen.MODID + "ignore"));
+						BlockPlacementLogic.get(MyWorldGen.MODID + ":ignore"));
 			}
 
 			if (tag.hasKey("anchorBlockId")) {
@@ -123,9 +123,9 @@ public class Schematic extends WeightedRandom.Item {
 					idMap.put(id, MyWorldGen.materialAnchorBlock);
 				}
 				placingMap.put(id,
-						BlockPlacementLogic.get(MyWorldGen.MODID + "anchor"));
+						BlockPlacementLogic.get(MyWorldGen.MODID + ":anchor"));
 				matchingMap.put(id,
-						BlockAnchorLogic.get(MyWorldGen.MODID + "anchor"));
+						BlockAnchorLogic.get(MyWorldGen.MODID + ":anchor"));
 			} else {
 				MyWorldGen.log
 						.log(Level.WARN,
@@ -136,16 +136,16 @@ public class Schematic extends WeightedRandom.Item {
 							GameData.getBlockRegistry().getId(
 									MyWorldGen.materialAnchorBlock),
 							BlockPlacementLogic
-									.get(MyWorldGen.MODID + "anchor"));
+									.get(MyWorldGen.MODID + ":anchor"));
 					matchingMap.put(
 							GameData.getBlockRegistry().getId(
 									MyWorldGen.materialAnchorBlock),
-							BlockAnchorLogic.get(MyWorldGen.MODID + "anchor"));
+							BlockAnchorLogic.get(MyWorldGen.MODID + ":anchor"));
 				}
 				placingMap.put(MyWorldGen.materialAnchorBlockId,
-						BlockPlacementLogic.get(MyWorldGen.MODID + "anchor"));
+						BlockPlacementLogic.get(MyWorldGen.MODID + ":anchor"));
 				matchingMap.put(MyWorldGen.materialAnchorBlockId,
-						BlockAnchorLogic.get(MyWorldGen.MODID + "anchor"));
+						BlockAnchorLogic.get(MyWorldGen.MODID + ":anchor"));
 			}
 
 			if (MyWorldGen.inventoryAnchorBlock != null) {
@@ -153,19 +153,19 @@ public class Schematic extends WeightedRandom.Item {
 						GameData.getBlockRegistry().getId(
 								MyWorldGen.inventoryAnchorBlock),
 						BlockPlacementLogic.get(MyWorldGen.MODID
-								+ "anchorInventory"));
+								+ ":anchorInventory"));
 				matchingMap.put(
 						GameData.getBlockRegistry().getId(
 								MyWorldGen.inventoryAnchorBlock),
 						BlockAnchorLogic.get(MyWorldGen.MODID
-								+ "anchorInventory"));
+								+ ":anchorInventory"));
 			}
 			placingMap.put(
 					MyWorldGen.inventoryAnchorBlockId,
 					BlockPlacementLogic.get(MyWorldGen.MODID
-							+ "anchorInventory"));
+							+ ":anchorInventory"));
 			matchingMap.put(MyWorldGen.inventoryAnchorBlockId,
-					BlockAnchorLogic.get(MyWorldGen.MODID + "anchorInventory"));
+					BlockAnchorLogic.get(MyWorldGen.MODID + ":anchorInventory"));
 		}
 
 		anchorBlockLocations = new ArrayList<Integer[]>();
