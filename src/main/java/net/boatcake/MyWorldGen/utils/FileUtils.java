@@ -13,8 +13,8 @@ public class FileUtils {
 	public static void writeStream(InputStream inStream, String outName)
 			throws IOException {
 		// Used for self-extracting files
-		OutputStream outStream = new FileOutputStream(new File(MyWorldGen.globalSchemDir,
-				new File(outName).getName()));
+		OutputStream outStream = new FileOutputStream(new File(
+				MyWorldGen.globalSchemDir, new File(outName).getName()));
 		byte[] buffer = new byte[256];
 		int readLen;
 		while (true) {

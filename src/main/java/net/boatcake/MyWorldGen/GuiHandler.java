@@ -4,12 +4,11 @@ import net.boatcake.MyWorldGen.blocks.TileEntityAnchorInventory;
 import net.boatcake.MyWorldGen.client.GuiAnchorInventory;
 import net.boatcake.MyWorldGen.client.GuiLoadSchematic;
 import net.boatcake.MyWorldGen.client.GuiSaveSchematic;
-import net.minecraft.block.BlockPistonBase;
+import net.boatcake.MyWorldGen.utils.DirectionUtils;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -27,8 +26,7 @@ public class GuiHandler implements IGuiHandler {
 			return new GuiSaveSchematic();
 		case 1:
 			return new GuiLoadSchematic(world, x, y, z,
-					ForgeDirection.getOrientation(BlockPistonBase
-							.determineOrientation(world, x, y, z, player)),
+					DirectionUtils.getDirectionFromYaw(player.rotationYaw),
 					(EntityClientPlayerMP) player);
 		case 2:
 			TileEntity tileEntity = world.getTileEntity(x, y, z);

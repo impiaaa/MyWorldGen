@@ -11,6 +11,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class NetUtils {
 	public static EnumMap<Side, FMLEmbeddedChannel> net;
+
 	public static void sendTo(MWGMessage message, EntityPlayerMP player) {
 		net.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
 				.set(FMLOutboundHandler.OutboundTarget.PLAYER);

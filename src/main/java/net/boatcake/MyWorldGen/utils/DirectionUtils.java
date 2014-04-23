@@ -1,5 +1,6 @@
 package net.boatcake.MyWorldGen.utils;
 
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -116,16 +117,20 @@ public class DirectionUtils {
 				worldY = -temp;
 			}
 		}
-	
+
 		worldX += at.xCoord;
 		worldY += at.yCoord;
 		worldZ += at.zCoord;
-	
+
 		return Vec3.createVectorHelper(worldX, worldY, worldZ);
 	}
 
-	public static ForgeDirection[] randomDirections = new ForgeDirection[] {
-	ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST,
-	ForgeDirection.WEST };
+	public static ForgeDirection[] cardinalDirections = new ForgeDirection[] {
+			ForgeDirection.NORTH, ForgeDirection.EAST, ForgeDirection.SOUTH,
+			ForgeDirection.WEST };
 
+	public static ForgeDirection getDirectionFromYaw(float yaw) {
+		return cardinalDirections[MathHelper
+				.floor_double(yaw * 4.0F / 360.0F + 0.5D) & 0x3];
+	}
 }

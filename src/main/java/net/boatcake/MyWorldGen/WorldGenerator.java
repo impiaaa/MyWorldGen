@@ -76,14 +76,15 @@ public class WorldGenerator implements IWorldGenerator {
 			if (!applicableSchematics.isEmpty()) {
 				WeightedRandom.Item noStructureItem = new WeightedRandom.Item(
 						MyWorldGen.generateNothingWeight);
-				WeightedRandom.Item selectedItem = WeightedRandom.getRandomItem(random, applicableSchematics);
+				WeightedRandom.Item selectedItem = WeightedRandom
+						.getRandomItem(random, applicableSchematics);
 				if (selectedItem != noStructureItem) {
 					Schematic schemToGenerate = (Schematic) selectedItem;
 					for (int i = 0; i < MyWorldGen.generateTries; i++) {
 						int x = random.nextInt(16) + chunkX * 16;
 						int y = random.nextInt(world.getHeight());
 						int z = random.nextInt(16) + chunkZ * 16;
-						ForgeDirection randomDirection = DirectionUtils.randomDirections[random
+						ForgeDirection randomDirection = DirectionUtils.cardinalDirections[random
 								.nextInt(4)];
 						if (schemToGenerate.fitsIntoWorldAt(world, x, y, z,
 								randomDirection)) {

@@ -34,10 +34,16 @@ public class WorldUtils {
 						y2 + 0.5, z2 + 0.5))) {
 			NBTTagCompound enbt = new NBTTagCompound();
 			((Entity) o).writeToNBTOptional(enbt);
+			if (enbt.hasNoTags()) {
+				continue;
+			}
 			NBTTagList posNBT = (NBTTagList) enbt.getTag("Pos");
-			posNBT.func_150304_a(0, new NBTTagDouble(posNBT.func_150309_d(0) - x1));
-			posNBT.func_150304_a(1, new NBTTagDouble(posNBT.func_150309_d(1) - y1));
-			posNBT.func_150304_a(2, new NBTTagDouble(posNBT.func_150309_d(2) - z1));
+			posNBT.func_150304_a(0, new NBTTagDouble(posNBT.func_150309_d(0)
+					- x1));
+			posNBT.func_150304_a(1, new NBTTagDouble(posNBT.func_150309_d(1)
+					- y1));
+			posNBT.func_150304_a(2, new NBTTagDouble(posNBT.func_150309_d(2)
+					- z1));
 			entities.appendTag(enbt);
 		}
 		return entities;

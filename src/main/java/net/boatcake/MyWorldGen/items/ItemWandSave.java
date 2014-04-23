@@ -60,16 +60,19 @@ public class ItemWandSave extends Item {
 					message.x2 = blockX;
 					message.y2 = blockY;
 					message.z2 = blockZ;
-					message.entitiesTag = WorldUtils.getEntities(playerMP.worldObj, message.x1, message.y1, message.z1, message.x2, message.y2, message.z2);
-					message.tileEntitiesTag = WorldUtils.getTileEntities(playerMP.worldObj, message.x1, message.y1, message.z1, message.x2, message.y2, message.z2);
+					message.entitiesTag = WorldUtils.getEntities(
+							playerMP.worldObj, message.x1, message.y1,
+							message.z1, message.x2, message.y2, message.z2);
+					message.tileEntitiesTag = WorldUtils.getTileEntities(
+							playerMP.worldObj, message.x1, message.y1,
+							message.z1, message.x2, message.y2, message.z2);
 					NetUtils.sendTo(message, playerMP);
 				}
 				// Clear the item data, so that we can make a new selection
 				stack.setTagCompound(null);
 			} else {
 				/*
-				 * START HERE
-				 * Step 1: Find the first corner, and record it to
+				 * START HERE Step 1: Find the first corner, and record it to
 				 * the item data.
 				 */
 				NBTTagCompound tag = new NBTTagCompound();

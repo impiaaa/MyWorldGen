@@ -31,6 +31,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 import org.apache.logging.log4j.Logger;
 
@@ -43,6 +44,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 
@@ -53,11 +55,14 @@ public class MyWorldGen {
 	public static int generateTries;
 	public static File globalSchemDir;
 	public static Block ignoreBlock;
+	public static int ignoreBlockId;
 	@Instance("MyWorldGen")
 	public static MyWorldGen instance;
 	public static Block inventoryAnchorBlock;
+	public static int inventoryAnchorBlockId;
 	public static Logger log;
 	public static Block materialAnchorBlock;
+	public static int materialAnchorBlockId;
 	public final static String MODID = "MyWorldGen";
 	public static String resourcePath = "assets/myworldgen/worldgen";
 	public static Item wandLoad;
@@ -71,7 +76,8 @@ public class MyWorldGen {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
-		NetUtils.net = NetworkRegistry.INSTANCE.newChannel("MyWorldGen", new MWGCodec());
+		NetUtils.net = NetworkRegistry.INSTANCE.newChannel("MyWorldGen",
+				new MWGCodec());
 
 		if (!globalSchemDir.isDirectory()) {
 			globalSchemDir.mkdir();
@@ -87,7 +93,8 @@ public class MyWorldGen {
 						if (!ze.isDirectory()
 								&& ze.getName().startsWith(
 										worldGenDir.getName())) {
-							FileUtils.writeStream(zf.getInputStream(ze), ze.getName());
+							FileUtils.writeStream(zf.getInputStream(ze),
+									ze.getName());
 						}
 					}
 				}
@@ -99,7 +106,8 @@ public class MyWorldGen {
 				if (f.isDirectory()) {
 					for (String s : f.list()) {
 						try {
-							FileUtils.writeStream(new FileInputStream(new File(f, s)), s);
+							FileUtils.writeStream(new FileInputStream(new File(
+									f, s)), s);
 						} catch (Throwable e1) {
 							e1.printStackTrace();
 						}
@@ -166,20 +174,52 @@ public class MyWorldGen {
 			creativeTab = new CreativeTabs("tabMyWorldGen") {
 				@Override
 				public Item getTabIconItem() {
-					return Item.getItemFromBlock(materialAnchorBlock == null ? Blocks.grass : materialAnchorBlock);
+					return Item
+							.getItemFromBlock(materialAnchorBlock == null ? Blocks.grass
+									: materialAnchorBlock);
 				}
 			};
 		}
 
 		try {
+			Property prop;
 			materialAnchorBlock = registerBlock("anchor",
-					BlockAnchorMaterial.class, cfg, BlockAnchorItem.class,
+					BlockAnchorMaterial.class, BlockAnchorItem.class,
 					BlockAnchorMaterialLogic.class);
-			ignoreBlock = registerBlock("ignore", BlockIgnore.class, cfg,
-					null, null);
+			prop = cfg
+					.get("blocks", "materialAnchorBlock",
+							"Default ID for when an ID map is not found in a schematic");
+			if (materialAnchorBlock == null) {
+				materialAnchorBlockId = prop.getInt(1575);
+			} else {
+				materialAnchorBlockId = prop.getInt(GameData.getBlockRegistry()
+						.getId(materialAnchorBlock));
+			}
+
+			ignoreBlock = registerBlock("ignore", BlockIgnore.class, null, null);
+			prop = cfg
+					.get("blocks", "ignoreBlock",
+							"Default ID for when an ID map is not found in a schematic");
+			if (ignoreBlock == null) {
+				ignoreBlockId = prop.getInt(1576);
+			} else {
+				ignoreBlockId = prop.getInt(GameData.getBlockRegistry().getId(
+						ignoreBlock));
+			}
+
 			inventoryAnchorBlock = registerBlock("anchorInventory",
-					BlockAnchorInventory.class, cfg, null,
+					BlockAnchorInventory.class, null,
 					BlockAnchorInventoryLogic.class);
+			prop = cfg
+					.get("blocks", "inventoryAnchorBlock",
+							"Default ID for when an ID map is not found in a schematic");
+			if (inventoryAnchorBlock == null) {
+				inventoryAnchorBlockId = prop.getInt(1577);
+			} else {
+				inventoryAnchorBlockId = prop.getInt(GameData
+						.getBlockRegistry().getId(inventoryAnchorBlock));
+			}
+
 			wandSave = registerItem("wandSave", ItemWandSave.class, cfg);
 			wandLoad = registerItem("wandLoad", ItemWandLoad.class, cfg);
 		} catch (RuntimeException e) {
@@ -227,15 +267,14 @@ public class MyWorldGen {
 		GameRegistry.registerWorldGenerator(worldGen, 0);
 	}
 
-	private Block registerBlock(String name,
-			Class<? extends Block> blockClass, Configuration cfg,
+	private Block registerBlock(String name, Class<? extends Block> blockClass,
 			Class<? extends ItemBlock> itemBlockClass,
 			Class<? extends BlockAnchorLogic> matching)
 			throws RuntimeException, ReflectiveOperationException {
 		Block block = null;
 		if (enableItemsAndBlocks) {
-			block = blockClass.getConstructor(Material.class)
-					.newInstance(Material.circuits);
+			block = blockClass.getConstructor(Material.class).newInstance(
+					Material.circuits);
 			block.setBlockName(name);
 			block.setBlockTextureName(MyWorldGen.MODID + ":" + name);
 			block.setCreativeTab(creativeTab);
@@ -244,16 +283,17 @@ public class MyWorldGen {
 							(itemBlockClass == null) ? ItemBlock.class
 									: itemBlockClass, name);
 		}
-		new BlockPlacementIgnore(name);
+		new BlockPlacementIgnore(MyWorldGen.MODID + ":" + name);
 		if (matching != null) {
-			matching.getConstructor(String.class).newInstance(name);
+			matching.getConstructor(String.class).newInstance(
+					MyWorldGen.MODID + ":" + name);
 		}
 		return block;
 	}
 
-	private Item registerItem(String name, 
-			Class<? extends Item> itemClass, Configuration cfg)
-			throws RuntimeException, ReflectiveOperationException {
+	private Item registerItem(String name, Class<? extends Item> itemClass,
+			Configuration cfg) throws RuntimeException,
+			ReflectiveOperationException {
 		Item item = null;
 		if (enableItemsAndBlocks) {
 			item = itemClass.getConstructor().newInstance();
@@ -269,9 +309,9 @@ public class MyWorldGen {
 	public void serverStart(FMLServerAboutToStartEvent event) {
 		worldGen.addSchematicsFromDirectory(globalSchemDir);
 	}
-	
+
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent e) {
-		//JUnitCore.runClasses(TestAnchors.class);
+		// JUnitCore.runClasses(TestAnchors.class);
 	}
 }
