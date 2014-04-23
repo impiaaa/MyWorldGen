@@ -34,6 +34,9 @@ public class WorldUtils {
 						y2 + 0.5, z2 + 0.5))) {
 			NBTTagCompound enbt = new NBTTagCompound();
 			((Entity) o).writeToNBTOptional(enbt);
+			if (enbt.hasNoTags()) {
+				continue;
+			}
 			NBTTagList posNBT = enbt.getTagList("Pos");
 			NBTTagDouble coordNBT = (NBTTagDouble) posNBT.tagAt(0);
 			coordNBT.data -= x1;

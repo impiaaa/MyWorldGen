@@ -52,11 +52,14 @@ public class MyWorldGen {
 	public static int generateTries;
 	public static File globalSchemDir;
 	public static Block ignoreBlock;
+	public static int ignoreBlockId;
 	@Instance("MyWorldGen")
 	public static MyWorldGen instance;
 	public static Block inventoryAnchorBlock;
+	public static int inventoryAnchorBlockId;
 	public static Logger log;
 	public static Block materialAnchorBlock;
+	public static int materialAnchorBlockId;
 	public final static String MODID = "MyWorldGen";
 	public static String resourcePath = "assets/myworldgen/worldgen";
 	public static Item wandLoad;
@@ -174,13 +177,17 @@ public class MyWorldGen {
 		}
 
 		try {
-			materialAnchorBlock = registerBlock("anchor", 1575,
-					BlockAnchorMaterial.class, cfg, BlockAnchorItem.class,
-					BlockAnchorMaterialLogic.class);
-			ignoreBlock = registerBlock("ignore", 1576, BlockIgnore.class, cfg,
-					null, null);
-			inventoryAnchorBlock = registerBlock("anchorInventory", 1577,
-					BlockAnchorInventory.class, cfg, null,
+			materialAnchorBlockId = cfg.getBlock("anchor", 1575).getInt(1575);
+			materialAnchorBlock = registerBlock("anchor",
+					materialAnchorBlockId, BlockAnchorMaterial.class,
+					BlockAnchorItem.class, BlockAnchorMaterialLogic.class);
+			ignoreBlockId = cfg.getBlock("ignore", 1576).getInt(1576);
+			ignoreBlock = registerBlock("ignore", ignoreBlockId,
+					BlockIgnore.class, null, null);
+			inventoryAnchorBlockId = cfg.getBlock("anchorInventory", 1577)
+					.getInt(1577);
+			inventoryAnchorBlock = registerBlock("anchorInventory",
+					inventoryAnchorBlockId, BlockAnchorInventory.class, null,
 					BlockAnchorInventoryLogic.class);
 			wandSave = registerItem("wandSave", 4175, ItemWandSave.class, cfg);
 			wandLoad = registerItem("wandLoad", 4176, ItemWandLoad.class, cfg);
@@ -229,13 +236,12 @@ public class MyWorldGen {
 		GameRegistry.registerWorldGenerator(worldGen);
 	}
 
-	private Block registerBlock(String name, int defaultID,
-			Class<? extends Block> blockClass, Configuration cfg,
+	private Block registerBlock(String name, int id,
+			Class<? extends Block> blockClass,
 			Class<? extends ItemBlock> itemBlockClass,
 			Class<? extends BlockAnchorLogic> matching)
 			throws RuntimeException, ReflectiveOperationException {
 		Block block = null;
-		int id = cfg.getBlock(name, defaultID).getInt(defaultID);
 		if (id > 0 && enableItemsAndBlocks) {
 			block = blockClass.getConstructor(int.class, Material.class)
 					.newInstance(id, Material.circuits);
@@ -247,9 +253,10 @@ public class MyWorldGen {
 							(itemBlockClass == null) ? ItemBlock.class
 									: itemBlockClass, name);
 		}
-		new BlockPlacementIgnore(name);
+		new BlockPlacementIgnore(MyWorldGen.MODID + ":" + name);
 		if (matching != null) {
-			matching.getConstructor(String.class).newInstance(name);
+			matching.getConstructor(String.class).newInstance(
+					MyWorldGen.MODID + ":" + name);
 		}
 		return block;
 	}

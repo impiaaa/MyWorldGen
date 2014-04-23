@@ -97,16 +97,15 @@ public class Schematic extends WeightedRandomItem {
 				if (MyWorldGen.ignoreBlock != null) {
 					idMap.put(id, MyWorldGen.ignoreBlock);
 				}
-				placingMap.put(id, BlockPlacementLogic.get("ignore"));
+				placingMap.put(id,
+						BlockPlacementLogic.get(MyWorldGen.MODID + ":ignore"));
 			} else {
 				MyWorldGen.log
 						.log(Level.WARNING,
 								"Schematic file {0} has no ignoreBlockId tag, defaulting to ID from config",
 								name);
-				if (MyWorldGen.ignoreBlock != null) {
-					placingMap.put(MyWorldGen.ignoreBlock.blockID,
-							BlockPlacementLogic.get("ignore"));
-				}
+				placingMap.put(MyWorldGen.ignoreBlockId,
+						BlockPlacementLogic.get(MyWorldGen.MODID + ":ignore"));
 			}
 
 			if (tag.hasKey("anchorBlockId")) {
@@ -114,20 +113,28 @@ public class Schematic extends WeightedRandomItem {
 				if (MyWorldGen.materialAnchorBlock != null) {
 					idMap.put(id, MyWorldGen.materialAnchorBlock);
 				}
-				placingMap.put(id, BlockPlacementLogic.get("anchor"));
-				matchingMap.put(id, BlockAnchorLogic.get("anchor"));
+				placingMap.put(id,
+						BlockPlacementLogic.get(MyWorldGen.MODID + ":anchor"));
+				matchingMap.put(id,
+						BlockAnchorLogic.get(MyWorldGen.MODID + ":anchor"));
 			} else {
 				MyWorldGen.log
 						.log(Level.WARNING,
 								"Schematic file {0} has no anchorBlockId tag, defaulting to ID from config",
 								name);
-				if (MyWorldGen.materialAnchorBlock != null) {
-					placingMap.put(MyWorldGen.materialAnchorBlock.blockID,
-							BlockPlacementLogic.get("anchor"));
-					matchingMap.put(MyWorldGen.materialAnchorBlock.blockID,
-							BlockAnchorLogic.get("anchor"));
-				}
+				placingMap.put(MyWorldGen.materialAnchorBlockId,
+						BlockPlacementLogic.get(MyWorldGen.MODID + ":anchor"));
+				matchingMap.put(MyWorldGen.materialAnchorBlockId,
+						BlockAnchorLogic.get(MyWorldGen.MODID + ":anchor"));
 			}
+			placingMap.put(
+					MyWorldGen.inventoryAnchorBlockId,
+					BlockPlacementLogic.get(MyWorldGen.MODID
+							+ ":anchorInventory"));
+			matchingMap
+					.put(MyWorldGen.inventoryAnchorBlockId,
+							BlockAnchorLogic.get(MyWorldGen.MODID
+									+ ":anchorInventory"));
 		}
 
 		anchorBlockLocations = new ArrayList<Integer[]>();
@@ -161,7 +168,7 @@ public class Schematic extends WeightedRandomItem {
 		entities = tag.getTagList("Entities");
 		tileEntities = tag.getTagList("TileEntities");
 
-		if (anchorBlockLocations.isEmpty()) {
+		if (anchorBlockLocations.isEmpty() && name != null) {
 			MyWorldGen.log.log(Level.WARNING,
 					"No anchors found in schematic {0}", name);
 		}

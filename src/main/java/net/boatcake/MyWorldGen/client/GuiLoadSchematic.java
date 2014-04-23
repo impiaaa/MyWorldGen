@@ -67,7 +67,7 @@ public class GuiLoadSchematic extends GuiScreen {
 				packet.data = bos.toByteArray();
 				packet.length = bos.size();
 				player.sendQueue.addToSendQueue(packet);
-				mc.displayGuiScreen(null);
+				this.mc.displayGuiScreen(null);
 			} else {
 				slot.actionPerformed(button);
 			}
