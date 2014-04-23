@@ -104,7 +104,8 @@ public class Schematic extends WeightedRandomItem {
 								"Schematic file {0} has no ignoreBlockId tag, defaulting to ID from config",
 								name);
 				if (MyWorldGen.ignoreBlock != null) {
-					placingMap.put(MyWorldGen.ignoreBlock.blockID, BlockPlacementLogic.get("ignore"));
+					placingMap.put(MyWorldGen.ignoreBlock.blockID,
+							BlockPlacementLogic.get("ignore"));
 				}
 			}
 
@@ -121,8 +122,10 @@ public class Schematic extends WeightedRandomItem {
 								"Schematic file {0} has no anchorBlockId tag, defaulting to ID from config",
 								name);
 				if (MyWorldGen.materialAnchorBlock != null) {
-					placingMap.put(MyWorldGen.materialAnchorBlock.blockID, BlockPlacementLogic.get("anchor"));
-					matchingMap.put(MyWorldGen.materialAnchorBlock.blockID, BlockAnchorLogic.get("anchor"));
+					placingMap.put(MyWorldGen.materialAnchorBlock.blockID,
+							BlockPlacementLogic.get("anchor"));
+					matchingMap.put(MyWorldGen.materialAnchorBlock.blockID,
+							BlockAnchorLogic.get("anchor"));
 				}
 			}
 		}
@@ -248,8 +251,10 @@ public class Schematic extends WeightedRandomItem {
 			}
 		}
 		if (!world.isRemote) {
-			this.entities = WorldUtils.getEntities(world, x1, y1, z1, x2, y2, z2);
-			this.tileEntities = WorldUtils.getTileEntities(world, x1, y1, z1, x2, y2, z2);
+			this.entities = WorldUtils.getEntities(world, x1, y1, z1, x2, y2,
+					z2);
+			this.tileEntities = WorldUtils.getTileEntities(world, x1, y1, z1,
+					x2, y2, z2);
 		}
 	}
 
@@ -266,8 +271,10 @@ public class Schematic extends WeightedRandomItem {
 			ForgeDirection rotationDirection) {
 		// used for world generation to determine if all anchor blocks in the
 		// schematic match up with the world
-		ForgeDirection rotationAxis = DirectionUtils.axisForDirection(rotationDirection);
-		int rotationCount = DirectionUtils.rotationCountForDirection(rotationDirection);
+		ForgeDirection rotationAxis = DirectionUtils
+				.axisForDirection(rotationDirection);
+		int rotationCount = DirectionUtils
+				.rotationCountForDirection(rotationDirection);
 		Vec3 offset = Vec3.createVectorHelper(atX, atY, atZ);
 		if (anchorBlockLocations.isEmpty()) {
 			Vec3 middle = DirectionUtils.rotateCoords(
@@ -290,9 +297,10 @@ public class Schematic extends WeightedRandomItem {
 		} else {
 			for (int i = 0; i < anchorBlockLocations.size(); i++) {
 				Integer[] origCoords = anchorBlockLocations.get(i);
-				Vec3 rotatedCoords = DirectionUtils.rotateCoords(Vec3.createVectorHelper(
-						origCoords[0], origCoords[1], origCoords[2]), offset,
-						rotationAxis, rotationCount);
+				Vec3 rotatedCoords = DirectionUtils.rotateCoords(Vec3
+						.createVectorHelper(origCoords[0], origCoords[1],
+								origCoords[2]), offset, rotationAxis,
+						rotationCount);
 				if (!world.blockExists((int) rotatedCoords.xCoord,
 						(int) rotatedCoords.yCoord, (int) rotatedCoords.zCoord)
 						|| !(matchingMap
@@ -353,7 +361,8 @@ public class Schematic extends WeightedRandomItem {
 
 		NBTTagCompound idMapTag = new NBTTagCompound();
 		for (Entry<Integer, Block> entry : idMap.entrySet()) {
-			idMapTag.setInteger(BlockUtils.getNameForBlock(entry.getValue()), entry.getKey());
+			idMapTag.setInteger(BlockUtils.getNameForBlock(entry.getValue()),
+					entry.getKey());
 		}
 		base.setTag("MWGIDMap", idMapTag);
 
@@ -382,7 +391,8 @@ public class Schematic extends WeightedRandomItem {
 
 	public TileEntity getTileEntityAt(int x, int y, int z) {
 		for (int i = 0; i < tileEntities.tagCount(); i++) {
-			NBTTagCompound tileEntityTag = (NBTTagCompound) tileEntities.tagAt(i);
+			NBTTagCompound tileEntityTag = (NBTTagCompound) tileEntities
+					.tagAt(i);
 			if (tileEntityTag.getInteger("x") == x
 					&& tileEntityTag.getInteger("y") == y
 					&& tileEntityTag.getInteger("z") == z) {
@@ -408,10 +418,14 @@ public class Schematic extends WeightedRandomItem {
 	public void placeInWorld(World world, int atX, int atY, int atZ,
 			ForgeDirection rotationDirection, boolean generateChests,
 			boolean generateSpawners, Random rand) {
-		ForgeDirection rotationAxis = DirectionUtils.axisForDirection(rotationDirection);
-		int rotationCount = DirectionUtils.rotationCountForDirection(rotationDirection);
-		float pitchOffset = DirectionUtils.pitchOffsetForDirection(rotationDirection);
-		float yawOffset = DirectionUtils.yawOffsetForDirection(rotationDirection);
+		ForgeDirection rotationAxis = DirectionUtils
+				.axisForDirection(rotationDirection);
+		int rotationCount = DirectionUtils
+				.rotationCountForDirection(rotationDirection);
+		float pitchOffset = DirectionUtils
+				.pitchOffsetForDirection(rotationDirection);
+		float yawOffset = DirectionUtils
+				.yawOffsetForDirection(rotationDirection);
 		Vec3 offset = Vec3.createVectorHelper(atX, atY, atZ);
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
@@ -469,9 +483,9 @@ public class Schematic extends WeightedRandomItem {
 							"Not loading tile entity ID {0}",
 							tileEntityTag.getString("id"));
 				} else {
-					Vec3 newCoords = DirectionUtils.rotateCoords(Vec3.createVectorHelper(
-							e.xCoord, e.yCoord, e.zCoord), offset,
-							rotationAxis, rotationCount);
+					Vec3 newCoords = DirectionUtils.rotateCoords(Vec3
+							.createVectorHelper(e.xCoord, e.yCoord, e.zCoord),
+							offset, rotationAxis, rotationCount);
 					e.xCoord = (int) newCoords.xCoord;
 					e.yCoord = (int) newCoords.yCoord;
 					e.zCoord = (int) newCoords.zCoord;
@@ -536,8 +550,8 @@ public class Schematic extends WeightedRandomItem {
 								Vec3.createVectorHelper(x, y, z), offset,
 								rotationAxis, rotationCount);
 						for (int i = 0; i < rotationCount; i++) {
-							Block.blocksList[blocks[x][y][z]].rotateBlock(world,
-									(int) rotatedCoords.xCoord,
+							Block.blocksList[blocks[x][y][z]].rotateBlock(
+									world, (int) rotatedCoords.xCoord,
 									(int) rotatedCoords.yCoord,
 									(int) rotatedCoords.zCoord, rotationAxis);
 						}

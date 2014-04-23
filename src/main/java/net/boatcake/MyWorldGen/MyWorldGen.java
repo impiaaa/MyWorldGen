@@ -85,7 +85,8 @@ public class MyWorldGen {
 						if (!ze.isDirectory()
 								&& ze.getName().startsWith(
 										worldGenDir.getName())) {
-							FileUtils.writeStream(zf.getInputStream(ze), ze.getName());
+							FileUtils.writeStream(zf.getInputStream(ze),
+									ze.getName());
 						}
 					}
 				}
@@ -97,7 +98,8 @@ public class MyWorldGen {
 				if (f.isDirectory()) {
 					for (String s : f.list()) {
 						try {
-							FileUtils.writeStream(new FileInputStream(new File(f, s)), s);
+							FileUtils.writeStream(new FileInputStream(new File(
+									f, s)), s);
 						} catch (Throwable e1) {
 							e1.printStackTrace();
 						}
@@ -164,7 +166,9 @@ public class MyWorldGen {
 			creativeTab = new CreativeTabs("tabMyWorldGen") {
 				@Override
 				public ItemStack getIconItemStack() {
-					return new ItemStack(materialAnchorBlock == null ? Block.grass : materialAnchorBlock);
+					return new ItemStack(
+							materialAnchorBlock == null ? Block.grass
+									: materialAnchorBlock);
 				}
 			};
 		}
@@ -269,9 +273,9 @@ public class MyWorldGen {
 	public void serverStart(FMLServerAboutToStartEvent event) {
 		worldGen.addSchematicsFromDirectory(globalSchemDir);
 	}
-	
+
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent e) {
-		//JUnitCore.runClasses(TestAnchors.class);
+		// JUnitCore.runClasses(TestAnchors.class);
 	}
 }

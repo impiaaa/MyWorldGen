@@ -16,8 +16,9 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 			return otherBlock == currentBiome.topBlock;
 		case AIR:
 			return otherBlock == 0
-					|| (Block.blocksList[otherBlock].blockMaterial.isReplaceable()
-						&& !Block.blocksList[otherBlock].blockMaterial.isLiquid());
+					|| (Block.blocksList[otherBlock].blockMaterial
+							.isReplaceable() && !Block.blocksList[otherBlock].blockMaterial
+							.isLiquid());
 		default:
 			return otherBlock != 0
 					&& type != null
@@ -31,8 +32,8 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 	}
 
 	@Override
-	public boolean matches(int myMeta, TileEntity myTileEntity, IBlockAccess world,
-			int x, int y, int z) {
+	public boolean matches(int myMeta, TileEntity myTileEntity,
+			IBlockAccess world, int x, int y, int z) {
 		return matchesStatic(myMeta, world.getBlockId(x, y, z),
 				world.getBlockMetadata(x, y, z),
 				world.getBiomeGenForCoords(x, z));

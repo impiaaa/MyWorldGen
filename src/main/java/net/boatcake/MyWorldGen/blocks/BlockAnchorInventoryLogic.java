@@ -10,8 +10,8 @@ public class BlockAnchorInventoryLogic extends BlockAnchorLogic {
 	}
 
 	@Override
-	public boolean matches(int myMeta, TileEntity myTileEntity, IBlockAccess world,
-			int x, int y, int z) {
+	public boolean matches(int myMeta, TileEntity myTileEntity,
+			IBlockAccess world, int x, int y, int z) {
 		return ((TileEntityAnchorInventory) myTileEntity).matches(world
 				.getBlockId(x, y, z));
 	}

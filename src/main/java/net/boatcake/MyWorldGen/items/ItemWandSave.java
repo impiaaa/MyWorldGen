@@ -75,15 +75,17 @@ public class ItemWandSave extends Item {
 					tagToSend.setInteger("z2", z2);
 					tagToSend.setTag("entities", WorldUtils.getEntities(
 							playerMP.worldObj, x1, y1, z1, x2, y2, z2));
-					tagToSend.setTag("tileEntities", WorldUtils.getTileEntities(
-							playerMP.worldObj, x1, y1, z1, x2, y2, z2));
+					tagToSend.setTag("tileEntities", WorldUtils
+							.getTileEntities(playerMP.worldObj, x1, y1, z1, x2,
+									y2, z2));
 
 					ByteArrayOutputStream bos = new ByteArrayOutputStream();
 					try {
 						CompressedStreamTools.writeCompressed(tagToSend, bos);
 						Packet250CustomPayload packetToSend = new Packet250CustomPayload(
 								"MWGGetSchem", bos.toByteArray());
-						PacketDispatcher.sendPacketToPlayer(packetToSend, (Player) player);
+						PacketDispatcher.sendPacketToPlayer(packetToSend,
+								(Player) player);
 					} catch (IOException exc) {
 						exc.printStackTrace();
 					}
@@ -92,8 +94,7 @@ public class ItemWandSave extends Item {
 				stack.setTagCompound(null);
 			} else {
 				/*
-				 * START HERE
-				 * Step 1: Find the first corner, and record it to
+				 * START HERE Step 1: Find the first corner, and record it to
 				 * the item data.
 				 */
 				NBTTagCompound tag = new NBTTagCompound();

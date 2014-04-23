@@ -116,16 +116,16 @@ public class DirectionUtils {
 				worldY = -temp;
 			}
 		}
-	
+
 		worldX += at.xCoord;
 		worldY += at.yCoord;
 		worldZ += at.zCoord;
-	
+
 		return Vec3.createVectorHelper(worldX, worldY, worldZ);
 	}
 
 	public static ForgeDirection[] randomDirections = new ForgeDirection[] {
-	ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST,
-	ForgeDirection.WEST };
+			ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST,
+			ForgeDirection.WEST };
 
 }
