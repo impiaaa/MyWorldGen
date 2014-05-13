@@ -153,7 +153,7 @@ public class Schematic extends WeightedRandomItem {
 			for (int z = 0; z < length; z++) {
 				for (int x = 0; x < width; x++, blockIdx++) {
 					blocks[x][y][z] = (blockBytes[blockIdx]) & 0xFF;
-					meta[x][y][z] = (metaBytes[blockIdx]) & 0xFF;
+					meta[x][y][z] = (metaBytes[blockIdx]) & 0x0F;
 					if (blockUpperBits != null) {
 						blocks[x][y][z] |= (blockUpperBits[blockIdx >> 1] << ((blockIdx % 2 == 0) ? 4
 								: 8)) & 0xF00;
@@ -328,7 +328,7 @@ public class Schematic extends WeightedRandomItem {
 
 	public NBTTagCompound getNBT() {
 		// http://www.minecraftwiki.net/wiki/Schematic_file_format
-		NBTTagCompound base = new NBTTagCompound();
+		NBTTagCompound base = new NBTTagCompound("Schematic");
 
 		base.setShort("Width", width);
 		base.setShort("Height", height);
@@ -347,7 +347,7 @@ public class Schematic extends WeightedRandomItem {
 			for (int z = 0; z < length; z++) {
 				for (int x = 0; x < width; x++, blockIdx++) {
 					blockBytes[blockIdx] = (byte) (blocks[x][y][z] & 0xFF);
-					metaBytes[blockIdx] = (byte) (meta[x][y][z]);
+					metaBytes[blockIdx] = (byte) (meta[x][y][z] & 0x0F);
 					blockUpperBits[blockIdx >> 1] |= (byte) ((blocks[x][y][z] & 0xF00) >> ((blockIdx % 2 == 0) ? 4
 							: 8));
 				}
