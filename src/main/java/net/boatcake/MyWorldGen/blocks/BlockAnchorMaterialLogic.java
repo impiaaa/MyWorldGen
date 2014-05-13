@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
 public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
@@ -32,7 +33,7 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 
 	@Override
 	public boolean matches(int myMeta, TileEntity myTileEntity,
-			IBlockAccess world, int x, int y, int z) {
+			World world, int x, int y, int z) {
 		return matchesStatic(myMeta, world.getBlock(x, y, z),
 				world.getBlockMetadata(x, y, z),
 				world.getBiomeGenForCoords(x, z));
