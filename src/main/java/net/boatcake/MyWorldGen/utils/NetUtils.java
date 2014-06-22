@@ -1,29 +1,31 @@
 package net.boatcake.MyWorldGen.utils;
 
-import java.util.EnumMap;
-
-import net.boatcake.MyWorldGen.network.MWGMessage;
+import net.boatcake.MyWorldGen.MyWorldGen;
+import net.boatcake.MyWorldGen.network.MessageGetSchemClient;
+import net.boatcake.MyWorldGen.network.MessageGetSchemServer;
+import net.boatcake.MyWorldGen.network.MessagePlaceSchem;
 import net.minecraft.entity.player.EntityPlayerMP;
-import cpw.mods.fml.common.network.FMLEmbeddedChannel;
-import cpw.mods.fml.common.network.FMLOutboundHandler;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class NetUtils {
-	public static EnumMap<Side, FMLEmbeddedChannel> net;
-
-	public static void sendTo(MWGMessage message, EntityPlayerMP player) {
-		net.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
-				.set(FMLOutboundHandler.OutboundTarget.PLAYER);
-		net.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS)
-				.set(player);
-		net.get(Side.SERVER).writeAndFlush(message);
+    public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(MyWorldGen.MODID.toLowerCase());
+    
+	public static void sendTo(IMessage message, EntityPlayerMP player) {
+		INSTANCE.sendTo(message, player);
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void sendToServer(MWGMessage message) {
-		net.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET)
-				.set(FMLOutboundHandler.OutboundTarget.TOSERVER);
-		net.get(Side.CLIENT).writeAndFlush(message);
+	public static void sendToServer(IMessage message) {
+		INSTANCE.sendToServer(message);
+	}
+
+	public static void init() {
+		INSTANCE.registerMessage(MessageGetSchemClient.class, MessageGetSchemClient.class, 0, Side.CLIENT);
+		INSTANCE.registerMessage(MessageGetSchemServer.class, MessageGetSchemServer.class, 1, Side.SERVER);
+		INSTANCE.registerMessage(MessagePlaceSchem.class, MessagePlaceSchem.class, 2, Side.SERVER);
 	}
 }

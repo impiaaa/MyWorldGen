@@ -19,7 +19,6 @@ import net.boatcake.MyWorldGen.blocks.TileEntityAnchorInventory;
 import net.boatcake.MyWorldGen.items.BlockAnchorItem;
 import net.boatcake.MyWorldGen.items.ItemWandLoad;
 import net.boatcake.MyWorldGen.items.ItemWandSave;
-import net.boatcake.MyWorldGen.network.MWGCodec;
 import net.boatcake.MyWorldGen.utils.FileUtils;
 import net.boatcake.MyWorldGen.utils.NetUtils;
 import net.minecraft.block.Block;
@@ -76,8 +75,7 @@ public class MyWorldGen {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
-		NetUtils.net = NetworkRegistry.INSTANCE.newChannel("MyWorldGen",
-				new MWGCodec());
+		NetUtils.init();
 
 		if (!globalSchemDir.isDirectory()) {
 			globalSchemDir.mkdir();

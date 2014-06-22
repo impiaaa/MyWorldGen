@@ -12,14 +12,14 @@ import net.boatcake.MyWorldGen.client.GuiSaveSchematic;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageGetSchemClient implements MWGMessage {
+public class MessageGetSchemClient implements IMessage, IMessageHandler<MessageGetSchemClient, IMessage> {
 	public NBTTagList entitiesTag;
 	public NBTTagList tileEntitiesTag;
 	public int x1, y1, z1;
@@ -46,10 +46,7 @@ public class MessageGetSchemClient implements MWGMessage {
 	}
 
 	@Override
-	public MWGMessage handle(EntityPlayer player) {
-		if (FMLCommonHandler.instance().getSide() != Side.CLIENT) {
-			return null;
-		}
+	public IMessage onMessage(MessageGetSchemClient message, MessageContext ctx) {
 		// client
 		/*
 		 * Step 4: The client has received all of the entity and tile entity
@@ -67,9 +64,9 @@ public class MessageGetSchemClient implements MWGMessage {
 			GuiSaveSchematic guiSchematic = (GuiSaveSchematic) currentScreen;
 
 			guiSchematic.schematicToSave = new Schematic(playerMP.worldObj,
-					this.x1, this.y1, this.z1, this.x2, this.y2, this.z2);
-			guiSchematic.schematicToSave.entities = this.entitiesTag;
-			guiSchematic.schematicToSave.tileEntities = this.tileEntitiesTag;
+					message.x1, message.y1, message.z1, message.x2, message.y2, message.z2);
+			guiSchematic.schematicToSave.entities = message.entitiesTag;
+			guiSchematic.schematicToSave.tileEntities = message.tileEntitiesTag;
 			guiSchematic.updateSaveButton();
 		}
 		// For step 5, go to GuiSaveSchematic

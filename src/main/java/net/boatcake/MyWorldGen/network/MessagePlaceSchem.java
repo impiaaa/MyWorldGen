@@ -7,13 +7,15 @@ import io.netty.buffer.ByteBufOutputStream;
 import java.io.IOException;
 
 import net.boatcake.MyWorldGen.Schematic;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 
-public class MessagePlaceSchem implements MWGMessage {
+public class MessagePlaceSchem implements IMessage, IMessageHandler<MessagePlaceSchem, IMessage> {
 	public ForgeDirection direction;
 	public NBTTagCompound schematicTag;
 	public int x, y, z;
@@ -37,12 +39,12 @@ public class MessagePlaceSchem implements MWGMessage {
 	}
 
 	@Override
-	public MWGMessage handle(EntityPlayer player) {
-		EntityPlayerMP playerMP = (EntityPlayerMP) player;
+	public IMessage onMessage(MessagePlaceSchem message, MessageContext ctx) {
+		EntityPlayerMP playerMP = ctx.getServerHandler().playerEntity;
 		// no cheating!
 		if (playerMP.capabilities.isCreativeMode) {
-			new Schematic(this.schematicTag, null).placeInWorld(
-					playerMP.worldObj, this.x, this.y, this.z, this.direction,
+			new Schematic(message.schematicTag, null).placeInWorld(
+					playerMP.worldObj, message.x, message.y, message.z, message.direction,
 					false, false, null);
 		}
 		return null;

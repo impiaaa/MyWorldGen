@@ -4,7 +4,6 @@ import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial.AnchorType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 

@@ -23,16 +23,16 @@ group= "net.boatcake.myworldgen" // http://maven.apache.org/guides/mini/guide-na
 archivesBaseName = "MyWorldGen-1.7.2"
 
 minecraft {
-    version = "1.7.2-10.12.1.1079"
+    version = "1.7.2-10.12.2.1130"
     assetDir = "eclipse/assets"
 }
 
-curse {
-    apiKey = project.curseforge_key
-    projectId = "72733"
-    changelog = "Fixed dedicated server crash and issue with saving & loading metadata"
-    releaseType = "release"
-}
+//curse {
+//    apiKey = project.curseforge_key
+//    projectId = "72733"
+//    changelog = ""
+//    releaseType = "release"
+//}
 
 processResources
 {

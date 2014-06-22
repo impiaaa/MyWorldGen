@@ -1,7 +1,6 @@
 package net.boatcake.MyWorldGen.blocks;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class BlockAnchorInventoryLogic extends BlockAnchorLogic {
