@@ -12,8 +12,9 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class NetUtils {
-    public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(MyWorldGen.MODID.toLowerCase());
-    
+	public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE
+			.newSimpleChannel(MyWorldGen.MODID.toLowerCase());
+
 	public static void sendTo(IMessage message, EntityPlayerMP player) {
 		INSTANCE.sendTo(message, player);
 	}
@@ -24,8 +25,11 @@ public class NetUtils {
 	}
 
 	public static void init() {
-		INSTANCE.registerMessage(MessageGetSchemClient.class, MessageGetSchemClient.class, 0, Side.CLIENT);
-		INSTANCE.registerMessage(MessageGetSchemServer.class, MessageGetSchemServer.class, 1, Side.SERVER);
-		INSTANCE.registerMessage(MessagePlaceSchem.class, MessagePlaceSchem.class, 2, Side.SERVER);
+		INSTANCE.registerMessage(MessageGetSchemClient.class,
+				MessageGetSchemClient.class, 0, Side.CLIENT);
+		INSTANCE.registerMessage(MessageGetSchemServer.class,
+				MessageGetSchemServer.class, 1, Side.SERVER);
+		INSTANCE.registerMessage(MessagePlaceSchem.class,
+				MessagePlaceSchem.class, 2, Side.SERVER);
 	}
 }

@@ -6,11 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import net.boatcake.MyWorldGen.utils.DirectionUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
@@ -100,6 +104,33 @@ public class WorldGenerator implements IWorldGenerator {
 						}
 					}
 				}
+			}
+		}
+	}
+
+	public void addResourcePacks() {
+		File resourcePacksDir = new File(Minecraft.getMinecraft().mcDataDir,
+				"resourcepacks");
+		for (File resourcePack : resourcePacksDir.listFiles()) {
+			try {
+				ZipFile zf = new ZipFile(resourcePack);
+				ZipEntry worldGenDir = zf.getEntry(MyWorldGen.resourcePath
+						+ "/");
+				if (worldGenDir != null && worldGenDir.isDirectory()) {
+					for (Enumeration<? extends ZipEntry> e = zf.entries(); e
+							.hasMoreElements();) {
+						ZipEntry ze = e.nextElement();
+						if (!ze.isDirectory()
+								&& ze.getName().startsWith(
+										worldGenDir.getName())) {
+							addSchemFromStream(zf.getInputStream(ze), new File(
+									resourcePack, ze.getName()));
+						}
+					}
+				}
+				zf.close();
+			} catch (Throwable e) {
+				e.printStackTrace();
 			}
 		}
 	}

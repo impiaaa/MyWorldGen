@@ -1,12 +1,6 @@
 package net.boatcake.MyWorldGen;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import net.boatcake.MyWorldGen.blocks.BlockAnchorInventory;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorInventoryLogic;
@@ -47,7 +41,7 @@ import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-@Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.3", dependencies = "after:OpenBlocks")
+@Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.3.3", dependencies = "after:OpenBlocks")
 public class MyWorldGen {
 	public static CreativeTabs creativeTab;
 	public static int generateNothingWeight;
@@ -79,68 +73,11 @@ public class MyWorldGen {
 
 		if (!globalSchemDir.isDirectory()) {
 			globalSchemDir.mkdir();
-			// Self-extract bundled schematics into the worldgen directory
-			// so that the players have something to start with
-			try {
-				ZipFile zf = new ZipFile(sourceFile);
-				ZipEntry worldGenDir = zf.getEntry(resourcePath + "/");
-				if (worldGenDir != null && worldGenDir.isDirectory()) {
-					for (Enumeration<? extends ZipEntry> e = zf.entries(); e
-							.hasMoreElements();) {
-						ZipEntry ze = e.nextElement();
-						if (!ze.isDirectory()
-								&& ze.getName().startsWith(
-										worldGenDir.getName())) {
-							FileUtils.writeStream(zf.getInputStream(ze),
-									ze.getName());
-						}
-					}
-				}
-				zf.close();
-			} catch (FileNotFoundException e) {
-				// Not in a jar
-				File f = new File(MyWorldGen.class.getClassLoader()
-						.getResource(resourcePath).getPath());
-				if (f.isDirectory()) {
-					for (String s : f.list()) {
-						try {
-							FileUtils.writeStream(new FileInputStream(new File(
-									f, s)), s);
-						} catch (Throwable e1) {
-							e1.printStackTrace();
-						}
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			FileUtils.extractSchematics(sourceFile);
 		}
 
 		if (event.getSide() == Side.CLIENT) {
-			File resourcePacksDir = new File(
-					Minecraft.getMinecraft().mcDataDir, "resourcepacks");
-			for (File resourcePack : resourcePacksDir.listFiles()) {
-				try {
-					ZipFile zf = new ZipFile(resourcePack);
-					ZipEntry worldGenDir = zf.getEntry(resourcePath + "/");
-					if (worldGenDir != null && worldGenDir.isDirectory()) {
-						for (Enumeration<? extends ZipEntry> e = zf.entries(); e
-								.hasMoreElements();) {
-							ZipEntry ze = e.nextElement();
-							if (!ze.isDirectory()
-									&& ze.getName().startsWith(
-											worldGenDir.getName())) {
-								worldGen.addSchemFromStream(zf
-										.getInputStream(ze), new File(
-										resourcePack, ze.getName()));
-							}
-						}
-					}
-					zf.close();
-				} catch (Throwable e) {
-					e.printStackTrace();
-				}
-			}
+			worldGen.addResourcePacks();
 		}
 
 		FMLInterModComms

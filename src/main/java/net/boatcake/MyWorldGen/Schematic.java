@@ -110,8 +110,8 @@ public class Schematic extends WeightedRandom.Item {
 					placingMap.put(
 							GameData.getBlockRegistry().getId(
 									MyWorldGen.ignoreBlock),
-							BlockPlacementLogic
-									.get(MyWorldGen.MODID + ":ignore"));
+							BlockPlacementLogic.get(MyWorldGen.MODID
+									+ ":ignore"));
 				}
 				placingMap.put(MyWorldGen.ignoreBlockId,
 						BlockPlacementLogic.get(MyWorldGen.MODID + ":ignore"));
@@ -135,8 +135,8 @@ public class Schematic extends WeightedRandom.Item {
 					placingMap.put(
 							GameData.getBlockRegistry().getId(
 									MyWorldGen.materialAnchorBlock),
-							BlockPlacementLogic
-									.get(MyWorldGen.MODID + ":anchor"));
+							BlockPlacementLogic.get(MyWorldGen.MODID
+									+ ":anchor"));
 					matchingMap.put(
 							GameData.getBlockRegistry().getId(
 									MyWorldGen.materialAnchorBlock),
@@ -164,8 +164,10 @@ public class Schematic extends WeightedRandom.Item {
 					MyWorldGen.inventoryAnchorBlockId,
 					BlockPlacementLogic.get(MyWorldGen.MODID
 							+ ":anchorInventory"));
-			matchingMap.put(MyWorldGen.inventoryAnchorBlockId,
-					BlockAnchorLogic.get(MyWorldGen.MODID + ":anchorInventory"));
+			matchingMap
+					.put(MyWorldGen.inventoryAnchorBlockId,
+							BlockAnchorLogic.get(MyWorldGen.MODID
+									+ ":anchorInventory"));
 		}
 
 		anchorBlockLocations = new ArrayList<Integer[]>();

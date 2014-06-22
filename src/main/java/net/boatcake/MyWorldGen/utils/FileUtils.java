@@ -1,10 +1,15 @@
 package net.boatcake.MyWorldGen.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import net.boatcake.MyWorldGen.MyWorldGen;
 
@@ -26,6 +31,43 @@ public class FileUtils {
 		}
 		inStream.close();
 		outStream.close();
+	}
+
+	/**
+	 * Self-extract bundled schematics into the worldgen directory so that the
+	 * players have something to start with
+	 */
+	public static void extractSchematics(File sourceFile) {
+		try {
+			ZipFile zf = new ZipFile(sourceFile);
+			ZipEntry worldGenDir = zf.getEntry(MyWorldGen.resourcePath + "/");
+			if (worldGenDir != null && worldGenDir.isDirectory()) {
+				for (Enumeration<? extends ZipEntry> e = zf.entries(); e
+						.hasMoreElements();) {
+					ZipEntry ze = e.nextElement();
+					if (!ze.isDirectory()
+							&& ze.getName().startsWith(worldGenDir.getName())) {
+						writeStream(zf.getInputStream(ze), ze.getName());
+					}
+				}
+			}
+			zf.close();
+		} catch (FileNotFoundException e) {
+			// Not in a jar
+			File f = new File(MyWorldGen.class.getClassLoader()
+					.getResource(MyWorldGen.resourcePath).getPath());
+			if (f.isDirectory()) {
+				for (String s : f.list()) {
+					try {
+						writeStream(new FileInputStream(new File(f, s)), s);
+					} catch (Throwable e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

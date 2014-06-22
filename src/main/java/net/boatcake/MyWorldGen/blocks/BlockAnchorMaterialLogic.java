@@ -31,8 +31,8 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 	}
 
 	@Override
-	public boolean matches(int myMeta, TileEntity myTileEntity,
-			World world, int x, int y, int z) {
+	public boolean matches(int myMeta, TileEntity myTileEntity, World world,
+			int x, int y, int z) {
 		return matchesStatic(myMeta, world.getBlock(x, y, z),
 				world.getBlockMetadata(x, y, z),
 				world.getBiomeGenForCoords(x, z));

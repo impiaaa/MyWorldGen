@@ -14,7 +14,8 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageGetSchemServer implements IMessage, IMessageHandler<MessageGetSchemServer, MessageGetSchemClient> {
+public class MessageGetSchemServer implements IMessage,
+		IMessageHandler<MessageGetSchemServer, MessageGetSchemClient> {
 	public int x1, y1, z1;
 	public int x2, y2, z2;
 
@@ -38,7 +39,8 @@ public class MessageGetSchemServer implements IMessage, IMessageHandler<MessageG
 	}
 
 	@Override
-	public MessageGetSchemClient onMessage(MessageGetSchemServer message, MessageContext ctx) {
+	public MessageGetSchemClient onMessage(MessageGetSchemServer message,
+			MessageContext ctx) {
 		// server
 		// Step 3: The server receives the selection box from the client.
 		/*
@@ -55,10 +57,11 @@ public class MessageGetSchemServer implements IMessage, IMessageHandler<MessageG
 			 */
 			MessageGetSchemClient response = new MessageGetSchemClient();
 			response.entitiesTag = WorldUtils.getEntities(playerMP.worldObj,
-					message.x1, message.y1, message.z1, message.x2, message.y2, message.z2);
+					message.x1, message.y1, message.z1, message.x2, message.y2,
+					message.z2);
 			response.tileEntitiesTag = WorldUtils.getTileEntities(
-					playerMP.worldObj, message.x1, message.y1, message.z1, message.x2,
-					message.y2, message.z2);
+					playerMP.worldObj, message.x1, message.y1, message.z1,
+					message.x2, message.y2, message.z2);
 			response.x1 = x1;
 			response.y1 = y1;
 			response.z1 = z1;

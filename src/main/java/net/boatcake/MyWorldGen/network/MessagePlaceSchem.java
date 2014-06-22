@@ -15,7 +15,8 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 
-public class MessagePlaceSchem implements IMessage, IMessageHandler<MessagePlaceSchem, IMessage> {
+public class MessagePlaceSchem implements IMessage,
+		IMessageHandler<MessagePlaceSchem, IMessage> {
 	public ForgeDirection direction;
 	public NBTTagCompound schematicTag;
 	public int x, y, z;
@@ -44,8 +45,8 @@ public class MessagePlaceSchem implements IMessage, IMessageHandler<MessagePlace
 		// no cheating!
 		if (playerMP.capabilities.isCreativeMode) {
 			new Schematic(message.schematicTag, null).placeInWorld(
-					playerMP.worldObj, message.x, message.y, message.z, message.direction,
-					false, false, null);
+					playerMP.worldObj, message.x, message.y, message.z,
+					message.direction, false, false, null);
 		}
 		return null;
 	}

@@ -19,7 +19,8 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageGetSchemClient implements IMessage, IMessageHandler<MessageGetSchemClient, IMessage> {
+public class MessageGetSchemClient implements IMessage,
+		IMessageHandler<MessageGetSchemClient, IMessage> {
 	public NBTTagList entitiesTag;
 	public NBTTagList tileEntitiesTag;
 	public int x1, y1, z1;
@@ -64,7 +65,8 @@ public class MessageGetSchemClient implements IMessage, IMessageHandler<MessageG
 			GuiSaveSchematic guiSchematic = (GuiSaveSchematic) currentScreen;
 
 			guiSchematic.schematicToSave = new Schematic(playerMP.worldObj,
-					message.x1, message.y1, message.z1, message.x2, message.y2, message.z2);
+					message.x1, message.y1, message.z1, message.x2, message.y2,
+					message.z2);
 			guiSchematic.schematicToSave.entities = message.entitiesTag;
 			guiSchematic.schematicToSave.tileEntities = message.tileEntitiesTag;
 			guiSchematic.updateSaveButton();
