@@ -29,10 +29,12 @@ import net.minecraftforge.common.config.Property;
 import org.apache.logging.log4j.Logger;
 
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
@@ -43,14 +45,18 @@ import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.3.3", dependencies = "after:OpenBlocks")
 public class MyWorldGen {
+	@Instance("MyWorldGen")
+	public static MyWorldGen instance;
+	
+	@SidedProxy(clientSide="net.boatcake.MyWorldGen.client.ClientProxy", serverSide="net.boatcake.MyWorldGen.ServerProxy")
+	public static CommonProxy sidedProxy;
+	
 	public static CreativeTabs creativeTab;
 	public static int generateNothingWeight;
 	public static int generateTries;
 	public static File globalSchemDir;
 	public static Block ignoreBlock;
 	public static int ignoreBlockId;
-	@Instance("MyWorldGen")
-	public static MyWorldGen instance;
 	public static Block inventoryAnchorBlock;
 	public static int inventoryAnchorBlockId;
 	public static Logger log;
@@ -76,15 +82,13 @@ public class MyWorldGen {
 			FileUtils.extractSchematics(sourceFile);
 		}
 
-		if (event.getSide() == Side.CLIENT) {
-			worldGen.addResourcePacks();
-		}
-
 		FMLInterModComms
 				.sendMessage(
 						"OpenBlocks",
 						"donateUrl",
 						"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=UHDDACLRN2T46&lc=US&item_name=MyWorldGen&currency_code=USD&bn=PP-DonationsBF:btn_donate_SM.gif:NonHosted");
+
+		sidedProxy.registerResourceHandler(worldGen);
 	}
 
 	@EventHandler
@@ -169,16 +173,7 @@ public class MyWorldGen {
 
 		String worldGenDir = cfg.get("configuration", "schematicDirectory",
 				"worldgen", "Subdirectory of .minecraft").getString();
-
-		switch (event.getSide()) {
-		case CLIENT:
-			globalSchemDir = new File(Minecraft.getMinecraft().mcDataDir,
-					worldGenDir);
-			break;
-		case SERVER:
-			globalSchemDir = MinecraftServer.getServer().getFile(worldGenDir);
-			break;
-		}
+		globalSchemDir = sidedProxy.getGlobalSchemDir(worldGenDir);
 
 		generateNothingWeight = cfg
 				.get("configuration", "generateNothingWeight", 10,

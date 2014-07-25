@@ -20,10 +20,10 @@ apply plugin: 'forge'
 
 version = "1.3.3"
 group= "net.boatcake.myworldgen" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "MyWorldGen-1.7.2"
+archivesBaseName = "MyWorldGen-1.7.10"
 
 minecraft {
-    version = "1.7.2-10.12.2.1130"
+    version = "1.7.10-10.13.0.1180"
     assetDir = "eclipse/assets"
 }
 

@@ -8,14 +8,21 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import net.boatcake.MyWorldGen.utils.DirectionUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IResource;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
+import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -23,46 +30,48 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import org.apache.logging.log4j.Level;
 
+import com.google.common.collect.Sets;
+
 import cpw.mods.fml.common.IWorldGenerator;
 
 public class WorldGenerator implements IWorldGenerator {
-	private Map<File, Schematic> schemList;
+	private Map<File, Set<Schematic>> schemList;
 
 	public WorldGenerator() {
-		schemList = new HashMap<File, Schematic>();
+		schemList = new HashMap<File, Set<Schematic>>();
 	}
 
 	public void addSchematicsFromDirectory(File schemDirectory) {
 		File[] schemFiles = schemDirectory
 				.listFiles(new SchematicFilenameFilter());
+		Set<Schematic> section = getSection(schemDirectory, schemFiles.length);
+		section.clear();
 		for (File schemFile : schemFiles) {
 			try {
-				addSchemFromFile(schemFile);
+				addSchemFromStream(section, new FileInputStream(schemFile), schemFile.getName());
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}
-		/*
-		 * ArrayList<File> filesToRemove = new ArrayList<File>(); for (File
-		 * schemFile : schemList.keySet()) { if
-		 * (!Arrays.asList(schemFiles).contains(schemFile)) {
-		 * filesToRemove.add(schemFile); } } for (File schemFile :
-		 * filesToRemove) { schemList.remove(schemFile); }
-		 */
 	}
 
-	public void addSchemFromFile(File schemFile) throws FileNotFoundException,
-			IOException {
-		addSchemFromStream(new FileInputStream(schemFile), schemFile);
-	}
-
-	public void addSchemFromStream(InputStream stream, File schemFile)
+	public void addSchemFromStream(Set<Schematic> section, InputStream stream, String name)
 			throws IOException {
-		if (!schemList.containsKey(schemFile)) {
-			Schematic newSchem = new Schematic(
-					CompressedStreamTools.readCompressed(stream),
-					schemFile.getName());
-			schemList.put(schemFile, newSchem);
+		Schematic newSchem = new Schematic(
+				CompressedStreamTools.readCompressed(stream),
+				name);
+		section.add(newSchem);
+		MyWorldGen.log.debug("Added schematic: %s", name);
+	}
+	
+	public Set<Schematic> getSection(File origin, int expectedSize) {
+		if (schemList.containsKey(origin)) {
+			return schemList.get(origin);
+		}
+		else {
+			Set<Schematic> section = Sets.newHashSetWithExpectedSize(expectedSize);
+			schemList.put(origin, section);
+			return section;
 		}
 	}
 
@@ -71,10 +80,12 @@ public class WorldGenerator implements IWorldGenerator {
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
 		if (!schemList.isEmpty() && random.nextBoolean()) {
 			ArrayList applicableSchematics = new ArrayList<WeightedRandom.Item>();
-			for (Schematic s : schemList.values()) {
-				if (s.matchesBiome(world.getBiomeGenForCoords(chunkX * 16,
-						chunkZ * 16))) {
-					applicableSchematics.add(s);
+			for (Set<Schematic> section : schemList.values()) {
+				for (Schematic s : section) {
+					if (s.matchesBiome(world.getBiomeGenForCoords(chunkX * 16,
+							chunkZ * 16))) {
+						applicableSchematics.add(s);
+					}
 				}
 			}
 			if (!applicableSchematics.isEmpty()) {
@@ -107,32 +118,4 @@ public class WorldGenerator implements IWorldGenerator {
 			}
 		}
 	}
-
-	public void addResourcePacks() {
-		File resourcePacksDir = new File(Minecraft.getMinecraft().mcDataDir,
-				"resourcepacks");
-		for (File resourcePack : resourcePacksDir.listFiles()) {
-			try {
-				ZipFile zf = new ZipFile(resourcePack);
-				ZipEntry worldGenDir = zf.getEntry(MyWorldGen.resourcePath
-						+ "/");
-				if (worldGenDir != null && worldGenDir.isDirectory()) {
-					for (Enumeration<? extends ZipEntry> e = zf.entries(); e
-							.hasMoreElements();) {
-						ZipEntry ze = e.nextElement();
-						if (!ze.isDirectory()
-								&& ze.getName().startsWith(
-										worldGenDir.getName())) {
-							addSchemFromStream(zf.getInputStream(ze), new File(
-									resourcePack, ze.getName()));
-						}
-					}
-				}
-				zf.close();
-			} catch (Throwable e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 }
