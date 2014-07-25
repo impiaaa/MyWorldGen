@@ -9,8 +9,7 @@ import net.minecraft.client.Minecraft;
 public class ClientProxy extends CommonProxy {
 	@Override
 	public File getGlobalSchemDir(String worldGenDir) {
-		return new File(Minecraft.getMinecraft().mcDataDir,
-				worldGenDir);
+		return new File(Minecraft.getMinecraft().mcDataDir, worldGenDir);
 	}
 
 	@Override

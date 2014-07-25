@@ -2,27 +2,16 @@ package net.boatcake.MyWorldGen;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import net.boatcake.MyWorldGen.utils.DirectionUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
-import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -48,28 +37,28 @@ public class WorldGenerator implements IWorldGenerator {
 		section.clear();
 		for (File schemFile : schemFiles) {
 			try {
-				addSchemFromStream(section, new FileInputStream(schemFile), schemFile.getName());
+				addSchemFromStream(section, new FileInputStream(schemFile),
+						schemFile.getName());
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public void addSchemFromStream(Set<Schematic> section, InputStream stream, String name)
-			throws IOException {
+	public void addSchemFromStream(Set<Schematic> section, InputStream stream,
+			String name) throws IOException {
 		Schematic newSchem = new Schematic(
-				CompressedStreamTools.readCompressed(stream),
-				name);
+				CompressedStreamTools.readCompressed(stream), name);
 		section.add(newSchem);
 		MyWorldGen.log.debug("Added schematic: %s", name);
 	}
-	
+
 	public Set<Schematic> getSection(File origin, int expectedSize) {
 		if (schemList.containsKey(origin)) {
 			return schemList.get(origin);
-		}
-		else {
-			Set<Schematic> section = Sets.newHashSetWithExpectedSize(expectedSize);
+		} else {
+			Set<Schematic> section = Sets
+					.newHashSetWithExpectedSize(expectedSize);
 			schemList.put(origin, section);
 			return section;
 		}

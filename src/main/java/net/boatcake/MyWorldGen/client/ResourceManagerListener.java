@@ -1,7 +1,6 @@
 package net.boatcake.MyWorldGen.client;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -12,21 +11,17 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.Schematic;
 import net.boatcake.MyWorldGen.WorldGenerator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.FallbackResourceManager;
 import net.minecraft.client.resources.FileResourcePack;
-import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
-import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
-import net.minecraft.util.ResourceLocation;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ResourceManagerListener implements IResourceManagerReloadListener {
@@ -77,7 +72,8 @@ public class ResourceManagerListener implements IResourceManagerReloadListener {
 	@Override
 	public void onResourceManagerReload(IResourceManager manager) {
 		// blehhhhhhhhhhh
-		// TODO: Use AccessTransformers, maybe? Or just have a directory listing json like MC does for sounds
+		// TODO: Use AccessTransformers, maybe? Or just have a directory listing
+		// json like MC does for sounds
 		try {
 			if (!(manager instanceof SimpleReloadableResourceManager)) {
 				return;
@@ -112,7 +108,8 @@ public class ResourceManagerListener implements IResourceManagerReloadListener {
 					ZipEntry worldGenDir = zf.getEntry(MyWorldGen.resourcePath
 							+ "/");
 					if (worldGenDir != null && worldGenDir.isDirectory()) {
-						Set<Schematic> section = worldGen.getSection(new File(pack.getPackName()), 0);
+						Set<Schematic> section = worldGen.getSection(new File(
+								pack.getPackName()), 0);
 						section.clear();
 						for (Enumeration<? extends ZipEntry> e = zf.entries(); e
 								.hasMoreElements();) {
@@ -120,7 +117,8 @@ public class ResourceManagerListener implements IResourceManagerReloadListener {
 							if (!ze.isDirectory()
 									&& ze.getName().startsWith(
 											worldGenDir.getName())) {
-								worldGen.addSchemFromStream(section, zf.getInputStream(ze), ze.getName());
+								worldGen.addSchemFromStream(section,
+										zf.getInputStream(ze), ze.getName());
 							}
 						}
 					}

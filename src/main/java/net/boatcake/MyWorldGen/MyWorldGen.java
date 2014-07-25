@@ -17,40 +17,36 @@ import net.boatcake.MyWorldGen.utils.FileUtils;
 import net.boatcake.MyWorldGen.utils.NetUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
 import org.apache.logging.log4j.Logger;
 
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.3.3", dependencies = "after:OpenBlocks")
 public class MyWorldGen {
 	@Instance("MyWorldGen")
 	public static MyWorldGen instance;
-	
-	@SidedProxy(clientSide="net.boatcake.MyWorldGen.client.ClientProxy", serverSide="net.boatcake.MyWorldGen.ServerProxy")
+
+	@SidedProxy(clientSide = "net.boatcake.MyWorldGen.client.ClientProxy", serverSide = "net.boatcake.MyWorldGen.ServerProxy")
 	public static CommonProxy sidedProxy;
-	
+
 	public static CreativeTabs creativeTab;
 	public static int generateNothingWeight;
 	public static int generateTries;
