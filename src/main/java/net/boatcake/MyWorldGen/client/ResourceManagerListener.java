@@ -92,6 +92,8 @@ public class ResourceManagerListener implements IResourceManagerReloadListener {
 				return;
 			}
 
+			worldGen.resourcePackSchemList.clear();
+
 			List resourcePacks = (List) getFieldValueOfClass(domainManager,
 					List.class);
 			for (Object o : resourcePacks) {
@@ -108,16 +110,14 @@ public class ResourceManagerListener implements IResourceManagerReloadListener {
 					ZipEntry worldGenDir = zf.getEntry(MyWorldGen.resourcePath
 							+ "/");
 					if (worldGenDir != null && worldGenDir.isDirectory()) {
-						Set<Schematic> section = worldGen.getSection(new File(
-								pack.getPackName()), 0);
-						section.clear();
 						for (Enumeration<? extends ZipEntry> e = zf.entries(); e
 								.hasMoreElements();) {
 							ZipEntry ze = e.nextElement();
 							if (!ze.isDirectory()
 									&& ze.getName().startsWith(
 											worldGenDir.getName())) {
-								worldGen.addSchemFromStream(section,
+								worldGen.addSchemFromStream(
+										worldGen.resourcePackSchemList,
 										zf.getInputStream(ze), ze.getName());
 							}
 						}

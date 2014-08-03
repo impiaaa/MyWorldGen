@@ -24,21 +24,22 @@ import com.google.common.collect.Sets;
 import cpw.mods.fml.common.IWorldGenerator;
 
 public class WorldGenerator implements IWorldGenerator {
-	private Map<File, Set<Schematic>> schemList;
+	private Set<Schematic> worldgenFolderSchemList;
+	public Set<Schematic> resourcePackSchemList;
 
 	public WorldGenerator() {
-		schemList = new HashMap<File, Set<Schematic>>();
+		worldgenFolderSchemList = Sets.newHashSet();
+		resourcePackSchemList = Sets.newHashSet();
 	}
 
 	public void addSchematicsFromDirectory(File schemDirectory) {
 		File[] schemFiles = schemDirectory
 				.listFiles(new SchematicFilenameFilter());
-		Set<Schematic> section = getSection(schemDirectory, schemFiles.length);
-		section.clear();
+		worldgenFolderSchemList.clear();
 		for (File schemFile : schemFiles) {
 			try {
-				addSchemFromStream(section, new FileInputStream(schemFile),
-						schemFile.getName());
+				addSchemFromStream(worldgenFolderSchemList,
+						new FileInputStream(schemFile), schemFile.getName());
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
@@ -50,32 +51,23 @@ public class WorldGenerator implements IWorldGenerator {
 		Schematic newSchem = new Schematic(
 				CompressedStreamTools.readCompressed(stream), name);
 		section.add(newSchem);
-		MyWorldGen.log.debug("Added schematic: %s", name);
-	}
-
-	public Set<Schematic> getSection(File origin, int expectedSize) {
-		if (schemList.containsKey(origin)) {
-			return schemList.get(origin);
-		} else {
-			Set<Schematic> section = Sets
-					.newHashSetWithExpectedSize(expectedSize);
-			schemList.put(origin, section);
-			return section;
-		}
 	}
 
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world,
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
-		if (world.getWorldInfo().isMapFeaturesEnabled() && !schemList.isEmpty()
-				&& random.nextBoolean()) {
-			ArrayList applicableSchematics = new ArrayList<WeightedRandom.Item>();
-			for (Set<Schematic> section : schemList.values()) {
-				for (Schematic s : section) {
-					if (s.info.matchesBiome(world.getBiomeGenForCoords(
-							chunkX * 16, chunkZ * 16))) {
-						applicableSchematics.add(s);
-					}
+		if (world.getWorldInfo().isMapFeaturesEnabled() && random.nextBoolean()) {
+			Set<Schematic> applicableSchematics = Sets.newHashSet();
+			for (Schematic s : worldgenFolderSchemList) {
+				if (s.info.matchesBiome(world.getBiomeGenForCoords(chunkX * 16,
+						chunkZ * 16))) {
+					applicableSchematics.add(s);
+				}
+			}
+			for (Schematic s : resourcePackSchemList) {
+				if (s.info.matchesBiome(world.getBiomeGenForCoords(chunkX * 16,
+						chunkZ * 16))) {
+					applicableSchematics.add(s);
 				}
 			}
 			if (!applicableSchematics.isEmpty()) {
