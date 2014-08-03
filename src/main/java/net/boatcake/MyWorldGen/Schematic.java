@@ -39,20 +39,20 @@ public class Schematic extends WeightedRandom.Item {
 	public short width;
 	public short height;
 	public short length;
-	
+
 	private int blocks[][][];
 	private int meta[][][];
 
 	public NBTTagList entities;
 	public NBTTagList tileEntities;
-	
+
 	public Map<Integer, Block> idMap;
 	public Map<Integer, BlockAnchorLogic> matchingMap;
 	public Map<Integer, BlockPlacementLogic> placingMap;
-	
+
 	// cache of the x,y,z locations of all anchor blocks
 	private ArrayList<Integer[]> anchorBlockLocations;
-	
+
 	public SchematicInfo info = new SchematicInfo();
 
 	public Schematic() {
@@ -225,6 +225,10 @@ public class Schematic extends WeightedRandom.Item {
 			for (int i = 0; i < l.tagCount(); i++) {
 				info.onlyIncludeBiomes.add(l.getStringTagAt(i));
 			}
+		}
+
+		if (tag.hasKey("lockRotation")) {
+			info.lockRotation = tag.getBoolean("lockRotation");
 		}
 	}
 
@@ -547,7 +551,8 @@ public class Schematic extends WeightedRandom.Item {
 		 * Rotate blocks afterward to try to avoid block updates making invalid
 		 * configurations (torches on air). Sometimes that still happens though.
 		 * Also, some blocks might have their rotation in tile entity data.
-		 * Forge devs, can I turn off block updates somehow please? :(
+		 * TODO: Look into some common rotation API. Block.rotateBlock is
+		 * supposed to be used for wrenches etc. in-game.
 		 */
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {

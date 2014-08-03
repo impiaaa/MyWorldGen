@@ -11,11 +11,13 @@ public class SchematicInfo {
 	public String chestType;
 	public ArrayList<String> onlyIncludeBiomes;
 	public String name;
+	public boolean lockRotation;
 
 	public SchematicInfo() {
 		chestType = ChestGenHooks.DUNGEON_CHEST;
 		excludeBiomes = null;
 		onlyIncludeBiomes = null;
+		lockRotation = false;
 	}
 
 	public boolean matchesBiome(BiomeGenBase biome) {

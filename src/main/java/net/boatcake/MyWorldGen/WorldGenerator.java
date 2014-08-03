@@ -71,8 +71,8 @@ public class WorldGenerator implements IWorldGenerator {
 			ArrayList applicableSchematics = new ArrayList<WeightedRandom.Item>();
 			for (Set<Schematic> section : schemList.values()) {
 				for (Schematic s : section) {
-					if (s.info.matchesBiome(world.getBiomeGenForCoords(chunkX * 16,
-							chunkZ * 16))) {
+					if (s.info.matchesBiome(world.getBiomeGenForCoords(
+							chunkX * 16, chunkZ * 16))) {
 						applicableSchematics.add(s);
 					}
 				}
@@ -88,8 +88,13 @@ public class WorldGenerator implements IWorldGenerator {
 						int x = random.nextInt(16) + chunkX * 16;
 						int y = random.nextInt(world.getHeight());
 						int z = random.nextInt(16) + chunkZ * 16;
-						ForgeDirection randomDirection = DirectionUtils.cardinalDirections[random
-								.nextInt(4)];
+						ForgeDirection randomDirection;
+						if (schemToGenerate.info.lockRotation) {
+							randomDirection = ForgeDirection.SOUTH;
+						} else {
+							randomDirection = DirectionUtils.cardinalDirections[random
+									.nextInt(4)];
+						}
 						if (schemToGenerate.fitsIntoWorldAt(world, x, y, z,
 								randomDirection)) {
 							schemToGenerate.placeInWorld(world, x, y, z,
@@ -98,8 +103,8 @@ public class WorldGenerator implements IWorldGenerator {
 									.log(Level.DEBUG,
 											"Generated {} at {}, {}, {}; took {} tries",
 											new Object[] {
-													schemToGenerate.info.name, x, y,
-													z, i + 1 });
+													schemToGenerate.info.name,
+													x, y, z, i + 1 });
 							break;
 						}
 					}
