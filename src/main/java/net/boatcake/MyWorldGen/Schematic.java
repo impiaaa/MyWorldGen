@@ -2,7 +2,6 @@ package net.boatcake.MyWorldGen;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -37,22 +36,24 @@ import org.apache.logging.log4j.Level;
 import cpw.mods.fml.common.registry.GameData;
 
 public class Schematic extends WeightedRandom.Item {
+	public short width;
+	public short height;
+	public short length;
+	
+	private int blocks[][][];
+	private int meta[][][];
+
+	public NBTTagList entities;
+	public NBTTagList tileEntities;
+	
+	public Map<Integer, Block> idMap;
+	public Map<Integer, BlockAnchorLogic> matchingMap;
+	public Map<Integer, BlockPlacementLogic> placingMap;
+	
 	// cache of the x,y,z locations of all anchor blocks
 	private ArrayList<Integer[]> anchorBlockLocations;
-	private int blocks[][][];
-	public String chestType;
-	public NBTTagList entities;
-	public ArrayList<String> excludeBiomes;
-	public short height;
-	public Map<Integer, Block> idMap;
-	public short length;
-	public Map<Integer, BlockAnchorLogic> matchingMap;
-	private int meta[][][];
-	public String name;
-	public ArrayList<String> onlyIncludeBiomes;
-	public Map<Integer, BlockPlacementLogic> placingMap;
-	public NBTTagList tileEntities;
-	public short width;
+	
+	public SchematicInfo info = new SchematicInfo();
 
 	public Schematic() {
 		this((short) 0, (short) 0, (short) 0, null);
@@ -60,7 +61,7 @@ public class Schematic extends WeightedRandom.Item {
 
 	public Schematic(NBTTagCompound tag, String n) {
 		super(tag.hasKey("randomWeight") ? tag.getInteger("randomWeight") : 10);
-		name = n;
+		info.name = n;
 		if (!tag.getString("Materials").equals("Alpha")) {
 			throw new RuntimeException(
 					"Non-Alpha schematics are not supported!");
@@ -105,7 +106,7 @@ public class Schematic extends WeightedRandom.Item {
 				MyWorldGen.log
 						.log(Level.WARN,
 								"Schematic file {} has no ignoreBlockId tag, defaulting to ID from config",
-								name);
+								info.name);
 				if (MyWorldGen.ignoreBlock != null) {
 					placingMap.put(
 							GameData.getBlockRegistry().getId(
@@ -130,7 +131,7 @@ public class Schematic extends WeightedRandom.Item {
 				MyWorldGen.log
 						.log(Level.WARN,
 								"Schematic file {} has no anchorBlockId tag, defaulting to ID from config",
-								name);
+								info.name);
 				if (MyWorldGen.materialAnchorBlock != null) {
 					placingMap.put(
 							GameData.getBlockRegistry().getId(
@@ -201,35 +202,29 @@ public class Schematic extends WeightedRandom.Item {
 		entities = (NBTTagList) tag.getTag("Entities");
 		tileEntities = (NBTTagList) tag.getTag("TileEntities");
 
-		if (anchorBlockLocations.isEmpty() && name != null) {
+		if (anchorBlockLocations.isEmpty() && info.name != null) {
 			MyWorldGen.log.log(Level.WARN, "No anchors found in schematic {}",
-					name);
+					info.name);
 		}
 
 		if (tag.hasKey("chestType")) {
-			chestType = tag.getString("chestType");
-		} else {
-			chestType = ChestGenHooks.DUNGEON_CHEST;
+			info.chestType = tag.getString("chestType");
 		}
 
 		if (tag.hasKey("excludeBiomes")) {
 			NBTTagList l = (NBTTagList) tag.getTag("excludeBiomes");
-			excludeBiomes = new ArrayList<String>(l.tagCount());
+			info.excludeBiomes = new ArrayList<String>(l.tagCount());
 			for (int i = 0; i < l.tagCount(); i++) {
-				excludeBiomes.add(l.getStringTagAt(i));
+				info.excludeBiomes.add(l.getStringTagAt(i));
 			}
-		} else {
-			excludeBiomes = null;
 		}
 
 		if (tag.hasKey("onlyIncludeBiomes")) {
 			NBTTagList l = (NBTTagList) tag.getTag("onlyIncludeBiomes");
-			onlyIncludeBiomes = new ArrayList<String>(l.tagCount());
+			info.onlyIncludeBiomes = new ArrayList<String>(l.tagCount());
 			for (int i = 0; i < l.tagCount(); i++) {
-				onlyIncludeBiomes.add(l.getStringTagAt(i));
+				info.onlyIncludeBiomes.add(l.getStringTagAt(i));
 			}
-		} else {
-			onlyIncludeBiomes = null;
 		}
 	}
 
@@ -246,19 +241,15 @@ public class Schematic extends WeightedRandom.Item {
 		matchingMap = new HashMap<Integer, BlockAnchorLogic>();
 		placingMap = new HashMap<Integer, BlockPlacementLogic>();
 		anchorBlockLocations = new ArrayList<Integer[]>();
-		chestType = ChestGenHooks.DUNGEON_CHEST;
-		excludeBiomes = new ArrayList<String>();
-		excludeBiomes.add(BiomeGenBase.hell.biomeName);
-		excludeBiomes.add(BiomeGenBase.sky.biomeName);
-		onlyIncludeBiomes = null;
-		name = n;
+		info.excludeBiomes = new ArrayList<String>();
+		info.excludeBiomes.add(BiomeGenBase.hell.biomeName);
+		info.excludeBiomes.add(BiomeGenBase.sky.biomeName);
+		info.name = n;
 	}
 
 	public Schematic(World world, int x1, int y1, int z1, int x2, int y2, int z2) {
 		this((short) (Math.abs(x2 - x1) + 1), (short) (Math.abs(y2 - y1) + 1),
-				(short) (Math.abs(z2 - z1) + 1), String.format(
-						"%s: %d,%d,%d:%d,%d,%d", world.getWorldInfo()
-								.getWorldName(), x1, y1, z1, x2, y2, z2));
+				(short) (Math.abs(z2 - z1) + 1), null);
 
 		if (x1 > x2) {
 			int t = x1;
@@ -294,15 +285,6 @@ public class Schematic extends WeightedRandom.Item {
 			this.tileEntities = WorldUtils.getTileEntities(world, x1, y1, z1,
 					x2, y2, z2);
 		}
-	}
-
-	public boolean containsIgnoreCase(List<String> list, String thing) {
-		for (String other : list) {
-			if (thing.equalsIgnoreCase(other)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public boolean fitsIntoWorldAt(World world, int atX, int atY, int atZ,
@@ -405,19 +387,19 @@ public class Schematic extends WeightedRandom.Item {
 		}
 		base.setTag("MWGIDMap", idMapTag);
 
-		base.setString("chestType", chestType);
+		base.setString("chestType", info.chestType);
 
-		if (excludeBiomes != null) {
+		if (info.excludeBiomes != null) {
 			NBTTagList t = new NBTTagList();
-			for (String biome : excludeBiomes) {
+			for (String biome : info.excludeBiomes) {
 				t.appendTag(new NBTTagString(biome));
 			}
 			base.setTag("excludeBiomes", t);
 		}
 
-		if (onlyIncludeBiomes != null) {
+		if (info.onlyIncludeBiomes != null) {
 			NBTTagList t = new NBTTagList();
-			for (String biome : onlyIncludeBiomes) {
+			for (String biome : info.onlyIncludeBiomes) {
 				t.appendTag(new NBTTagString(biome));
 			}
 			base.setTag("onlyIncludeBiomes", t);
@@ -439,18 +421,6 @@ public class Schematic extends WeightedRandom.Item {
 			}
 		}
 		return null;
-	}
-
-	public boolean matchesBiome(BiomeGenBase biome) {
-		if ((excludeBiomes != null)
-				&& (containsIgnoreCase(excludeBiomes, biome.biomeName))) {
-			return false;
-		}
-		if ((onlyIncludeBiomes != null)
-				&& (!containsIgnoreCase(onlyIncludeBiomes, biome.biomeName))) {
-			return false;
-		}
-		return true;
 	}
 
 	public void placeInWorld(World world, int atX, int atY, int atZ,
@@ -548,14 +518,14 @@ public class Schematic extends WeightedRandom.Item {
 							(int) rotatedCoords.xCoord,
 							(int) rotatedCoords.yCoord,
 							(int) rotatedCoords.zCoord);
-					if (generateChests && !chestType.isEmpty()) {
+					if (generateChests && !info.chestType.isEmpty()) {
 						if (block == Blocks.chest
 								|| block == Blocks.trapped_chest) {
-							ChestGenHooks info = ChestGenHooks
-									.getInfo(chestType);
+							ChestGenHooks hook = ChestGenHooks
+									.getInfo(info.chestType);
 							WeightedRandomChestContent.generateChestContents(
-									rand, info.getItems(rand),
-									(TileEntityChest) e, info.getCount(rand));
+									rand, hook.getItems(rand),
+									(TileEntityChest) e, hook.getCount(rand));
 						} else if (block == Blocks.dispenser) {
 							ChestGenHooks info = ChestGenHooks
 									.getInfo(ChestGenHooks.PYRAMID_JUNGLE_DISPENSER);
