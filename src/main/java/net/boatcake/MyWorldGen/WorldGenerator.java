@@ -67,7 +67,8 @@ public class WorldGenerator implements IWorldGenerator {
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world,
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
-		if (!schemList.isEmpty() && random.nextBoolean()) {
+		if (world.getWorldInfo().isMapFeaturesEnabled() && !schemList.isEmpty()
+				&& random.nextBoolean()) {
 			ArrayList applicableSchematics = new ArrayList<WeightedRandom.Item>();
 			for (Set<Schematic> section : schemList.values()) {
 				for (Schematic s : section) {
