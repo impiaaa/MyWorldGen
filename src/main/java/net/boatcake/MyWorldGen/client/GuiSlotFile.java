@@ -8,7 +8,10 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSlot;
 import net.minecraft.client.renderer.Tessellator;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class GuiSlotFile extends GuiSlot {
 	public File[] files;
 	public FontRenderer fr;

@@ -23,7 +23,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.util.Vec3;
-import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -35,7 +34,7 @@ import org.apache.logging.log4j.Level;
 
 import cpw.mods.fml.common.registry.GameData;
 
-public class Schematic extends WeightedRandom.Item {
+public class Schematic {
 	public short width;
 	public short height;
 	public short length;
@@ -53,14 +52,14 @@ public class Schematic extends WeightedRandom.Item {
 	// cache of the x,y,z locations of all anchor blocks
 	private ArrayList<Integer[]> anchorBlockLocations;
 
-	public SchematicInfo info = new SchematicInfo();
+	public SchematicInfo info;
 
 	public Schematic() {
 		this((short) 0, (short) 0, (short) 0, null);
 	}
 
 	public Schematic(NBTTagCompound tag, String n) {
-		super(tag.hasKey("randomWeight") ? tag.getInteger("randomWeight") : 10);
+		info = new SchematicInfo();
 		info.name = n;
 		if (!tag.getString("Materials").equals("Alpha")) {
 			throw new RuntimeException(
@@ -207,33 +206,10 @@ public class Schematic extends WeightedRandom.Item {
 					info.name);
 		}
 
-		if (tag.hasKey("chestType")) {
-			info.chestType = tag.getString("chestType");
-		}
-
-		if (tag.hasKey("excludeBiomes")) {
-			NBTTagList l = (NBTTagList) tag.getTag("excludeBiomes");
-			info.excludeBiomes = new ArrayList<String>(l.tagCount());
-			for (int i = 0; i < l.tagCount(); i++) {
-				info.excludeBiomes.add(l.getStringTagAt(i));
-			}
-		}
-
-		if (tag.hasKey("onlyIncludeBiomes")) {
-			NBTTagList l = (NBTTagList) tag.getTag("onlyIncludeBiomes");
-			info.onlyIncludeBiomes = new ArrayList<String>(l.tagCount());
-			for (int i = 0; i < l.tagCount(); i++) {
-				info.onlyIncludeBiomes.add(l.getStringTagAt(i));
-			}
-		}
-
-		if (tag.hasKey("lockRotation")) {
-			info.lockRotation = tag.getBoolean("lockRotation");
-		}
+		info.readFromNBT(tag);
 	}
 
 	public Schematic(short w, short h, short d, String n) {
-		super(10);
 		width = w;
 		height = h;
 		length = d;
@@ -245,6 +221,7 @@ public class Schematic extends WeightedRandom.Item {
 		matchingMap = new HashMap<Integer, BlockAnchorLogic>();
 		placingMap = new HashMap<Integer, BlockPlacementLogic>();
 		anchorBlockLocations = new ArrayList<Integer[]>();
+		info = new SchematicInfo();
 		info.excludeBiomes = new ArrayList<String>();
 		info.excludeBiomes.add(BiomeGenBase.hell.biomeName);
 		info.excludeBiomes.add(BiomeGenBase.sky.biomeName);
@@ -409,7 +386,7 @@ public class Schematic extends WeightedRandom.Item {
 			base.setTag("onlyIncludeBiomes", t);
 		}
 
-		base.setInteger("randomWeight", super.itemWeight);
+		base.setInteger("randomWeight", info.randomWeight);
 
 		return base;
 	}

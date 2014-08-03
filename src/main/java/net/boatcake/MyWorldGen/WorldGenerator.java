@@ -56,26 +56,27 @@ public class WorldGenerator implements IWorldGenerator {
 	public void generate(Random random, int chunkX, int chunkZ, World world,
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
 		if (world.getWorldInfo().isMapFeaturesEnabled() && random.nextBoolean()) {
-			List<Schematic> applicableSchematics = new ArrayList<Schematic>();
+			List<WeightedRandom.Item> applicableSchematics = new ArrayList<WeightedRandom.Item>();
 			for (Schematic s : worldgenFolderSchemList) {
 				if (s.info.matchesBiome(world.getBiomeGenForCoords(chunkX * 16,
 						chunkZ * 16))) {
-					applicableSchematics.add(s);
+					applicableSchematics.add(new WeightedRandomSchematic(s));
 				}
 			}
 			for (Schematic s : resourcePackSchemList) {
 				if (s.info.matchesBiome(world.getBiomeGenForCoords(chunkX * 16,
 						chunkZ * 16))) {
-					applicableSchematics.add(s);
+					applicableSchematics.add(new WeightedRandomSchematic(s));
 				}
 			}
 			if (!applicableSchematics.isEmpty()) {
 				WeightedRandom.Item noStructureItem = new WeightedRandom.Item(
 						MyWorldGen.generateNothingWeight);
+				applicableSchematics.add(noStructureItem);
 				WeightedRandom.Item selectedItem = WeightedRandom
 						.getRandomItem(random, applicableSchematics);
 				if (selectedItem != noStructureItem) {
-					Schematic schemToGenerate = (Schematic) selectedItem;
+					Schematic schemToGenerate = ((WeightedRandomSchematic) selectedItem).schematic;
 					for (int i = 0; i < MyWorldGen.generateTries; i++) {
 						int x = random.nextInt(16) + chunkX * 16;
 						int y = random.nextInt(world.getHeight());
