@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.ChestGenHooks;
 
@@ -64,6 +65,28 @@ public class SchematicInfo {
 		if (tag.hasKey("randomWeight")) {
 			randomWeight = tag.getInteger("randomWeight");
 		}
+	}
+
+	public void writeToNBT(NBTTagCompound base) {
+		base.setString("chestType", chestType);
+
+		if (excludeBiomes != null) {
+			NBTTagList t = new NBTTagList();
+			for (String biome : excludeBiomes) {
+				t.appendTag(new NBTTagString(biome));
+			}
+			base.setTag("excludeBiomes", t);
+		}
+
+		if (onlyIncludeBiomes != null) {
+			NBTTagList t = new NBTTagList();
+			for (String biome : onlyIncludeBiomes) {
+				t.appendTag(new NBTTagString(biome));
+			}
+			base.setTag("onlyIncludeBiomes", t);
+		}
+
+		base.setInteger("randomWeight", randomWeight);
 	}
 
 	public static boolean containsIgnoreCase(List<String> list, String thing) {

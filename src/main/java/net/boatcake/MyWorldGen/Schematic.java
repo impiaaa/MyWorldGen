@@ -18,7 +18,6 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityDispenser;
@@ -368,25 +367,7 @@ public class Schematic {
 		}
 		base.setTag("MWGIDMap", idMapTag);
 
-		base.setString("chestType", info.chestType);
-
-		if (info.excludeBiomes != null) {
-			NBTTagList t = new NBTTagList();
-			for (String biome : info.excludeBiomes) {
-				t.appendTag(new NBTTagString(biome));
-			}
-			base.setTag("excludeBiomes", t);
-		}
-
-		if (info.onlyIncludeBiomes != null) {
-			NBTTagList t = new NBTTagList();
-			for (String biome : info.onlyIncludeBiomes) {
-				t.appendTag(new NBTTagString(biome));
-			}
-			base.setTag("onlyIncludeBiomes", t);
-		}
-
-		base.setInteger("randomWeight", info.randomWeight);
+		info.writeToNBT(base);
 
 		return base;
 	}
