@@ -1,18 +1,15 @@
 package net.boatcake.MyWorldGen.client;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import net.boatcake.MyWorldGen.MyWorldGen;
-import net.boatcake.MyWorldGen.Schematic;
 import net.boatcake.MyWorldGen.WorldGenerator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.FallbackResourceManager;

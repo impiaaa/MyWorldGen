@@ -5,10 +5,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
+import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import net.boatcake.MyWorldGen.utils.DirectionUtils;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -19,22 +18,22 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import org.apache.logging.log4j.Level;
 
-import com.google.common.collect.Sets;
-
+import scala.actors.threadpool.Arrays;
 import cpw.mods.fml.common.IWorldGenerator;
 
 public class WorldGenerator implements IWorldGenerator {
-	private Set<Schematic> worldgenFolderSchemList;
-	public Set<Schematic> resourcePackSchemList;
+	private List<Schematic> worldgenFolderSchemList;
+	public List<Schematic> resourcePackSchemList;
 
 	public WorldGenerator() {
-		worldgenFolderSchemList = Sets.newHashSet();
-		resourcePackSchemList = Sets.newHashSet();
+		worldgenFolderSchemList = new ArrayList<Schematic>();
+		resourcePackSchemList = new ArrayList<Schematic>();
 	}
 
 	public void addSchematicsFromDirectory(File schemDirectory) {
 		File[] schemFiles = schemDirectory
 				.listFiles(new SchematicFilenameFilter());
+		Arrays.sort(schemFiles);
 		worldgenFolderSchemList.clear();
 		for (File schemFile : schemFiles) {
 			try {
@@ -46,8 +45,8 @@ public class WorldGenerator implements IWorldGenerator {
 		}
 	}
 
-	public void addSchemFromStream(Set<Schematic> section, InputStream stream,
-			String name) throws IOException {
+	public void addSchemFromStream(Collection<Schematic> section,
+			InputStream stream, String name) throws IOException {
 		Schematic newSchem = new Schematic(
 				CompressedStreamTools.readCompressed(stream), name);
 		section.add(newSchem);
@@ -57,7 +56,7 @@ public class WorldGenerator implements IWorldGenerator {
 	public void generate(Random random, int chunkX, int chunkZ, World world,
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
 		if (world.getWorldInfo().isMapFeaturesEnabled() && random.nextBoolean()) {
-			Set<Schematic> applicableSchematics = Sets.newHashSet();
+			List<Schematic> applicableSchematics = new ArrayList<Schematic>();
 			for (Schematic s : worldgenFolderSchemList) {
 				if (s.info.matchesBiome(world.getBiomeGenForCoords(chunkX * 16,
 						chunkZ * 16))) {
