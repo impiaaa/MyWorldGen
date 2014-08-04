@@ -2,6 +2,7 @@ package net.boatcake.MyWorldGen.client;
 
 import java.io.FileInputStream;
 
+import net.boatcake.MyWorldGen.BlockPlacementOption;
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.SchematicFilenameFilter;
 import net.boatcake.MyWorldGen.network.MessagePlaceSchem;
@@ -19,12 +20,15 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiLoadSchematic extends GuiScreen {
-	private ForgeDirection direction;
 	private GuiButton doneButton;
-	private EntityClientPlayerMP player;
+	private GuiButton placementButton;
 	private GuiSlotFile slot;
+
 	private World world;
+	private ForgeDirection direction;
 	private int x, y, z;
+	private EntityClientPlayerMP player;
+	private BlockPlacementOption placementOption;
 
 	public GuiLoadSchematic(World world, int x, int y, int z,
 			ForgeDirection direction, EntityClientPlayerMP player) {
@@ -35,6 +39,7 @@ public class GuiLoadSchematic extends GuiScreen {
 		this.z = z;
 		this.direction = direction;
 		this.player = player;
+		this.placementOption = BlockPlacementOption.ASGENERATED;
 	}
 
 	@Override
@@ -46,6 +51,7 @@ public class GuiLoadSchematic extends GuiScreen {
 				message.y = y;
 				message.z = z;
 				message.direction = direction;
+				message.placementOption = placementOption;
 				// We might be able to send the file data directly, but it's
 				// better to make sure that it's valid NBT first.
 				try {
@@ -60,6 +66,10 @@ public class GuiLoadSchematic extends GuiScreen {
 				}
 				NetUtils.sendToServer(message);
 				this.mc.displayGuiScreen(null);
+			} else if (button.id == placementButton.id) {
+				placementOption = placementOption.next;
+				placementButton.displayString = I18n
+						.format(placementOption.text);
 			} else {
 				slot.actionPerformed(button);
 			}
@@ -75,10 +85,12 @@ public class GuiLoadSchematic extends GuiScreen {
 
 	@Override
 	public void initGui() {
-		buttonList.add(doneButton = new GuiButton(0, this.width / 2 - 75,
-				this.height - 38, I18n.format("gui.done")));
+		buttonList.add(placementButton = new GuiButton(0, this.width / 2 - 154,
+				this.height - 52, 150, 20, I18n.format(placementOption.text)));
+		buttonList.add(doneButton = new GuiButton(1, this.width / 2 + 4,
+				this.height - 52, 150, 20, I18n.format("gui.done")));
 		slot = new GuiSlotFile(this.mc, this, MyWorldGen.globalSchemDir,
 				this.fontRendererObj, new SchematicFilenameFilter());
-		slot.registerScrollButtons(1, 2);
+		slot.registerScrollButtons(2, 3);
 	}
 }

@@ -91,7 +91,7 @@ public class WorldGenerator implements IWorldGenerator {
 						if (schemToGenerate.fitsIntoWorldAt(world, x, y, z,
 								randomDirection)) {
 							schemToGenerate.placeInWorld(world, x, y, z,
-									randomDirection, true, true, random);
+									randomDirection, true, true, true, random);
 							MyWorldGen.log
 									.log(Level.DEBUG,
 											"Generated {} at {}, {}, {}; took {} tries",

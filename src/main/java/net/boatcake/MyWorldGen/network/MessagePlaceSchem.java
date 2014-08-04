@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBufOutputStream;
 
 import java.io.IOException;
 
+import net.boatcake.MyWorldGen.BlockPlacementOption;
 import net.boatcake.MyWorldGen.Schematic;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -20,6 +21,7 @@ public class MessagePlaceSchem implements IMessage,
 	public ForgeDirection direction;
 	public NBTTagCompound schematicTag;
 	public int x, y, z;
+	public BlockPlacementOption placementOption;
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
@@ -37,6 +39,8 @@ public class MessagePlaceSchem implements IMessage,
 		schematicTag = packetTag.getCompoundTag("schematic");
 		direction = ForgeDirection.getOrientation(packetTag
 				.getInteger("direction"));
+		placementOption = BlockPlacementOption.get(packetTag
+				.getInteger("placementOption"));
 	}
 
 	@Override
@@ -46,7 +50,9 @@ public class MessagePlaceSchem implements IMessage,
 		if (playerMP.capabilities.isCreativeMode) {
 			new Schematic(message.schematicTag, null).placeInWorld(
 					playerMP.worldObj, message.x, message.y, message.z,
-					message.direction, false, false, null);
+					message.direction, message.placementOption.generateChests,
+					message.placementOption.generateSpawners,
+					message.placementOption.followPlacementRules, null);
 		}
 		return null;
 	}
@@ -59,6 +65,7 @@ public class MessagePlaceSchem implements IMessage,
 		tagToSend.setInteger("y", y);
 		tagToSend.setInteger("z", z);
 		tagToSend.setInteger("direction", direction.ordinal());
+		tagToSend.setInteger("placementOption", placementOption.id);
 		// We might be able to send the file data directly, but it's better to
 		// make sure that it's valid NBT first.
 		try {

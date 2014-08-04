@@ -14,4 +14,6 @@ item.wandSave.name=Schematic Save Wand
 item.wandLoad.name=Schematic Load Wand
 gui.save=Save
 gui.filename=Enter a file name:
+gui.placement.asgenerated=Place as generated
+gui.placement.lossless=Preserve anchors & chests
 itemGroup.tabMyWorldGen=MyWorldGen

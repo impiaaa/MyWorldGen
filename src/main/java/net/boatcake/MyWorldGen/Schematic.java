@@ -387,7 +387,7 @@ public class Schematic {
 
 	public void placeInWorld(World world, int atX, int atY, int atZ,
 			ForgeDirection rotationDirection, boolean generateChests,
-			boolean generateSpawners, Random rand) {
+			boolean generateSpawners, boolean followPlacementRules, Random rand) {
 		ForgeDirection rotationAxis = DirectionUtils
 				.axisForDirection(rotationDirection);
 		int rotationCount = DirectionUtils
@@ -403,7 +403,8 @@ public class Schematic {
 					Vec3 rotatedCoords = DirectionUtils.rotateCoords(
 							Vec3.createVectorHelper(x, y, z), offset,
 							rotationAxis, rotationCount);
-					if (placingMap.containsKey(blocks[x][y][z])) {
+					if (placingMap.containsKey(blocks[x][y][z])
+							&& followPlacementRules) {
 						placingMap.get(blocks[x][y][z]).affectWorld(
 								meta[x][y][z], getTileEntityAt(x, y, z), world,
 								x, y, z);
