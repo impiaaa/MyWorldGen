@@ -16,6 +16,7 @@ public class SchematicInfo {
 	public String name;
 	public boolean lockRotation;
 	public int randomWeight;
+	public boolean generateSpawners;
 
 	public SchematicInfo() {
 		chestType = ChestGenHooks.DUNGEON_CHEST;
@@ -65,6 +66,10 @@ public class SchematicInfo {
 		if (tag.hasKey("randomWeight")) {
 			randomWeight = tag.getInteger("randomWeight");
 		}
+
+		if (tag.hasKey("generateSpawners")) {
+			generateSpawners = tag.getBoolean("generateSpawners");
+		}
 	}
 
 	public void writeToNBT(NBTTagCompound base) {
@@ -86,7 +91,9 @@ public class SchematicInfo {
 			base.setTag("onlyIncludeBiomes", t);
 		}
 
+		base.setBoolean("lockRotation", lockRotation);
 		base.setInteger("randomWeight", randomWeight);
+		base.setBoolean("generateSpawners", generateSpawners);
 	}
 
 	public static boolean containsIgnoreCase(List<String> list, String thing) {

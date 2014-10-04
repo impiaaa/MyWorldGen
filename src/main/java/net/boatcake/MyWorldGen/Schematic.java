@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.World;
@@ -482,14 +483,13 @@ public class Schematic {
 							(int) rotatedCoords.yCoord,
 							(int) rotatedCoords.zCoord);
 					if (generateChests && !info.chestType.isEmpty()) {
-						if (block == Blocks.chest
-								|| block == Blocks.trapped_chest) {
+						if ((block == Blocks.chest || block == Blocks.trapped_chest) && (e instanceof TileEntityChest)) {
 							ChestGenHooks hook = ChestGenHooks
 									.getInfo(info.chestType);
 							WeightedRandomChestContent.generateChestContents(
 									rand, hook.getItems(rand),
 									(TileEntityChest) e, hook.getCount(rand));
-						} else if (block == Blocks.dispenser) {
+						} else if (block == Blocks.dispenser && (e instanceof TileEntityDispenser)) {
 							ChestGenHooks info = ChestGenHooks
 									.getInfo(ChestGenHooks.PYRAMID_JUNGLE_DISPENSER);
 							WeightedRandomChestContent
@@ -499,8 +499,8 @@ public class Schematic {
 											info.getCount(rand));
 						}
 					}
-					if (generateSpawners && block == Blocks.mob_spawner) {
-						DungeonHooks.getRandomDungeonMob(rand);
+					if (info.generateSpawners && generateSpawners && block == Blocks.mob_spawner && e instanceof TileEntityMobSpawner) {
+						((TileEntityMobSpawner)e).func_145881_a().setEntityName(DungeonHooks.getRandomDungeonMob(rand));
 					}
 				}
 			}

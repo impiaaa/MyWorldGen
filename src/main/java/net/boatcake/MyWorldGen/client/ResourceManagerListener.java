@@ -33,6 +33,7 @@ public class ResourceManagerListener implements IResourceManagerReloadListener {
 				.getResourceManager()).registerReloadListener(this);
 	}
 
+	// Reflection utilities
 	private static Object getFieldValueOfClass(Object o, Class c) {
 		for (Field f : o.getClass().getDeclaredFields()) {
 			boolean wasAccessible = f.isAccessible();
