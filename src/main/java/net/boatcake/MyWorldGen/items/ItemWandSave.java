@@ -18,8 +18,8 @@ public class ItemWandSave extends Item {
 	}
 
 	@Override
-	public boolean hasEffect(ItemStack stack) {
-		return stack.hasTagCompound();
+	public boolean hasEffect(ItemStack stack, int pass) {
+		return stack.hasTagCompound() && (pass == 0);
 	}
 
 	@Override

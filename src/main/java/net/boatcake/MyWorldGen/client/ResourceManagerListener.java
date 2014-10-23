@@ -124,7 +124,7 @@ public class ResourceManagerListener implements IResourceManagerReloadListener {
 					continue;
 				}
 			}
-		} catch (ReflectiveOperationException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		// P.S.

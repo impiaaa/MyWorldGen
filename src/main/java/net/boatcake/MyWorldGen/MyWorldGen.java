@@ -161,7 +161,7 @@ public class MyWorldGen {
 			log.fatal("Could not load configuration");
 			e.printStackTrace();
 			return;
-		} catch (ReflectiveOperationException e) {
+		} catch (Exception e) {
 			log.fatal("Self-reflection failed. Is the mod intact?");
 			e.printStackTrace();
 			return;
@@ -196,7 +196,7 @@ public class MyWorldGen {
 	private Block registerBlock(String name, Class<? extends Block> blockClass,
 			Class<? extends ItemBlock> itemBlockClass,
 			Class<? extends BlockAnchorLogic> matching)
-			throws RuntimeException, ReflectiveOperationException {
+			throws Exception {
 		Block block = null;
 		if (enableItemsAndBlocks) {
 			block = blockClass.getConstructor(Material.class).newInstance(
@@ -218,8 +218,7 @@ public class MyWorldGen {
 	}
 
 	private Item registerItem(String name, Class<? extends Item> itemClass,
-			Configuration cfg) throws RuntimeException,
-			ReflectiveOperationException {
+			Configuration cfg) throws Exception {
 		Item item = null;
 		if (enableItemsAndBlocks) {
 			item = itemClass.getConstructor().newInstance();

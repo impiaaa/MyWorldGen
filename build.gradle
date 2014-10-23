@@ -27,6 +27,12 @@ minecraft {
     assetDir = "eclipse/assets"
 }
 
+tasks.withType(JavaCompile) {
+    sourceCompatibility = "1.6"
+    targetCompatibility = "1.6"
+    options.deprecation = true
+}
+
 //curse {
 //    apiKey = project.curseforge_key
 //    projectId = "72733"
