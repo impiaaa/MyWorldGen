@@ -5,6 +5,6 @@
     "version": "${version}",
     "mcversion": "${mcversion}",
     "url": "http://www.minecraftforum.net/topic/1902599-",
-    "authors": ["impiaaa"],
+    "authorList": ["impiaaa"],
     "logoFile": "pack.png"
 }]
