@@ -2,6 +2,7 @@ package net.boatcake.MyWorldGen.client;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.Schematic;
@@ -11,11 +12,10 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.input.Keyboard;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiSaveSchematic extends GuiScreen {
@@ -30,7 +30,7 @@ public class GuiSaveSchematic extends GuiScreen {
 	}
 
 	@Override
-	protected void actionPerformed(GuiButton button) {
+	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
 		if (button.id == saveBtn.id && saveBtn.enabled) {
 			// Step 5: Now that we have the block data and entity and tile

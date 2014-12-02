@@ -8,6 +8,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 public class ItemWandSave extends Item {
@@ -18,14 +20,14 @@ public class ItemWandSave extends Item {
 	}
 
 	@Override
-	public boolean hasEffect(ItemStack stack, int pass) {
-		return stack.hasTagCompound() && (pass == 0);
+	public boolean hasEffect(ItemStack stack) {
+		return stack.hasTagCompound();
 	}
 
 	@Override
 	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world,
-			int blockX, int blockY, int blockZ, int side, float hitX,
-			float hitY, float hitZ) {
+			BlockPos blockPos, EnumFacing side, float hitX, float hitY,
+			float hitZ) {
 		if (!world.isRemote) {
 			if (stack.hasTagCompound()) {
 				/*
@@ -54,18 +56,15 @@ public class ItemWandSave extends Item {
 					 * block data later.
 					 */
 					MessageGetSchemClient message = new MessageGetSchemClient();
-					message.x1 = stack.getTagCompound().getInteger("x");
-					message.y1 = stack.getTagCompound().getInteger("y");
-					message.z1 = stack.getTagCompound().getInteger("z");
-					message.x2 = blockX;
-					message.y2 = blockY;
-					message.z2 = blockZ;
+					message.pos1 = new BlockPos(stack.getTagCompound()
+							.getInteger("x"), stack.getTagCompound()
+							.getInteger("y"), stack.getTagCompound()
+							.getInteger("z"));
+					message.pos2 = blockPos;
 					message.entitiesTag = WorldUtils.getEntities(
-							playerMP.worldObj, message.x1, message.y1,
-							message.z1, message.x2, message.y2, message.z2);
+							playerMP.worldObj, message.pos1, message.pos2);
 					message.tileEntitiesTag = WorldUtils.getTileEntities(
-							playerMP.worldObj, message.x1, message.y1,
-							message.z1, message.x2, message.y2, message.z2);
+							playerMP.worldObj, message.pos1, message.pos2);
 					NetUtils.sendTo(message, playerMP);
 				}
 				// Clear the item data, so that we can make a new selection
@@ -76,9 +75,9 @@ public class ItemWandSave extends Item {
 				 * the item data.
 				 */
 				NBTTagCompound tag = new NBTTagCompound();
-				tag.setInteger("x", blockX);
-				tag.setInteger("y", blockY);
-				tag.setInteger("z", blockZ);
+				tag.setInteger("x", blockPos.getX());
+				tag.setInteger("y", blockPos.getY());
+				tag.setInteger("z", blockPos.getZ());
 				stack.setTagCompound(tag);
 			}
 		}

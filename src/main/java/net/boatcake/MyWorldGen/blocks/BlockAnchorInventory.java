@@ -5,8 +5,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 public class BlockAnchorInventory extends BlockContainer implements
@@ -25,14 +28,16 @@ public class BlockAnchorInventory extends BlockContainer implements
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z,
-			EntityPlayer player, int par6, float par7, float par8, float par9) {
-		TileEntity tileEntity = world.getTileEntity(x, y, z);
+	public boolean onBlockActivated(World world, BlockPos pos,
+			IBlockState blockState, EntityPlayer player, EnumFacing side,
+			float par7, float par8, float par9) {
+		TileEntity tileEntity = world.getTileEntity(pos);
 		if (tileEntity == null || player.isSneaking()) {
 			return false;
 		}
 		// code to open gui explained later
-		player.openGui(MyWorldGen.instance, 2, world, x, y, z);
+		player.openGui(MyWorldGen.instance, 2, world, pos.getX(), pos.getY(),
+				pos.getZ());
 		return true;
 	}
 }

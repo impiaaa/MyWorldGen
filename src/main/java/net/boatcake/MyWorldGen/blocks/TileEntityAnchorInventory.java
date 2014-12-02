@@ -1,6 +1,6 @@
 package net.boatcake.MyWorldGen.blocks;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemBlock;
@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IChatComponent;
 
 public class TileEntityAnchorInventory extends TileEntity implements IInventory {
 
@@ -18,7 +19,7 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer arg0) {
 	}
 
 	@Override
@@ -38,7 +39,7 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getName() {
 		return "container.anchorInventory";
 	}
 
@@ -67,7 +68,7 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
+	public boolean hasCustomName() {
 		return false;
 	}
 
@@ -78,15 +79,17 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this
-				&& player.getDistanceSq(xCoord + 0.5, yCoord + 0.5,
-						zCoord + 0.5) < 64;
+		return worldObj.getTileEntity(getPos()) == this
+				&& player.getDistanceSq(getPos().getX() + 0.5,
+						getPos().getY() + 0.5, getPos().getZ() + 0.5) < 64;
 	}
 
-	public boolean matches(Block block) {
+	public boolean matches(IBlockState blockState) {
 		for (int i = 0; i < inv.length; i++) {
-			if (inv[i] != null && (inv[i].getItem() instanceof ItemBlock)
-					&& ((ItemBlock) inv[i].getItem()).field_150939_a == block) {
+			if (inv[i] != null
+					&& (inv[i].getItem() instanceof ItemBlock)
+					&& ((ItemBlock) inv[i].getItem()).block == blockState
+							.getBlock()) {
 				return true;
 			}
 		}
@@ -94,7 +97,7 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer arg0) {
 	}
 
 	@Override
@@ -134,5 +137,34 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 			}
 		}
 		tagCompound.setTag("Inventory", itemList);
+	}
+
+	@Override
+	public IChatComponent getDisplayName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void clear() {
+		inv = new ItemStack[9];
+	}
+
+	@Override
+	public int getField(int arg0) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getFieldCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setField(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+
 	}
 }

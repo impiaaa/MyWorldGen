@@ -7,9 +7,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSlot;
-import net.minecraft.client.renderer.Tessellator;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiSlotFile extends GuiSlot {
@@ -32,8 +31,7 @@ public class GuiSlotFile extends GuiSlot {
 	}
 
 	@Override
-	protected void drawSlot(int i, int j, int k, int l,
-			Tessellator tessellator, int var6, int var7) {
+	protected void drawSlot(int i, int j, int k, int l, int var6, int var7) {
 		parent.drawString(fr, files[i].getName(), j + 2, k + 1, 0xFFFFFF);
 	}
 

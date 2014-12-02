@@ -3,7 +3,9 @@ package net.boatcake.MyWorldGen.blocks;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public abstract class BlockAnchorLogic {
@@ -21,6 +23,6 @@ public abstract class BlockAnchorLogic {
 		blockNameToLogic.put(blockName, this);
 	}
 
-	public abstract boolean matches(int myMeta, TileEntity myTileEntity,
-			World world, int x, int y, int z);
+	public abstract boolean matches(IBlockState myState,
+			TileEntity myTileEntity, World world, BlockPos pos);
 }

@@ -1,32 +1,32 @@
 package net.boatcake.MyWorldGen.utils;
 
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.Vec3i;
 
 public class DirectionUtils {
-
-	public static ForgeDirection axisForDirection(
-			ForgeDirection rotationDirection) {
+	// To rotate facing A, rotate around B, N times
+	public static Axis axisForDirection(EnumFacing rotationDirection) {
 		switch (rotationDirection) {
 		case UP:
-			return ForgeDirection.EAST;
+			return Axis.X;
 		case WEST:
-			return ForgeDirection.UP;
+			return Axis.Y;
 		case NORTH:
-			return ForgeDirection.UP;
+			return Axis.Y;
 		case DOWN:
-			return ForgeDirection.WEST;
+			return Axis.X;
 		case EAST:
-			return ForgeDirection.DOWN;
+			return Axis.Y;
 		case SOUTH:
-		case UNKNOWN:
 		default:
-			return ForgeDirection.UNKNOWN;
+			return Axis.Z;
 		}
 	}
 
-	public static float pitchOffsetForDirection(ForgeDirection rotationDirection) {
+	public static float pitchOffsetForDirection(EnumFacing rotationDirection) {
 		switch (rotationDirection) {
 		case UP:
 			return 90;
@@ -39,13 +39,25 @@ public class DirectionUtils {
 		case EAST:
 			return 0;
 		case SOUTH:
-		case UNKNOWN:
 		default:
 			return 0;
 		}
 	}
 
-	public static int rotationCountForDirection(ForgeDirection rotationDirection) {
+	public static EnumFacing getFakeAxisFromAxis(Axis axis) {
+		switch (axis) {
+		case X:
+			return EnumFacing.EAST;
+		case Y:
+			return EnumFacing.UP;
+		case Z:
+			return EnumFacing.SOUTH;
+		default:
+			return null;
+		}
+	}
+
+	public static int rotationCountForDirection(EnumFacing rotationDirection) {
 		switch (rotationDirection) {
 		case UP:
 			return 1;
@@ -54,17 +66,16 @@ public class DirectionUtils {
 		case NORTH:
 			return 2;
 		case DOWN:
-			return 1;
+			return 3;
 		case EAST:
-			return 1;
+			return 3;
 		case SOUTH:
-		case UNKNOWN:
 		default:
 			return 0;
 		}
 	}
 
-	public static float yawOffsetForDirection(ForgeDirection rotationDirection) {
+	public static float yawOffsetForDirection(EnumFacing rotationDirection) {
 		switch (rotationDirection) {
 		case UP:
 			return 0;
@@ -77,44 +88,36 @@ public class DirectionUtils {
 		case EAST:
 			return -90;
 		case SOUTH:
-		case UNKNOWN:
 		default:
 			return 0;
 		}
 	}
 
-	public static Vec3 rotateCoords(Vec3 coords, Vec3 at,
-			ForgeDirection rotationAxis, int rotationCount) {
+	public static Vec3 rotateCoords(Vec3 coords, Vec3 at, Axis rotationAxis,
+			int rotationCount) {
 		double worldX = coords.xCoord;
 		double worldY = coords.yCoord;
 		double worldZ = coords.zCoord;
 		for (int i = 0; i < rotationCount; i++) {
-			if (rotationAxis.offsetX == 1) {
-				double temp = worldY;
+			double temp;
+			switch (rotationAxis) {
+			case X:
+				temp = worldY;
 				worldY = -worldZ;
 				worldZ = temp;
-			} else if (rotationAxis.offsetX == -1) {
-				double temp = worldY;
-				worldY = worldZ;
-				worldZ = -temp;
-			}
-			if (rotationAxis.offsetY == 1) {
-				double temp = worldX;
+				break;
+			case Y:
+				temp = worldX;
 				worldX = -worldZ;
 				worldZ = temp;
-			} else if (rotationAxis.offsetY == -1) {
-				double temp = worldX;
-				worldX = worldZ;
-				worldZ = -temp;
-			}
-			if (rotationAxis.offsetZ == 1) {
-				double temp = worldX;
+				break;
+			case Z:
+				temp = worldX;
 				worldX = -worldY;
 				worldY = temp;
-			} else if (rotationAxis.offsetZ == -1) {
-				double temp = worldX;
-				worldX = worldY;
-				worldY = -temp;
+				break;
+			default:
+				return null;
 			}
 		}
 
@@ -122,14 +125,21 @@ public class DirectionUtils {
 		worldY += at.yCoord;
 		worldZ += at.zCoord;
 
-		return Vec3.createVectorHelper(worldX, worldY, worldZ);
+		return new Vec3(worldX, worldY, worldZ);
 	}
 
-	public static ForgeDirection[] cardinalDirections = new ForgeDirection[] {
-			ForgeDirection.NORTH, ForgeDirection.EAST, ForgeDirection.SOUTH,
-			ForgeDirection.WEST };
+	public static Vec3 rotateCoords(Vec3i coords, Vec3 at, Axis rotationAxis,
+			int rotationCount) {
+		return rotateCoords(
+				new Vec3(coords.getX(), coords.getY(), coords.getZ()), at,
+				rotationAxis, rotationCount);
+	}
 
-	public static ForgeDirection getDirectionFromYaw(float yaw) {
+	public static EnumFacing[] cardinalDirections = new EnumFacing[] {
+			EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.SOUTH,
+			EnumFacing.WEST };
+
+	public static EnumFacing getDirectionFromYaw(float yaw) {
 		return cardinalDirections[MathHelper
 				.floor_double(yaw * 4.0F / 360.0F + 0.5D) & 0x3];
 	}

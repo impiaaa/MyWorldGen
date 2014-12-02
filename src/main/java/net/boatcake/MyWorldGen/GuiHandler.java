@@ -5,13 +5,14 @@ import net.boatcake.MyWorldGen.client.GuiAnchorInventory;
 import net.boatcake.MyWorldGen.client.GuiLoadSchematic;
 import net.boatcake.MyWorldGen.client.GuiSaveSchematic;
 import net.boatcake.MyWorldGen.utils.DirectionUtils;
-import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.IGuiHandler;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class GuiHandler implements IGuiHandler {
 
@@ -25,11 +26,11 @@ public class GuiHandler implements IGuiHandler {
 		case 0:
 			return new GuiSaveSchematic();
 		case 1:
-			return new GuiLoadSchematic(world, x, y, z,
+			return new GuiLoadSchematic(world, new BlockPos(x, y, z),
 					DirectionUtils.getDirectionFromYaw(player.rotationYaw),
-					(EntityClientPlayerMP) player);
+					(EntityPlayerSP) player);
 		case 2:
-			TileEntity tileEntity = world.getTileEntity(x, y, z);
+			TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 			if (tileEntity instanceof TileEntityAnchorInventory) {
 				return new GuiAnchorInventory(player.inventory,
 						(TileEntityAnchorInventory) tileEntity);
@@ -44,7 +45,7 @@ public class GuiHandler implements IGuiHandler {
 	public Object getServerGuiElement(int id, EntityPlayer player, World world,
 			int x, int y, int z) {
 		if (id == 2) {
-			TileEntity tileEntity = world.getTileEntity(x, y, z);
+			TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 			if (tileEntity instanceof TileEntityAnchorInventory) {
 				return new ContainerAnchorInventory(player.inventory,
 						(TileEntityAnchorInventory) tileEntity);

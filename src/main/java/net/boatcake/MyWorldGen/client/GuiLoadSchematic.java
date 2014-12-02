@@ -7,16 +7,17 @@ import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.SchematicFilenameFilter;
 import net.boatcake.MyWorldGen.network.MessagePlaceSchem;
 import net.boatcake.MyWorldGen.utils.NetUtils;
-import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiLoadSchematic extends GuiScreen {
@@ -25,18 +26,16 @@ public class GuiLoadSchematic extends GuiScreen {
 	private GuiSlotFile slot;
 
 	private World world;
-	private ForgeDirection direction;
-	private int x, y, z;
-	private EntityClientPlayerMP player;
+	private EnumFacing direction;
+	private BlockPos pos;
+	private EntityPlayerSP player;
 	private BlockPlacementOption placementOption;
 
-	public GuiLoadSchematic(World world, int x, int y, int z,
-			ForgeDirection direction, EntityClientPlayerMP player) {
+	public GuiLoadSchematic(World world, BlockPos pos, EnumFacing direction,
+			EntityPlayerSP player) {
 		super();
 		this.world = world;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.pos = pos;
 		this.direction = direction;
 		this.player = player;
 		this.placementOption = BlockPlacementOption.ASGENERATED;
@@ -47,9 +46,7 @@ public class GuiLoadSchematic extends GuiScreen {
 		if (button.enabled) {
 			if (button.id == doneButton.id) {
 				MessagePlaceSchem message = new MessagePlaceSchem();
-				message.x = x;
-				message.y = y;
-				message.z = z;
+				message.pos = pos;
 				message.direction = direction;
 				message.placementOption = placementOption;
 				// We might be able to send the file data directly, but it's

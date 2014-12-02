@@ -10,21 +10,22 @@ import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.Schematic;
 import net.boatcake.MyWorldGen.client.GuiSaveSchematic;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageGetSchemClient implements IMessage,
 		IMessageHandler<MessageGetSchemClient, IMessage> {
 	public NBTTagList entitiesTag;
 	public NBTTagList tileEntitiesTag;
-	public int x1, y1, z1;
-	public int x2, y2, z2;
+	public BlockPos pos1;
+	public BlockPos pos2;
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
@@ -36,12 +37,10 @@ public class MessageGetSchemClient implements IMessage,
 			e.printStackTrace();
 			return;
 		}
-		x1 = packetTag.getInteger("x1");
-		y1 = packetTag.getInteger("y1");
-		z1 = packetTag.getInteger("z1");
-		x2 = packetTag.getInteger("x2");
-		y2 = packetTag.getInteger("y2");
-		z2 = packetTag.getInteger("z2");
+		pos1 = new BlockPos(packetTag.getInteger("x1"),
+				packetTag.getInteger("y1"), packetTag.getInteger("z1"));
+		pos2 = new BlockPos(packetTag.getInteger("x2"),
+				packetTag.getInteger("y2"), packetTag.getInteger("z2"));
 		entitiesTag = packetTag.getTagList("entities", 10);
 		tileEntitiesTag = packetTag.getTagList("tileEntities", 10);
 	}
@@ -54,19 +53,18 @@ public class MessageGetSchemClient implements IMessage,
 		 * data. Now we need to gather the block data from the client copy, and
 		 * then open a save dialog.
 		 */
-		EntityClientPlayerMP playerMP = Minecraft.getMinecraft().thePlayer;
+		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 
 		// Open the GUI
-		playerMP.openGui(MyWorldGen.instance, 0, playerMP.worldObj, 0, 0, 0);
+		player.openGui(MyWorldGen.instance, 0, player.worldObj, 0, 0, 0);
 
 		// Give the GUI the entity & tile entity information
 		GuiScreen currentScreen = Minecraft.getMinecraft().currentScreen;
 		if (currentScreen instanceof GuiSaveSchematic) {
 			GuiSaveSchematic guiSchematic = (GuiSaveSchematic) currentScreen;
 
-			guiSchematic.schematicToSave = new Schematic(playerMP.worldObj,
-					message.x1, message.y1, message.z1, message.x2, message.y2,
-					message.z2);
+			guiSchematic.schematicToSave = new Schematic(player.worldObj,
+					message.pos1, message.pos2);
 			guiSchematic.schematicToSave.entities = message.entitiesTag;
 			guiSchematic.schematicToSave.tileEntities = message.tileEntitiesTag;
 			guiSchematic.updateSaveButton();
@@ -78,12 +76,12 @@ public class MessageGetSchemClient implements IMessage,
 	@Override
 	public void toBytes(ByteBuf buf) {
 		NBTTagCompound tagToSend = new NBTTagCompound();
-		tagToSend.setInteger("x1", x1);
-		tagToSend.setInteger("y1", y1);
-		tagToSend.setInteger("z1", z1);
-		tagToSend.setInteger("x2", x2);
-		tagToSend.setInteger("y2", y2);
-		tagToSend.setInteger("z2", z2);
+		tagToSend.setInteger("x1", pos1.getX());
+		tagToSend.setInteger("y1", pos1.getY());
+		tagToSend.setInteger("z1", pos1.getZ());
+		tagToSend.setInteger("x2", pos2.getX());
+		tagToSend.setInteger("y2", pos2.getY());
+		tagToSend.setInteger("z2", pos2.getZ());
 		tagToSend.setTag("entities", entitiesTag);
 		tagToSend.setTag("tileEntities", tileEntitiesTag);
 

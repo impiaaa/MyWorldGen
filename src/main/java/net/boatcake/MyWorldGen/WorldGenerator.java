@@ -12,14 +12,14 @@ import java.util.Random;
 
 import net.boatcake.MyWorldGen.utils.DirectionUtils;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.common.IWorldGenerator;
 
 import org.apache.logging.log4j.Level;
-
-import cpw.mods.fml.common.IWorldGenerator;
 
 public class WorldGenerator implements IWorldGenerator {
 	private List<Schematic> worldgenFolderSchemList;
@@ -57,15 +57,14 @@ public class WorldGenerator implements IWorldGenerator {
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
 		if (world.getWorldInfo().isMapFeaturesEnabled() && random.nextBoolean()) {
 			List<WeightedRandom.Item> applicableSchematics = new ArrayList<WeightedRandom.Item>();
+			BlockPos chunkPos = new BlockPos(chunkX * 16, 0, chunkZ * 16);
 			for (Schematic s : worldgenFolderSchemList) {
-				if (s.info.matchesBiome(world.getBiomeGenForCoords(chunkX * 16,
-						chunkZ * 16))) {
+				if (s.info.matchesBiome(world.getBiomeGenForCoords(chunkPos))) {
 					applicableSchematics.add(new WeightedRandomSchematic(s));
 				}
 			}
 			for (Schematic s : resourcePackSchemList) {
-				if (s.info.matchesBiome(world.getBiomeGenForCoords(chunkX * 16,
-						chunkZ * 16))) {
+				if (s.info.matchesBiome(world.getBiomeGenForCoords(chunkPos))) {
 					applicableSchematics.add(new WeightedRandomSchematic(s));
 				}
 			}
@@ -78,19 +77,20 @@ public class WorldGenerator implements IWorldGenerator {
 				if (selectedItem != noStructureItem) {
 					Schematic schemToGenerate = ((WeightedRandomSchematic) selectedItem).schematic;
 					for (int i = 0; i < MyWorldGen.generateTries; i++) {
-						int x = random.nextInt(16) + chunkX * 16;
+						int x = random.nextInt(16) + chunkPos.getX();
 						int y = random.nextInt(world.getHeight());
-						int z = random.nextInt(16) + chunkZ * 16;
-						ForgeDirection randomDirection;
+						int z = random.nextInt(16) + chunkPos.getZ();
+						BlockPos pos = new BlockPos(x, y, z);
+						EnumFacing randomDirection;
 						if (schemToGenerate.info.lockRotation) {
-							randomDirection = ForgeDirection.SOUTH;
+							randomDirection = EnumFacing.SOUTH;
 						} else {
 							randomDirection = DirectionUtils.cardinalDirections[random
 									.nextInt(4)];
 						}
-						if (schemToGenerate.fitsIntoWorldAt(world, x, y, z,
+						if (schemToGenerate.fitsIntoWorldAt(world, pos,
 								randomDirection)) {
-							schemToGenerate.placeInWorld(world, x, y, z,
+							schemToGenerate.placeInWorld(world, pos,
 									randomDirection, true, true, true, random);
 							MyWorldGen.log
 									.log(Level.DEBUG,

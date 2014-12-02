@@ -1,6 +1,8 @@
 package net.boatcake.MyWorldGen.blocks;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public class BlockPlacementIgnore extends BlockPlacementLogic {
@@ -10,8 +12,8 @@ public class BlockPlacementIgnore extends BlockPlacementLogic {
 	}
 
 	@Override
-	public void affectWorld(int myMeta, TileEntity myTileEntity, World world,
-			int x, int y, int z) {
+	public void affectWorld(IBlockState myState, TileEntity myTileEntity,
+			World world, BlockPos pos) {
 		// do nothing!
 	}
 }

@@ -11,16 +11,17 @@ import net.boatcake.MyWorldGen.Schematic;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessagePlaceSchem implements IMessage,
 		IMessageHandler<MessagePlaceSchem, IMessage> {
-	public ForgeDirection direction;
+	public EnumFacing direction;
 	public NBTTagCompound schematicTag;
-	public int x, y, z;
+	public BlockPos pos;
 	public BlockPlacementOption placementOption;
 
 	@Override
@@ -33,12 +34,10 @@ public class MessagePlaceSchem implements IMessage,
 			e.printStackTrace();
 			return;
 		}
-		x = packetTag.getInteger("x");
-		y = packetTag.getInteger("y");
-		z = packetTag.getInteger("z");
+		pos = new BlockPos(packetTag.getInteger("x"),
+				packetTag.getInteger("y"), packetTag.getInteger("z"));
 		schematicTag = packetTag.getCompoundTag("schematic");
-		direction = ForgeDirection.getOrientation(packetTag
-				.getInteger("direction"));
+		direction = EnumFacing.getFront(packetTag.getInteger("direction"));
 		placementOption = BlockPlacementOption.get(packetTag
 				.getInteger("placementOption"));
 	}
@@ -49,8 +48,8 @@ public class MessagePlaceSchem implements IMessage,
 		// no cheating!
 		if (playerMP.capabilities.isCreativeMode) {
 			new Schematic(message.schematicTag, null).placeInWorld(
-					playerMP.worldObj, message.x, message.y, message.z,
-					message.direction, message.placementOption.generateChests,
+					playerMP.worldObj, message.pos, message.direction,
+					message.placementOption.generateChests,
 					message.placementOption.generateSpawners,
 					message.placementOption.followPlacementRules, null);
 		}
@@ -61,10 +60,10 @@ public class MessagePlaceSchem implements IMessage,
 	public void toBytes(ByteBuf buf) {
 		NBTTagCompound tagToSend = new NBTTagCompound();
 		ByteBufOutputStream bos = new ByteBufOutputStream(buf);
-		tagToSend.setInteger("x", x);
-		tagToSend.setInteger("y", y);
-		tagToSend.setInteger("z", z);
-		tagToSend.setInteger("direction", direction.ordinal());
+		tagToSend.setInteger("x", pos.getX());
+		tagToSend.setInteger("y", pos.getY());
+		tagToSend.setInteger("z", pos.getZ());
+		tagToSend.setInteger("direction", direction.getIndex());
 		tagToSend.setInteger("placementOption", placementOption.id);
 		// We might be able to send the file data directly, but it's better to
 		// make sure that it's valid NBT first.

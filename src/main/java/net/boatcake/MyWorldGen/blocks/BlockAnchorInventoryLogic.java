@@ -1,6 +1,8 @@
 package net.boatcake.MyWorldGen.blocks;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public class BlockAnchorInventoryLogic extends BlockAnchorLogic {
@@ -10,10 +12,10 @@ public class BlockAnchorInventoryLogic extends BlockAnchorLogic {
 	}
 
 	@Override
-	public boolean matches(int myMeta, TileEntity myTileEntity, World world,
-			int x, int y, int z) {
+	public boolean matches(IBlockState myState, TileEntity myTileEntity,
+			World world, BlockPos pos) {
 		return ((TileEntityAnchorInventory) myTileEntity).matches(world
-				.getBlock(x, y, z));
+				.getBlockState(pos));
 	}
 
 }
