@@ -23,6 +23,6 @@ public abstract class BlockAnchorLogic {
 		blockNameToLogic.put(blockName, this);
 	}
 
-	public abstract boolean matches(IBlockState myState,
+	public abstract boolean matches(int myMeta,
 			TileEntity myTileEntity, World world, BlockPos pos);
 }

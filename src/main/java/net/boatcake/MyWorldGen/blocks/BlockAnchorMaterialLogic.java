@@ -10,10 +10,9 @@ import net.minecraft.world.biome.BiomeGenBase;
 
 public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 
-	public static boolean matchesStatic(IBlockState myState,
+	public static boolean matchesStatic(AnchorType myType,
 			IBlockState otherState, BiomeGenBase currentBiome) {
-		AnchorType type = AnchorType.get(myMeta);
-		switch (type) {
+		switch (myType) {
 		case GROUND:
 			return otherState.getBlock() == currentBiome.topBlock;
 		case AIR:
@@ -21,9 +20,9 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 					|| (otherState.getBlock().getMaterial().isReplaceable() && !otherState
 							.getBlock().getMaterial().isLiquid());
 		default:
-			return !(otherState.getBlock() instanceof BlockAir) && type != null
-					&& type.material != null
-					&& otherState.getBlock().getMaterial() == type.material;
+			return !(otherState.getBlock() instanceof BlockAir) && myType != null
+					&& myType.material != null
+					&& otherState.getBlock().getMaterial() == myType.material;
 		}
 	}
 
@@ -32,9 +31,9 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 	}
 
 	@Override
-	public boolean matches(IBlockState myState, TileEntity myTileEntity,
+	public boolean matches(int myMeta, TileEntity myTileEntity,
 			World world, BlockPos pos) {
-		return matchesStatic(myState, world.getBlockState(pos),
+		return matchesStatic(AnchorType.get(myMeta), world.getBlockState(pos),
 				world.getBiomeGenForCoords(pos));
 	}
 

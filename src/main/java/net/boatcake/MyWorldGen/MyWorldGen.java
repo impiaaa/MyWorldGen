@@ -199,7 +199,7 @@ public class MyWorldGen {
 		if (enableItemsAndBlocks) {
 			block = blockClass.getConstructor(Material.class).newInstance(
 					Material.circuits);
-			block.setBlockName(name);
+			block.setUnlocalizedName(name);
 			block.setBlockTextureName(MyWorldGen.MODID + ":" + name);
 			block.setCreativeTab(creativeTab);
 			GameRegistry

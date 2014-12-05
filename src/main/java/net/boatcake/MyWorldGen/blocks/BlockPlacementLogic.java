@@ -23,6 +23,6 @@ public abstract class BlockPlacementLogic {
 		blockNameToLogic.put(blockName, this);
 	}
 
-	public abstract void affectWorld(IBlockState myState,
+	public abstract void affectWorld(int myMeta,
 			TileEntity myTileEntity, World world, BlockPos pos);
 }

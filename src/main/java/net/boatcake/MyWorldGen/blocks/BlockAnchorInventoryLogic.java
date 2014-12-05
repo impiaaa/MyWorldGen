@@ -12,7 +12,7 @@ public class BlockAnchorInventoryLogic extends BlockAnchorLogic {
 	}
 
 	@Override
-	public boolean matches(IBlockState myState, TileEntity myTileEntity,
+	public boolean matches(int myMeta, TileEntity myTileEntity,
 			World world, BlockPos pos) {
 		return ((TileEntityAnchorInventory) myTileEntity).matches(world
 				.getBlockState(pos));

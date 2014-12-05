@@ -253,8 +253,7 @@ public class Schematic {
 			BlockPos offset = pos.subtract(minVec);
 			blocks[offset.getX()][offset.getY()][offset.getZ()] = id;
 			idMap.put(id, block);
-			meta[offset.getX()][offset.getY()][offset.getZ()] = blockState
-					.getBlockMetadata();
+			meta[offset.getX()][offset.getY()][offset.getZ()] = block.getMetaFromState(blockState);
 		}
 		if (!world.isRemote) {
 			this.entities = WorldUtils.getEntities(world, min, max);
@@ -275,27 +274,25 @@ public class Schematic {
 					length / 2), offset, rotationAxis, rotationCount);
 			BlockPos mid = new BlockPos(middle);
 			BlockPos midDown = mid.offsetDown();
-			Block otherBlockBelow = world.getBlock(mid);
-			int otherMetaBelow = world.getBlockMetadata(mid);
-			Block otherBlockAbove = world.getBlock(midDown);
-			int otherMetaAbove = world.getBlockMetadata(midDown);
+			IBlockState otherBlockBelow = world.getBlockState(mid);
+			IBlockState otherBlockAbove = world.getBlockState(midDown);
 			BiomeGenBase biome = world.getBiomeGenForCoords(mid);
 			return BlockAnchorMaterialLogic.matchesStatic(
-					BlockAnchorMaterial.AnchorType.GROUND.id, otherBlockBelow,
-					otherMetaBelow, biome)
+					BlockAnchorMaterial.AnchorType.GROUND, otherBlockBelow, biome)
 					&& BlockAnchorMaterialLogic.matchesStatic(
-							BlockAnchorMaterial.AnchorType.AIR.id,
-							otherBlockAbove, otherMetaAbove, biome);
+							BlockAnchorMaterial.AnchorType.AIR,
+							otherBlockAbove, biome);
 		} else {
 			for (int i = 0; i < anchorBlockLocations.size(); i++) {
 				BlockPos origCoords = anchorBlockLocations.get(i);
 				Vec3 rotatedCoords = DirectionUtils.rotateCoords(origCoords,
 						offset, rotationAxis, rotationCount);
 				BlockPos rotatedPos = new BlockPos(rotatedCoords);
-				if (!world.blockExists(rotatedPos)
+				int blockId = blocks[origCoords.getX()][origCoords.getY()][origCoords
+						.getZ()];
+				if (!world.chunkExists(rotatedPos.getX()/16, rotatedPos.getZ()/16)
 						|| !(matchingMap
-								.get(blocks[origCoords.getX()][origCoords
-										.getY()][origCoords.getZ()]))
+								.get(blockId))
 								.matches(meta[origCoords.getX()][origCoords
 										.getY()][origCoords.getZ()],
 										getTileEntityAt(origCoords), world,
@@ -396,11 +393,11 @@ public class Schematic {
 								.affectWorld(meta[x][y][z],
 										getTileEntityAt(pos), world, pos);
 					} else if (idMap.containsKey(blocks[x][y][z])) {
-						Block block = idMap.get(blocks[x][y][z]);
-						world.setBlock(rotatedPos, block, meta[x][y][z], 0x2);
+						IBlockState blockState = idMap.get(blocks[x][y][z]).getStateFromMeta(meta[x][y][z]);
+						world.setBlockState(rotatedPos, blockState, 0x2);
 					} else {
-						Block block = Block.getBlockById(blocks[x][y][z]);
-						world.setBlock(rotatedPos, block, meta[x][y][z], 0x2);
+						IBlockState blockState = Block.getBlockById(blocks[x][y][z]).getStateFromMeta(meta[x][y][z]);
+						world.setBlockState(rotatedPos, blockState, 0x2);
 					}
 				}
 			}
@@ -451,7 +448,7 @@ public class Schematic {
 					BlockPos rotatedPos = new BlockPos(
 							DirectionUtils.rotateCoords(new Vec3(x, y, z),
 									offset, rotationAxis, rotationCount));
-					Block block = world.getBlock(rotatedPos);
+					Block block = world.getBlockState(rotatedPos).getBlock();
 					TileEntity e = world.getTileEntity(rotatedPos);
 					if (generateChests && !info.chestType.isEmpty()) {
 						if ((block == Blocks.chest || block == Blocks.trapped_chest)
