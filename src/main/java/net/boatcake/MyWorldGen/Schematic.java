@@ -253,7 +253,8 @@ public class Schematic {
 			BlockPos offset = pos.subtract(minVec);
 			blocks[offset.getX()][offset.getY()][offset.getZ()] = id;
 			idMap.put(id, block);
-			meta[offset.getX()][offset.getY()][offset.getZ()] = block.getMetaFromState(blockState);
+			meta[offset.getX()][offset.getY()][offset.getZ()] = block
+					.getMetaFromState(blockState);
 		}
 		if (!world.isRemote) {
 			this.entities = WorldUtils.getEntities(world, min, max);
@@ -278,7 +279,8 @@ public class Schematic {
 			IBlockState otherBlockAbove = world.getBlockState(midDown);
 			BiomeGenBase biome = world.getBiomeGenForCoords(mid);
 			return BlockAnchorMaterialLogic.matchesStatic(
-					BlockAnchorMaterial.AnchorType.GROUND, otherBlockBelow, biome)
+					BlockAnchorMaterial.AnchorType.GROUND, otherBlockBelow,
+					biome)
 					&& BlockAnchorMaterialLogic.matchesStatic(
 							BlockAnchorMaterial.AnchorType.AIR,
 							otherBlockAbove, biome);
@@ -290,9 +292,9 @@ public class Schematic {
 				BlockPos rotatedPos = new BlockPos(rotatedCoords);
 				int blockId = blocks[origCoords.getX()][origCoords.getY()][origCoords
 						.getZ()];
-				if (!world.chunkExists(rotatedPos.getX()/16, rotatedPos.getZ()/16)
-						|| !(matchingMap
-								.get(blockId))
+				if (!world.chunkExists(rotatedPos.getX() / 16,
+						rotatedPos.getZ() / 16)
+						|| !(matchingMap.get(blockId))
 								.matches(meta[origCoords.getX()][origCoords
 										.getY()][origCoords.getZ()],
 										getTileEntityAt(origCoords), world,
@@ -393,10 +395,13 @@ public class Schematic {
 								.affectWorld(meta[x][y][z],
 										getTileEntityAt(pos), world, pos);
 					} else if (idMap.containsKey(blocks[x][y][z])) {
-						IBlockState blockState = idMap.get(blocks[x][y][z]).getStateFromMeta(meta[x][y][z]);
+						IBlockState blockState = idMap.get(blocks[x][y][z])
+								.getStateFromMeta(meta[x][y][z]);
 						world.setBlockState(rotatedPos, blockState, 0x2);
 					} else {
-						IBlockState blockState = Block.getBlockById(blocks[x][y][z]).getStateFromMeta(meta[x][y][z]);
+						IBlockState blockState = Block.getBlockById(
+								blocks[x][y][z])
+								.getStateFromMeta(meta[x][y][z]);
 						world.setBlockState(rotatedPos, blockState, 0x2);
 					}
 				}

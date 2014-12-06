@@ -3,7 +3,6 @@ package net.boatcake.MyWorldGen.blocks;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -23,6 +22,6 @@ public abstract class BlockPlacementLogic {
 		blockNameToLogic.put(blockName, this);
 	}
 
-	public abstract void affectWorld(int myMeta,
-			TileEntity myTileEntity, World world, BlockPos pos);
+	public abstract void affectWorld(int myMeta, TileEntity myTileEntity,
+			World world, BlockPos pos);
 }

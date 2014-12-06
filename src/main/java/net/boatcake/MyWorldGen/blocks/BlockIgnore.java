@@ -31,9 +31,4 @@ public class BlockIgnore extends Block {
 	public boolean isOpaqueCube() {
 		return false;
 	}
-
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
 }

@@ -125,6 +125,11 @@ public class MyWorldGen {
 							"Default ID for when an ID map is not found in a schematic");
 			if (materialAnchorBlock == null) {
 				materialAnchorBlockId = prop.getInt(1575);
+				for (BlockAnchorMaterial.AnchorType type : BlockAnchorMaterial.AnchorType
+						.values()) {
+					sidedProxy.registerBlock(materialAnchorBlock, type.id,
+							MODID + ":" + "anchor");
+				}
 			} else {
 				materialAnchorBlockId = prop.getInt(GameData.getBlockRegistry()
 						.getId(materialAnchorBlock));
@@ -136,6 +141,8 @@ public class MyWorldGen {
 							"Default ID for when an ID map is not found in a schematic");
 			if (ignoreBlock == null) {
 				ignoreBlockId = prop.getInt(1576);
+				sidedProxy.registerBlock(materialAnchorBlock, 0, MODID + ":"
+						+ "ignore");
 			} else {
 				ignoreBlockId = prop.getInt(GameData.getBlockRegistry().getId(
 						ignoreBlock));
@@ -149,6 +156,8 @@ public class MyWorldGen {
 							"Default ID for when an ID map is not found in a schematic");
 			if (inventoryAnchorBlock == null) {
 				inventoryAnchorBlockId = prop.getInt(1577);
+				sidedProxy.registerBlock(materialAnchorBlock, 0, MODID + ":"
+						+ "anchorInventory");
 			} else {
 				inventoryAnchorBlockId = prop.getInt(GameData
 						.getBlockRegistry().getId(inventoryAnchorBlock));
@@ -200,7 +209,6 @@ public class MyWorldGen {
 			block = blockClass.getConstructor(Material.class).newInstance(
 					Material.circuits);
 			block.setUnlocalizedName(name);
-			block.setBlockTextureName(MyWorldGen.MODID + ":" + name);
 			block.setCreativeTab(creativeTab);
 			GameRegistry
 					.registerBlock(block,
@@ -221,7 +229,6 @@ public class MyWorldGen {
 		if (enableItemsAndBlocks) {
 			item = itemClass.getConstructor().newInstance();
 			item.setUnlocalizedName(name);
-			item.setTextureName(MyWorldGen.MODID + ":" + name);
 			item.setCreativeTab(creativeTab);
 			GameRegistry.registerItem(item, name);
 		}

@@ -39,8 +39,6 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 		}
 	}
 
-	public IIcon[] icons;
-
 	public BlockAnchorMaterial(Material par2Material) {
 		super(par2Material);
 		setBlockUnbreakable();
@@ -55,26 +53,10 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int side, int meta) {
-		return this.icons[meta];
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item item, CreativeTabs creativeTabs,
 			List subBlockList) {
 		for (AnchorType a : AnchorType.values()) {
 			subBlockList.add(new ItemStack(item, 1, a.id));
-		}
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister iconRegister) {
-		icons = new IIcon[16];
-		for (AnchorType a : AnchorType.values()) {
-			this.icons[a.id] = iconRegister.registerIcon(this.getTextureName()
-					+ a.name);
 		}
 	}
 }

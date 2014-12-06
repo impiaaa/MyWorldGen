@@ -20,8 +20,8 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 					|| (otherState.getBlock().getMaterial().isReplaceable() && !otherState
 							.getBlock().getMaterial().isLiquid());
 		default:
-			return !(otherState.getBlock() instanceof BlockAir) && myType != null
-					&& myType.material != null
+			return !(otherState.getBlock() instanceof BlockAir)
+					&& myType != null && myType.material != null
 					&& otherState.getBlock().getMaterial() == myType.material;
 		}
 	}
@@ -31,8 +31,8 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 	}
 
 	@Override
-	public boolean matches(int myMeta, TileEntity myTileEntity,
-			World world, BlockPos pos) {
+	public boolean matches(int myMeta, TileEntity myTileEntity, World world,
+			BlockPos pos) {
 		return matchesStatic(AnchorType.get(myMeta), world.getBlockState(pos),
 				world.getBiomeGenForCoords(pos));
 	}

@@ -79,7 +79,7 @@ public class GuiSaveSchematic extends GuiScreen {
 				this.height / 4 + 72, I18n.format("gui.save")));
 		buttonList.add(cancelBtn = new GuiButton(1, this.width / 2 - 100,
 				this.height / 4 + 96, I18n.format("gui.cancel")));
-		fileNameField = new GuiTextField(this.fontRendererObj,
+		fileNameField = new GuiTextField(0, this.fontRendererObj,
 				this.width / 2 - 150, 60, 300, 20);
 		fileNameField.setMaxStringLength(32767);
 		fileNameField.setFocused(true);
@@ -87,7 +87,7 @@ public class GuiSaveSchematic extends GuiScreen {
 	}
 
 	@Override
-	protected void keyTyped(char character, int keycode) {
+	protected void keyTyped(char character, int keycode) throws IOException {
 		fileNameField.textboxKeyTyped(character, keycode);
 		updateSaveButton();
 
