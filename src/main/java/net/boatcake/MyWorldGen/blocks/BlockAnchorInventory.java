@@ -40,4 +40,9 @@ public class BlockAnchorInventory extends BlockContainer implements
 				pos.getZ());
 		return true;
 	}
+
+	@Override
+	public int getRenderType() {
+		return 3;
+	}
 }

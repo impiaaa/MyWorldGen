@@ -17,6 +17,8 @@ import net.boatcake.MyWorldGen.utils.FileUtils;
 import net.boatcake.MyWorldGen.utils.NetUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -66,9 +68,10 @@ public class MyWorldGen {
 	private boolean enableItemsAndBlocks;
 
 	private File sourceFile;
+	private Configuration cfg;
 
 	@EventHandler
-	public void init(FMLInitializationEvent event) {
+	public void postInit(FMLPostInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 		NetUtils.init();
 
@@ -84,14 +87,38 @@ public class MyWorldGen {
 						"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=UHDDACLRN2T46&lc=US&item_name=MyWorldGen&currency_code=USD&bn=PP-DonationsBF:btn_donate_SM.gif:NonHosted");
 
 		sidedProxy.registerResourceHandler(worldGen);
+
+		if (materialAnchorBlock != null) {
+			for (BlockAnchorMaterial.AnchorType type : BlockAnchorMaterial.AnchorType
+					.values()) {
+				sidedProxy.registerBlock(materialAnchorBlock, type.id, MODID
+						+ ":" + "anchor" + type.name);
+			}
+		}
+		if (ignoreBlock != null) {
+			sidedProxy.registerBlock(ignoreBlock, 0, MODID + ":ignore");
+		}
+		if (inventoryAnchorBlock != null) {
+			sidedProxy.registerBlock(inventoryAnchorBlock, 0, MODID
+					+ ":anchorInventory");
+		}
+		if (wandLoad != null) {
+			sidedProxy.registerItem(wandLoad, 0, MODID + ":wandLoad");
+		}
+		if (wandSave != null) {
+			sidedProxy.registerItem(wandSave, 0, MODID + ":wandSave");
+		}
 	}
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		log = event.getModLog();
 		sourceFile = event.getSourceFile();
-		Configuration cfg = new Configuration(
-				event.getSuggestedConfigurationFile());
+		cfg = new Configuration(event.getSuggestedConfigurationFile());
+	}
+
+	@EventHandler
+	public void init(FMLInitializationEvent event) {
 		cfg.load();
 
 		enableItemsAndBlocks = cfg
@@ -120,47 +147,59 @@ public class MyWorldGen {
 			materialAnchorBlock = registerBlock("anchor",
 					BlockAnchorMaterial.class, BlockAnchorItem.class,
 					BlockAnchorMaterialLogic.class);
+
+			if (materialAnchorBlock != null) {
+				String[] names = new String[BlockAnchorMaterial.AnchorType
+						.values().length];
+				for (int i = 0; i < names.length; i++) {
+					names[i] = MODID + ":anchor"
+							+ BlockAnchorMaterial.AnchorType.get(i).name;
+				}
+				ModelBakery.addVariantName(
+						Item.getItemFromBlock(materialAnchorBlock), names);
+				Minecraft.getMinecraft().getRenderItem().getItemModelMesher()
+						.getModelManager().getBlockModelShapes()
+						.func_178123_a(materialAnchorBlock);
+			}
+
 			prop = cfg
 					.get("blocks", "materialAnchorBlock",
 							"Default ID for when an ID map is not found in a schematic");
 			if (materialAnchorBlock == null) {
 				materialAnchorBlockId = prop.getInt(1575);
-				for (BlockAnchorMaterial.AnchorType type : BlockAnchorMaterial.AnchorType
-						.values()) {
-					sidedProxy.registerBlock(materialAnchorBlock, type.id,
-							MODID + ":" + "anchor");
-				}
 			} else {
 				materialAnchorBlockId = prop.getInt(GameData.getBlockRegistry()
 						.getId(materialAnchorBlock));
 			}
 
-			ignoreBlock = registerBlock("ignore", BlockIgnore.class, null, null);
+			ignoreBlock = registerBlock("ignore", BlockIgnore.class);
 			prop = cfg
 					.get("blocks", "ignoreBlock",
 							"Default ID for when an ID map is not found in a schematic");
 			if (ignoreBlock == null) {
 				ignoreBlockId = prop.getInt(1576);
-				sidedProxy.registerBlock(materialAnchorBlock, 0, MODID + ":"
-						+ "ignore");
 			} else {
 				ignoreBlockId = prop.getInt(GameData.getBlockRegistry().getId(
 						ignoreBlock));
+				Minecraft.getMinecraft().getRenderItem().getItemModelMesher()
+						.getModelManager().getBlockModelShapes()
+						.func_178123_a(ignoreBlock);
 			}
 
 			inventoryAnchorBlock = registerBlock("anchorInventory",
-					BlockAnchorInventory.class, null,
+					BlockAnchorInventory.class, ItemBlock.class,
 					BlockAnchorInventoryLogic.class);
 			prop = cfg
 					.get("blocks", "inventoryAnchorBlock",
 							"Default ID for when an ID map is not found in a schematic");
 			if (inventoryAnchorBlock == null) {
 				inventoryAnchorBlockId = prop.getInt(1577);
-				sidedProxy.registerBlock(materialAnchorBlock, 0, MODID + ":"
-						+ "anchorInventory");
 			} else {
 				inventoryAnchorBlockId = prop.getInt(GameData
 						.getBlockRegistry().getId(inventoryAnchorBlock));
+				Minecraft.getMinecraft().getRenderItem().getItemModelMesher()
+						.getModelManager().getBlockModelShapes()
+						.func_178123_a(inventoryAnchorBlock);
 			}
 
 			wandSave = registerItem("wandSave", ItemWandSave.class, cfg);
@@ -203,17 +242,16 @@ public class MyWorldGen {
 
 	private Block registerBlock(String name, Class<? extends Block> blockClass,
 			Class<? extends ItemBlock> itemBlockClass,
-			Class<? extends BlockAnchorLogic> matching) throws Exception {
+			Class<? extends BlockAnchorLogic> matching, Object... itemCtorArgs)
+			throws Exception {
 		Block block = null;
 		if (enableItemsAndBlocks) {
 			block = blockClass.getConstructor(Material.class).newInstance(
 					Material.circuits);
 			block.setUnlocalizedName(name);
 			block.setCreativeTab(creativeTab);
-			GameRegistry
-					.registerBlock(block,
-							(itemBlockClass == null) ? ItemBlock.class
-									: itemBlockClass, name);
+			GameRegistry.registerBlock(block, itemBlockClass, name,
+					itemCtorArgs);
 		}
 		new BlockPlacementIgnore(MyWorldGen.MODID + ":" + name);
 		if (matching != null) {
@@ -221,6 +259,12 @@ public class MyWorldGen {
 					MyWorldGen.MODID + ":" + name);
 		}
 		return block;
+	}
+
+	private Block registerBlock(String name, Class<? extends Block> blockClass)
+			throws Exception {
+		return registerBlock(name, blockClass, ItemBlock.class, null,
+				new Object[] {});
 	}
 
 	private Item registerItem(String name, Class<? extends Item> itemClass,
@@ -238,10 +282,5 @@ public class MyWorldGen {
 	@EventHandler
 	public void serverStart(FMLServerAboutToStartEvent event) {
 		worldGen.addSchematicsFromDirectory(globalSchemDir);
-	}
-
-	@EventHandler
-	public void postInit(FMLPostInitializationEvent e) {
-		// JUnitCore.runClasses(TestAnchors.class);
 	}
 }
