@@ -44,6 +44,8 @@ public class WorldGenerator implements IWorldGenerator {
 				e.printStackTrace();
 			}
 		}
+		MyWorldGen.log.log(Level.INFO, "Loaded {} schematics from {}",
+				schemFiles.length, schemDirectory.toString());
 	}
 
 	public void addSchemFromStream(Collection<Schematic> section,
@@ -99,9 +101,14 @@ public class WorldGenerator implements IWorldGenerator {
 											new Object[] {
 													schemToGenerate.info.name,
 													x, y, z, i + 1 });
-							break;
+							return;
 						}
 					}
+					MyWorldGen.log
+							.log(Level.WARN,
+									"{} failed to place after {} tries!",
+									schemToGenerate.info.name,
+									MyWorldGen.generateTries);
 				}
 			}
 		}

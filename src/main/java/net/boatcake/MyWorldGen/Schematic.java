@@ -243,7 +243,6 @@ public class Schematic {
 		BlockPos max = new BlockPos(Math.max(pos1.getX(), pos2.getX()),
 				Math.max(pos1.getY(), pos2.getY()), Math.max(pos1.getZ(),
 						pos2.getZ()));
-		Vec3i maxVec = new Vec3i(max.getX(), max.getY(), max.getZ());
 
 		for (Object o : BlockPos.getAllInBox(min, max)) {
 			BlockPos pos = (BlockPos) o;

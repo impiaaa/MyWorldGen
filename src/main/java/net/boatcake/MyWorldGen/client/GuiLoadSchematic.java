@@ -1,13 +1,13 @@
 package net.boatcake.MyWorldGen.client;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 
 import net.boatcake.MyWorldGen.BlockPlacementOption;
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.network.MessagePlaceSchem;
 import net.boatcake.MyWorldGen.utils.NetUtils;
 import net.boatcake.MyWorldGen.utils.SchematicFilenameFilter;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
@@ -15,7 +15,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -25,20 +24,21 @@ public class GuiLoadSchematic extends GuiScreen {
 	private GuiButton placementButton;
 	private GuiSlotFile slot;
 
-	private World world;
 	private EnumFacing direction;
 	private BlockPos pos;
-	private EntityPlayerSP player;
 	private BlockPlacementOption placementOption;
 
-	public GuiLoadSchematic(World world, BlockPos pos, EnumFacing direction,
-			EntityPlayerSP player) {
+	public GuiLoadSchematic(BlockPos pos, EnumFacing direction) {
 		super();
-		this.world = world;
 		this.pos = pos;
 		this.direction = direction;
-		this.player = player;
 		this.placementOption = BlockPlacementOption.ASGENERATED;
+	}
+
+	@Override
+	public void handleMouseInput() throws IOException {
+		super.handleMouseInput();
+		slot.handleMouseInput();
 	}
 
 	@Override

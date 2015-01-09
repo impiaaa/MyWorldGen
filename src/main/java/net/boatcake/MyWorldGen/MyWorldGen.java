@@ -154,13 +154,22 @@ public class MyWorldGen {
 						.values().length];
 				for (int i = 0; i < names.length; i++) {
 					names[i] = MODID + ":"
-							+ BlockAnchorMaterial.AnchorType.get(i).name + "_anchor";
+							+ BlockAnchorMaterial.AnchorType.get(i).name
+							+ "_anchor";
 				}
 				ModelBakery.addVariantName(
 						Item.getItemFromBlock(materialAnchorBlock), names);
-				Minecraft.getMinecraft().getRenderItem().getItemModelMesher()
-						.getModelManager().getBlockModelShapes()
-						.func_178121_a(materialAnchorBlock, new NamespacedStateMap(BlockAnchorMaterial.TYPE_PROP, "_anchor"));
+				Minecraft
+						.getMinecraft()
+						.getRenderItem()
+						.getItemModelMesher()
+						.getModelManager()
+						.getBlockModelShapes()
+						.func_178121_a(
+								materialAnchorBlock,
+								new NamespacedStateMap(
+										BlockAnchorMaterial.TYPE_PROP,
+										"_anchor"));
 			}
 
 			prop = cfg

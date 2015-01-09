@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class NamespacedStateMap extends StateMapperBase {
 	private String postfix;
 	private PropertyEnum prop;
-	
+
 	public NamespacedStateMap(PropertyEnum typeProp, String string) {
 		postfix = string;
 		prop = typeProp;
@@ -22,7 +22,8 @@ public class NamespacedStateMap extends StateMapperBase {
 
 	@Override
 	protected ModelResourceLocation func_178132_a(IBlockState arg0) {
-		String s = ((IStringSerializable)arg0.getValue(prop)).getName();
-		return new ModelResourceLocation(new ResourceLocation(MyWorldGen.MODID, s+postfix), "normal");
+		String s = ((IStringSerializable) arg0.getValue(prop)).getName();
+		return new ModelResourceLocation(new ResourceLocation(MyWorldGen.MODID,
+				s + postfix), "normal");
 	}
 }
