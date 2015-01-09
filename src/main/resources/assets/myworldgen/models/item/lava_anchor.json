@@ -1,5 +1,5 @@
 {
-    "parent": "myworldgen:block/anchorSand",
+    "parent": "myworldgen:block/lava_anchor",
     "display": {
         "thirdperson": {
             "rotation": [ 10, -45, 170 ],

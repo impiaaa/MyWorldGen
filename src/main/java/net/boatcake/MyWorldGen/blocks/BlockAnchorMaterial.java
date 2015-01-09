@@ -17,11 +17,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 	public enum AnchorType implements IStringSerializable {
-		GROUND(0, "Ground", null), AIR(1, "Air", null), STONE(2, "Stone",
-				Material.rock), WATER(3, "Water", Material.water), LAVA(4,
-				"Lava", Material.lava), DIRT(5, "Dirt", Material.ground), WOOD(
-				6, "Wood", Material.wood), LEAVES(7, "Leaves", Material.leaves), SAND(
-				8, "Sand", Material.sand);
+		GROUND(0, "ground", null), AIR(1, "air", null), STONE(2, "stone",
+				Material.rock), WATER(3, "water", Material.water), LAVA(4,
+				"lava", Material.lava), DIRT(5, "dirt", Material.ground), WOOD(
+				6, "wood", Material.wood), LEAVES(7, "leaves", Material.leaves), SAND(
+				8, "sand", Material.sand);
 
 		public static AnchorType get(int id) {
 			for (AnchorType a : AnchorType.values()) {

@@ -1,5 +1,5 @@
 {
-    "parent": "myworldgen:block/anchorGround",
+    "parent": "myworldgen:block/leaves_anchor",
     "display": {
         "thirdperson": {
             "rotation": [ 10, -45, 170 ],

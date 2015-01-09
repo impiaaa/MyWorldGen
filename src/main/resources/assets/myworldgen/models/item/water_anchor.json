@@ -1,5 +1,5 @@
 {
-    "parent": "myworldgen:block/anchorWood",
+    "parent": "myworldgen:block/water_anchor",
     "display": {
         "thirdperson": {
             "rotation": [ 10, -45, 170 ],

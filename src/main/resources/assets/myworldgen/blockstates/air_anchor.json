@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "normal": { "model": "myworldgen:air_anchor" }
+    }
+}

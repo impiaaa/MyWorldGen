@@ -29,9 +29,16 @@ public class BlockIgnore extends Block {
 	}
 
 	@Override
-	public boolean isFullCube() {
-		return false;
-	}
+    public boolean isOpaqueCube()
+    {
+        return false;
+    }
+
+	@Override
+    public boolean isFullCube()
+    {
+        return false;
+    }
 
 	@Override
 	public EnumWorldBlockLayer getBlockLayer() {

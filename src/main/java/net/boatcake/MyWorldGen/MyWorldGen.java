@@ -10,6 +10,7 @@ import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterialLogic;
 import net.boatcake.MyWorldGen.blocks.BlockIgnore;
 import net.boatcake.MyWorldGen.blocks.BlockPlacementIgnore;
 import net.boatcake.MyWorldGen.blocks.TileEntityAnchorInventory;
+import net.boatcake.MyWorldGen.client.NamespacedStateMap;
 import net.boatcake.MyWorldGen.items.BlockAnchorItem;
 import net.boatcake.MyWorldGen.items.ItemWandLoad;
 import net.boatcake.MyWorldGen.items.ItemWandSave;
@@ -92,7 +93,7 @@ public class MyWorldGen {
 			for (BlockAnchorMaterial.AnchorType type : BlockAnchorMaterial.AnchorType
 					.values()) {
 				sidedProxy.registerBlock(materialAnchorBlock, type.id, MODID
-						+ ":" + "anchor" + type.name);
+						+ ":" + type.name + "_anchor");
 			}
 		}
 		if (ignoreBlock != null) {
@@ -152,14 +153,14 @@ public class MyWorldGen {
 				String[] names = new String[BlockAnchorMaterial.AnchorType
 						.values().length];
 				for (int i = 0; i < names.length; i++) {
-					names[i] = MODID + ":anchor"
-							+ BlockAnchorMaterial.AnchorType.get(i).name;
+					names[i] = MODID + ":"
+							+ BlockAnchorMaterial.AnchorType.get(i).name + "_anchor";
 				}
 				ModelBakery.addVariantName(
 						Item.getItemFromBlock(materialAnchorBlock), names);
 				Minecraft.getMinecraft().getRenderItem().getItemModelMesher()
 						.getModelManager().getBlockModelShapes()
-						.func_178123_a(materialAnchorBlock);
+						.func_178121_a(materialAnchorBlock, new NamespacedStateMap(BlockAnchorMaterial.TYPE_PROP, "_anchor"));
 			}
 
 			prop = cfg
@@ -181,9 +182,6 @@ public class MyWorldGen {
 			} else {
 				ignoreBlockId = prop.getInt(GameData.getBlockRegistry().getId(
 						ignoreBlock));
-				Minecraft.getMinecraft().getRenderItem().getItemModelMesher()
-						.getModelManager().getBlockModelShapes()
-						.func_178123_a(ignoreBlock);
 			}
 
 			inventoryAnchorBlock = registerBlock("anchorInventory",
@@ -197,9 +195,6 @@ public class MyWorldGen {
 			} else {
 				inventoryAnchorBlockId = prop.getInt(GameData
 						.getBlockRegistry().getId(inventoryAnchorBlock));
-				Minecraft.getMinecraft().getRenderItem().getItemModelMesher()
-						.getModelManager().getBlockModelShapes()
-						.func_178123_a(inventoryAnchorBlock);
 			}
 
 			wandSave = registerItem("wandSave", ItemWandSave.class, cfg);

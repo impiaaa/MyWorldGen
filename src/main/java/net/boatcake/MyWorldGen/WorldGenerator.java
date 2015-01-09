@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Random;
 
 import net.boatcake.MyWorldGen.utils.DirectionUtils;
+import net.boatcake.MyWorldGen.utils.SchematicFilenameFilter;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;

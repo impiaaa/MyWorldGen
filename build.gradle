@@ -23,7 +23,7 @@ group= "net.boatcake.myworldgen" // http://maven.apache.org/guides/mini/guide-na
 archivesBaseName = "MyWorldGen-1.8"
 
 minecraft {
-    version = "1.8-11.14.0.1281-1.8"
+    version = "1.8-11.14.0.1282-1.8"
     assetDir = "eclipse/assets"
 }
 

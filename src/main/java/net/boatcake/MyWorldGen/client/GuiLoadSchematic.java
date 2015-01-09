@@ -4,9 +4,9 @@ import java.io.FileInputStream;
 
 import net.boatcake.MyWorldGen.BlockPlacementOption;
 import net.boatcake.MyWorldGen.MyWorldGen;
-import net.boatcake.MyWorldGen.SchematicFilenameFilter;
 import net.boatcake.MyWorldGen.network.MessagePlaceSchem;
 import net.boatcake.MyWorldGen.utils.NetUtils;
+import net.boatcake.MyWorldGen.utils.SchematicFilenameFilter;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
