@@ -5,7 +5,6 @@ import net.boatcake.MyWorldGen.client.GuiAnchorInventory;
 import net.boatcake.MyWorldGen.client.GuiLoadSchematic;
 import net.boatcake.MyWorldGen.client.GuiSaveSchematic;
 import net.boatcake.MyWorldGen.utils.DirectionUtils;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -26,9 +25,8 @@ public class GuiHandler implements IGuiHandler {
 		case 0:
 			return new GuiSaveSchematic();
 		case 1:
-			return new GuiLoadSchematic(world, new BlockPos(x, y, z),
-					DirectionUtils.getDirectionFromYaw(player.rotationYaw),
-					(EntityPlayerSP) player);
+			return new GuiLoadSchematic(new BlockPos(x, y, z),
+					DirectionUtils.getDirectionFromYaw(player.rotationYaw));
 		case 2:
 			TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 			if (tileEntity instanceof TileEntityAnchorInventory) {

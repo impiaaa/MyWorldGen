@@ -13,6 +13,8 @@ import net.boatcake.MyWorldGen.blocks.BlockPlacementLogic;
 import net.boatcake.MyWorldGen.utils.DirectionUtils;
 import net.boatcake.MyWorldGen.utils.WorldUtils;
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -347,8 +349,9 @@ public class Schematic {
 
 		NBTTagCompound idMapTag = new NBTTagCompound();
 		for (Entry<Integer, Block> entry : idMap.entrySet()) {
-			idMapTag.setInteger((String) Block.blockRegistry
-					.getNameForObject(entry.getValue()), entry.getKey());
+			idMapTag.setInteger(
+					Block.blockRegistry.getNameForObject(entry.getValue())
+							.toString(), entry.getKey());
 		}
 		base.setTag("MWGIDMap", idMapTag);
 
@@ -487,26 +490,30 @@ public class Schematic {
 		 * Rotate blocks afterward to try to avoid block updates making invalid
 		 * configurations (torches on air). Sometimes that still happens though.
 		 * Also, some blocks might have their rotation in tile entity data.
-		 * TODO: Look into some common rotation API. Block.rotateBlock is
-		 * supposed to be used for wrenches etc. in-game.
+		 * TODO: Look into some common rotation API.
 		 */
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
-					Block block;
-					if (idMap.containsKey(blocks[x][y][z])) {
-						block = idMap.get(blocks[x][y][z]);
-					} else {
-						block = Block.getBlockById(blocks[x][y][z]);
-					}
-					if (block != null) {
-						BlockPos rotatedCoords = new BlockPos(
-								DirectionUtils.rotateCoords(new Vec3(x, y, z),
-										offset, rotationAxis, rotationCount));
-						for (int i = 0; i < rotationCount; i++) {
-							block.rotateBlock(world, rotatedCoords,
-									DirectionUtils
-											.getFakeAxisFromAxis(rotationAxis));
+					BlockPos rotatedCoords = new BlockPos(
+							DirectionUtils.rotateCoords(new Vec3(x, y, z),
+									offset, rotationAxis, rotationCount));
+					IBlockState state = world.getBlockState(rotatedCoords);
+					for (IProperty prop : (java.util.Set<IProperty>) state
+							.getProperties().keySet()) {
+						if (prop.getName().equals("facing")
+								&& prop instanceof PropertyDirection) {
+							EnumFacing facing = (EnumFacing) state
+									.getValue(prop);
+							for (int i = 0; i < rotationCount; i++) {
+								facing = facing.rotateAround(rotationAxis);
+							}
+							IBlockState rotatedState = state.withProperty(prop,
+									facing);
+							world.setBlockState(rotatedCoords, rotatedState);
+							MyWorldGen.log.info("Rotated {} from {} to {}",
+									state.getBlock().getUnlocalizedName(),
+									state, rotatedState);
 						}
 					}
 				}

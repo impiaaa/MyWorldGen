@@ -59,6 +59,12 @@ public class GuiSaveSchematic extends GuiScreen {
 
 	@Override
 	public void drawScreen(int par1, int par2, float par3) {
+		if (fileNameField == null) {
+			// Sometimes, initGui will not have been called yet. I think it's a
+			// race condition on my platform that I can't easily fix right now,
+			// but this works anyway.
+			return;
+		}
 		drawDefaultBackground();
 		drawCenteredString(fontRendererObj, I18n.format("gui.filename"),
 				this.width / 2, 20, 0xFFFFFF);
@@ -114,7 +120,7 @@ public class GuiSaveSchematic extends GuiScreen {
 		// Call this every so often to make sure we have a valid file name and a
 		// valid schematic
 		saveBtn.enabled = fileNameField.getText().trim().length() > 0
-				&& schematicToSave.entities != null
+				&& schematicToSave != null && schematicToSave.entities != null
 				&& schematicToSave.tileEntities != null;
 	}
 

@@ -119,7 +119,7 @@ public class MyWorldGen {
 	}
 
 	@EventHandler
-	public void init(FMLInitializationEvent event) {
+	public void init(FMLInitializationEvent event) throws Exception {
 		cfg.load();
 
 		enableItemsAndBlocks = cfg
@@ -209,13 +209,9 @@ public class MyWorldGen {
 			wandSave = registerItem("wandSave", ItemWandSave.class, cfg);
 			wandLoad = registerItem("wandLoad", ItemWandLoad.class, cfg);
 		} catch (RuntimeException e) {
-			log.fatal("Could not load configuration");
-			e.printStackTrace();
-			return;
+			throw new Exception("Could not load configuration", e);
 		} catch (Exception e) {
-			log.fatal("Self-reflection failed. Is the mod intact?");
-			e.printStackTrace();
-			return;
+			throw new Exception("Self-reflection failed. Is the mod intact?", e);
 		}
 
 		String worldGenDir = cfg.get("configuration", "schematicDirectory",
