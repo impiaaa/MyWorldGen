@@ -14,7 +14,7 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 			IBlockState otherState, BiomeGenBase currentBiome) {
 		switch (myType) {
 		case GROUND:
-			return otherState.getBlock() == currentBiome.topBlock;
+			return otherState.equals(currentBiome.topBlock);
 		case AIR:
 			return otherState.getBlock() instanceof BlockAir
 					|| (otherState.getBlock().getMaterial().isReplaceable() && !otherState

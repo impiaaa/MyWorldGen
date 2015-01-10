@@ -143,4 +143,53 @@ public class DirectionUtils {
 		return cardinalDirections[MathHelper
 				.floor_double(yaw * 4.0F / 360.0F + 0.5D) & 0x3];
 	}
+
+	// This method already exists in EnumFacing, but it's SideOnly(CLIENT) for
+	// some reason >:(
+	public static EnumFacing rotateAround(EnumFacing facing,
+			EnumFacing.Axis axis) {
+		switch (axis) {
+		case X:
+			switch (facing) {
+			case NORTH:
+				return EnumFacing.DOWN;
+			case EAST:
+			case WEST:
+			default:
+				return facing;
+			case SOUTH:
+				return EnumFacing.UP;
+			case UP:
+				return EnumFacing.NORTH;
+			case DOWN:
+				return EnumFacing.SOUTH;
+			}
+
+		case Y:
+			if (facing != EnumFacing.UP && facing != EnumFacing.DOWN) {
+				return facing.rotateY();
+			}
+			return facing;
+
+		case Z:
+			switch (facing) {
+			case EAST:
+				return EnumFacing.DOWN;
+			case NORTH:
+			case SOUTH:
+			default:
+				return facing;
+			case WEST:
+				return EnumFacing.UP;
+			case UP:
+				return EnumFacing.EAST;
+			case DOWN:
+				return EnumFacing.WEST;
+			}
+
+		default:
+			throw new IllegalStateException("Unable to get CW facing for axis "
+					+ axis);
+		}
+	}
 }

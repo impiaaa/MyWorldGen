@@ -503,7 +503,8 @@ public class Schematic {
 							EnumFacing facing = (EnumFacing) state
 									.getValue(prop);
 							for (int i = 0; i < rotationCount; i++) {
-								facing = facing.rotateAround(rotationAxis);
+								facing = DirectionUtils.rotateAround(facing,
+										rotationAxis);
 							}
 							IBlockState rotatedState = state.withProperty(prop,
 									facing);

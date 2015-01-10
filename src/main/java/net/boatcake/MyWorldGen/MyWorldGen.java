@@ -10,7 +10,6 @@ import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterialLogic;
 import net.boatcake.MyWorldGen.blocks.BlockIgnore;
 import net.boatcake.MyWorldGen.blocks.BlockPlacementIgnore;
 import net.boatcake.MyWorldGen.blocks.TileEntityAnchorInventory;
-import net.boatcake.MyWorldGen.client.NamespacedStateMap;
 import net.boatcake.MyWorldGen.items.BlockAnchorItem;
 import net.boatcake.MyWorldGen.items.ItemWandLoad;
 import net.boatcake.MyWorldGen.items.ItemWandSave;
@@ -18,8 +17,6 @@ import net.boatcake.MyWorldGen.utils.FileUtils;
 import net.boatcake.MyWorldGen.utils.NetUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -150,33 +147,16 @@ public class MyWorldGen {
 					BlockAnchorMaterialLogic.class);
 
 			if (materialAnchorBlock != null) {
-				String[] names = new String[BlockAnchorMaterial.AnchorType
-						.values().length];
-				for (int i = 0; i < names.length; i++) {
-					names[i] = MODID + ":"
-							+ BlockAnchorMaterial.AnchorType.get(i).name
-							+ "_anchor";
-				}
-				ModelBakery.addVariantName(
-						Item.getItemFromBlock(materialAnchorBlock), names);
-				Minecraft
-						.getMinecraft()
-						.getRenderItem()
-						.getItemModelMesher()
-						.getModelManager()
-						.getBlockModelShapes()
-						.func_178121_a(
-								materialAnchorBlock,
-								new NamespacedStateMap(
-										BlockAnchorMaterial.TYPE_PROP,
-										"_anchor"));
+				sidedProxy.registerVariants(materialAnchorBlock,
+						BlockAnchorMaterial.TYPE_PROP, "_anchor");
 			}
 
 			int defaultId;
 			if (materialAnchorBlock == null) {
 				defaultId = 1575;
 			} else {
-				defaultId = GameData.getBlockRegistry().getId(materialAnchorBlock);
+				defaultId = GameData.getBlockRegistry().getId(
+						materialAnchorBlock);
 			}
 			prop = cfg
 					.get("blocks", "materialAnchorBlock", defaultId,
@@ -200,7 +180,8 @@ public class MyWorldGen {
 			if (inventoryAnchorBlock == null) {
 				defaultId = 1577;
 			} else {
-				defaultId = GameData.getBlockRegistry().getId(inventoryAnchorBlock);
+				defaultId = GameData.getBlockRegistry().getId(
+						inventoryAnchorBlock);
 			}
 			prop = cfg
 					.get("blocks", "inventoryAnchorBlock", defaultId,
