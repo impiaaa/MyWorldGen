@@ -104,11 +104,6 @@ public class WorldGenerator implements IWorldGenerator {
 							return;
 						}
 					}
-					MyWorldGen.log
-							.log(Level.WARN,
-									"{} failed to place after {} tries!",
-									schemToGenerate.info.name,
-									MyWorldGen.generateTries);
 				}
 			}
 		}

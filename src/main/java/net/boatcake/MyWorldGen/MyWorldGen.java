@@ -172,39 +172,40 @@ public class MyWorldGen {
 										"_anchor"));
 			}
 
-			prop = cfg
-					.get("blocks", "materialAnchorBlock",
-							"Default ID for when an ID map is not found in a schematic");
+			int defaultId;
 			if (materialAnchorBlock == null) {
-				materialAnchorBlockId = prop.getInt(1575);
+				defaultId = 1575;
 			} else {
-				materialAnchorBlockId = prop.getInt(GameData.getBlockRegistry()
-						.getId(materialAnchorBlock));
+				defaultId = GameData.getBlockRegistry().getId(materialAnchorBlock);
 			}
+			prop = cfg
+					.get("blocks", "materialAnchorBlock", defaultId,
+							"Default ID for when an ID map is not found in a schematic");
+			materialAnchorBlockId = prop.getInt(defaultId);
 
 			ignoreBlock = registerBlock("ignore", BlockIgnore.class);
-			prop = cfg
-					.get("blocks", "ignoreBlock",
-							"Default ID for when an ID map is not found in a schematic");
 			if (ignoreBlock == null) {
-				ignoreBlockId = prop.getInt(1576);
+				defaultId = 1576;
 			} else {
-				ignoreBlockId = prop.getInt(GameData.getBlockRegistry().getId(
-						ignoreBlock));
+				defaultId = GameData.getBlockRegistry().getId(ignoreBlock);
 			}
+			prop = cfg
+					.get("blocks", "ignoreBlock", defaultId,
+							"Default ID for when an ID map is not found in a schematic");
+			ignoreBlockId = prop.getInt(defaultId);
 
 			inventoryAnchorBlock = registerBlock("anchorInventory",
 					BlockAnchorInventory.class, ItemBlock.class,
 					BlockAnchorInventoryLogic.class);
-			prop = cfg
-					.get("blocks", "inventoryAnchorBlock",
-							"Default ID for when an ID map is not found in a schematic");
 			if (inventoryAnchorBlock == null) {
-				inventoryAnchorBlockId = prop.getInt(1577);
+				defaultId = 1577;
 			} else {
-				inventoryAnchorBlockId = prop.getInt(GameData
-						.getBlockRegistry().getId(inventoryAnchorBlock));
+				defaultId = GameData.getBlockRegistry().getId(inventoryAnchorBlock);
 			}
+			prop = cfg
+					.get("blocks", "inventoryAnchorBlock", defaultId,
+							"Default ID for when an ID map is not found in a schematic");
+			inventoryAnchorBlockId = prop.getInt(defaultId);
 
 			wandSave = registerItem("wandSave", ItemWandSave.class, cfg);
 			wandLoad = registerItem("wandLoad", ItemWandLoad.class, cfg);

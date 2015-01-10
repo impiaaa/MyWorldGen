@@ -293,13 +293,10 @@ public class Schematic {
 				BlockPos rotatedPos = new BlockPos(rotatedCoords);
 				int blockId = blocks[origCoords.getX()][origCoords.getY()][origCoords
 						.getZ()];
-				if (!world.chunkExists(rotatedPos.getX() / 16,
-						rotatedPos.getZ() / 16)
-						|| !(matchingMap.get(blockId))
-								.matches(meta[origCoords.getX()][origCoords
-										.getY()][origCoords.getZ()],
-										getTileEntityAt(origCoords), world,
-										rotatedPos)) {
+				if (!(matchingMap.get(blockId)).matches(
+						meta[origCoords.getX()][origCoords.getY()][origCoords
+								.getZ()], getTileEntityAt(origCoords), world,
+						rotatedPos)) {
 					return false;
 				}
 			}
@@ -511,9 +508,6 @@ public class Schematic {
 							IBlockState rotatedState = state.withProperty(prop,
 									facing);
 							world.setBlockState(rotatedCoords, rotatedState);
-							MyWorldGen.log.info("Rotated {} from {} to {}",
-									state.getBlock().getUnlocalizedName(),
-									state, rotatedState);
 						}
 					}
 				}
