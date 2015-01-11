@@ -17,6 +17,8 @@ public class SchematicInfo {
 	public boolean lockRotation;
 	public int randomWeight;
 	public boolean generateSpawners;
+	public boolean fuzzyMatching;
+	public boolean terrainSmoothing;
 
 	public SchematicInfo() {
 		chestType = ChestGenHooks.DUNGEON_CHEST;

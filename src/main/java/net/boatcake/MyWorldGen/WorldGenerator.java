@@ -17,6 +17,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
@@ -79,11 +80,9 @@ public class WorldGenerator implements IWorldGenerator {
 						.getRandomItem(random, applicableSchematics);
 				if (selectedItem != noStructureItem) {
 					Schematic schemToGenerate = ((WeightedRandomSchematic) selectedItem).schematic;
-					for (int i = 0; i < MyWorldGen.generateTries; i++) {
-						int x = random.nextInt(16) + chunkPos.getX();
-						int y = random.nextInt(world.getHeight());
-						int z = random.nextInt(16) + chunkPos.getZ();
-						BlockPos pos = new BlockPos(x, y, z);
+					if (schemToGenerate.info.fuzzyMatching) {
+						Chunk chunk = world.getChunkFromChunkCoords(chunkX,
+								chunkZ);
 						EnumFacing randomDirection;
 						if (schemToGenerate.info.lockRotation) {
 							randomDirection = EnumFacing.SOUTH;
@@ -91,17 +90,43 @@ public class WorldGenerator implements IWorldGenerator {
 							randomDirection = DirectionUtils.cardinalDirections[random
 									.nextInt(4)];
 						}
-						if (schemToGenerate.fitsIntoWorldAt(world, pos,
-								randomDirection)) {
+						BlockPos pos = schemToGenerate
+								.getFuzzyMatchingLocation(chunk,
+										randomDirection, random);
+						if (pos != null) {
 							schemToGenerate.placeInWorld(world, pos,
 									randomDirection, true, true, true, random);
-							MyWorldGen.log
-									.log(Level.DEBUG,
-											"Generated {} at {}, {}, {}; took {} tries",
-											new Object[] {
-													schemToGenerate.info.name,
-													x, y, z, i + 1 });
-							return;
+							MyWorldGen.log.log(Level.DEBUG,
+									"Generated {} at {}, {}, {}", new Object[] {
+											schemToGenerate.info.name, pos.getX(),
+											pos.getY(), pos.getZ() });
+						}
+					} else {
+						for (int i = 0; i < MyWorldGen.generateTries; i++) {
+							int x = random.nextInt(16) + chunkPos.getX();
+							int y = random.nextInt(world.getHeight());
+							int z = random.nextInt(16) + chunkPos.getZ();
+							BlockPos pos = new BlockPos(x, y, z);
+							EnumFacing randomDirection;
+							if (schemToGenerate.info.lockRotation) {
+								randomDirection = EnumFacing.SOUTH;
+							} else {
+								randomDirection = DirectionUtils.cardinalDirections[random
+										.nextInt(4)];
+							}
+							if (schemToGenerate.fitsIntoWorldAt(world, pos,
+									randomDirection)) {
+								schemToGenerate.placeInWorld(world, pos,
+										randomDirection, true, true, true,
+										random);
+								MyWorldGen.log
+										.log(Level.DEBUG,
+												"Generated {} at {}, {}, {}; took {} tries",
+												new Object[] {
+														schemToGenerate.info.name,
+														x, y, z, i + 1 });
+								return;
+							}
 						}
 					}
 				}

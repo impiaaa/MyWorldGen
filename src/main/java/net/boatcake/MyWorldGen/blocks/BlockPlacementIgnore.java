@@ -12,7 +12,7 @@ public class BlockPlacementIgnore extends BlockPlacementLogic {
 
 	@Override
 	public void affectWorld(int myMeta, TileEntity myTileEntity, World world,
-			BlockPos pos) {
+			BlockPos pos, boolean matchTerrain) {
 		// do nothing!
 	}
 }

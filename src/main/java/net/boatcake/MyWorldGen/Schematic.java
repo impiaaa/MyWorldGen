@@ -1,6 +1,7 @@
 package net.boatcake.MyWorldGen;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,6 +34,7 @@ import net.minecraft.util.Vec3i;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DungeonHooks;
 import net.minecraftforge.fml.common.registry.GameData;
@@ -390,9 +392,9 @@ public class Schematic {
 					BlockPos rotatedPos = new BlockPos(rotatedCoords);
 					if (placingMap.containsKey(blocks[x][y][z])
 							&& followPlacementRules) {
-						placingMap.get(blocks[x][y][z])
-								.affectWorld(meta[x][y][z],
-										getTileEntityAt(pos), world, pos);
+						placingMap.get(blocks[x][y][z]).affectWorld(
+								meta[x][y][z], getTileEntityAt(pos), world,
+								pos, false);
 					} else if (idMap.containsKey(blocks[x][y][z])) {
 						IBlockState blockState = idMap.get(blocks[x][y][z])
 								.getStateFromMeta(meta[x][y][z]);
@@ -438,7 +440,7 @@ public class Schematic {
 					BlockPos newPos = new BlockPos(DirectionUtils.rotateCoords(
 							e.getPos(), offset, rotationAxis, rotationCount));
 					e.setPos(newPos);
-					world.getChunkFromBlockCoords(newPos).addTileEntity(e);
+					world.addTileEntity(e);
 				}
 			}
 		}
@@ -514,5 +516,35 @@ public class Schematic {
 				}
 			}
 		}
+	}
+
+	public BlockPos getFuzzyMatchingLocation(Chunk chunk,
+			EnumFacing rotationDirection, Random rand) {
+		ArrayList<BlockPos> shuffledAnchors = (ArrayList<BlockPos>) anchorBlockLocations
+				.clone();
+		Collections.shuffle(shuffledAnchors, rand);
+		Axis rotationAxis = DirectionUtils.axisForDirection(rotationDirection);
+		int rotationCount = DirectionUtils
+				.rotationCountForDirection(rotationDirection);
+		for (BlockPos anchorPos : shuffledAnchors) {
+			BlockAnchorLogic matching = matchingMap
+					.get(blocks[anchorPos.getX()][anchorPos.getY()][anchorPos
+							.getZ()]);
+			int anchorMeta = meta[anchorPos.getX()][anchorPos.getY()][anchorPos
+					.getZ()];
+			TileEntity anchorEntity = getTileEntityAt(anchorPos);
+			BlockPos worldAnchorPos = matching.getQuickMatchingBlockInChunk(
+					anchorMeta, anchorEntity, chunk, rand);
+			if (worldAnchorPos != null
+					&& matching.matches(anchorMeta, anchorEntity,
+							chunk.getWorld(), worldAnchorPos)) {
+				Vec3 worldSchematicPos = DirectionUtils.rotateCoords(anchorPos
+						.multiply(-1), new Vec3(worldAnchorPos.getX(),
+						worldAnchorPos.getY(), worldAnchorPos.getZ()),
+						rotationAxis, rotationCount);
+				return new BlockPos(worldSchematicPos);
+			}
+		}
+		return null;
 	}
 }

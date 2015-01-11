@@ -2,10 +2,12 @@ package net.boatcake.MyWorldGen.blocks;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 public abstract class BlockAnchorLogic {
 	private static Map<String, BlockAnchorLogic> blockNameToLogic = new HashMap<String, BlockAnchorLogic>();
@@ -24,4 +26,7 @@ public abstract class BlockAnchorLogic {
 
 	public abstract boolean matches(int myMeta, TileEntity myTileEntity,
 			World world, BlockPos pos);
+	
+	public abstract BlockPos getQuickMatchingBlockInChunk(int myMeta,
+			TileEntity myTileEntity, Chunk chunk, Random rand);
 }

@@ -37,7 +37,7 @@ tasks.withType(JavaCompile) {
 //    apiKey = project.curseforge_key
 //    projectId = "72733"
 //    changelog = ""
-//    releaseType = "release"
+//    releaseType = "beta"
 //}
 
 processResources

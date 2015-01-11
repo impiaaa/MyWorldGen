@@ -23,5 +23,5 @@ public abstract class BlockPlacementLogic {
 	}
 
 	public abstract void affectWorld(int myMeta, TileEntity myTileEntity,
-			World world, BlockPos pos);
+			World world, BlockPos pos, boolean matchTerrain);
 }
