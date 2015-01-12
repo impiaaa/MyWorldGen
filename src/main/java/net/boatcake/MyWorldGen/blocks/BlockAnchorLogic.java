@@ -1,6 +1,7 @@
 package net.boatcake.MyWorldGen.blocks;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
@@ -21,7 +22,7 @@ public abstract class BlockAnchorLogic {
 	}
 
 	public BlockAnchorLogic(String blockName) {
-		blockNameToLogic.put(blockName, this);
+		blockNameToLogic.put(blockName.toLowerCase(Locale.ROOT), this);
 	}
 
 	public abstract boolean matches(int myMeta, TileEntity myTileEntity,

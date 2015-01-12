@@ -1,6 +1,7 @@
 package net.boatcake.MyWorldGen.blocks;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import net.minecraft.tileentity.TileEntity;
@@ -19,7 +20,7 @@ public abstract class BlockPlacementLogic {
 	}
 
 	public BlockPlacementLogic(String blockName) {
-		blockNameToLogic.put(blockName, this);
+		blockNameToLogic.put(blockName.toLowerCase(Locale.ROOT), this);
 	}
 
 	public abstract void affectWorld(int myMeta, TileEntity myTileEntity,

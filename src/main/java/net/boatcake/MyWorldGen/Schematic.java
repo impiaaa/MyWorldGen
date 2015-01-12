@@ -37,6 +37,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DungeonHooks;
+import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fml.common.registry.GameData;
 
 import org.apache.logging.log4j.Level;
@@ -392,9 +393,11 @@ public class Schematic {
 					BlockPos rotatedPos = new BlockPos(rotatedCoords);
 					if (placingMap.containsKey(blocks[x][y][z])
 							&& followPlacementRules) {
-						placingMap.get(blocks[x][y][z]).affectWorld(
+						BlockPlacementLogic placing = placingMap.get(blocks[x][y][z]);
+						placing.affectWorld(
 								meta[x][y][z], getTileEntityAt(pos), world,
-								pos, false);
+								rotatedPos, info.terrainSmoothing);
+						
 					} else if (idMap.containsKey(blocks[x][y][z])) {
 						IBlockState blockState = idMap.get(blocks[x][y][z])
 								.getStateFromMeta(meta[x][y][z]);
@@ -535,9 +538,7 @@ public class Schematic {
 			TileEntity anchorEntity = getTileEntityAt(anchorPos);
 			BlockPos worldAnchorPos = matching.getQuickMatchingBlockInChunk(
 					anchorMeta, anchorEntity, chunk, rand);
-			if (worldAnchorPos != null
-					&& matching.matches(anchorMeta, anchorEntity,
-							chunk.getWorld(), worldAnchorPos)) {
+			if (worldAnchorPos != null) {
 				Vec3 worldSchematicPos = DirectionUtils.rotateCoords(anchorPos
 						.multiply(-1), new Vec3(worldAnchorPos.getX(),
 						worldAnchorPos.getY(), worldAnchorPos.getZ()),

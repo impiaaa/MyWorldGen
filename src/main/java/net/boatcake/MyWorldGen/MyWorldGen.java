@@ -9,6 +9,7 @@ import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterialLogic;
 import net.boatcake.MyWorldGen.blocks.BlockIgnore;
 import net.boatcake.MyWorldGen.blocks.BlockPlacementIgnore;
+import net.boatcake.MyWorldGen.blocks.BlockPlacementMaterialAnchor;
 import net.boatcake.MyWorldGen.blocks.TileEntityAnchorInventory;
 import net.boatcake.MyWorldGen.items.BlockAnchorItem;
 import net.boatcake.MyWorldGen.items.ItemWandLoad;
@@ -145,6 +146,7 @@ public class MyWorldGen {
 			materialAnchorBlock = registerBlock("anchor",
 					BlockAnchorMaterial.class, BlockAnchorItem.class,
 					BlockAnchorMaterialLogic.class);
+			new BlockPlacementMaterialAnchor(MODID+":anchor");
 
 			if (materialAnchorBlock != null) {
 				sidedProxy.registerVariants(materialAnchorBlock,
@@ -164,6 +166,7 @@ public class MyWorldGen {
 			materialAnchorBlockId = prop.getInt(defaultId);
 
 			ignoreBlock = registerBlock("ignore", BlockIgnore.class);
+			new BlockPlacementIgnore(MODID+":ignore");
 			if (ignoreBlock == null) {
 				defaultId = 1576;
 			} else {
@@ -177,6 +180,7 @@ public class MyWorldGen {
 			inventoryAnchorBlock = registerBlock("anchorInventory",
 					BlockAnchorInventory.class, ItemBlock.class,
 					BlockAnchorInventoryLogic.class);
+			new BlockPlacementIgnore(MODID+":anchorInventory");
 			if (inventoryAnchorBlock == null) {
 				defaultId = 1577;
 			} else {
@@ -235,7 +239,6 @@ public class MyWorldGen {
 			GameRegistry.registerBlock(block, itemBlockClass, name,
 					itemCtorArgs);
 		}
-		new BlockPlacementIgnore(MyWorldGen.MODID + ":" + name);
 		if (matching != null) {
 			matching.getConstructor(String.class).newInstance(
 					MyWorldGen.MODID + ":" + name);

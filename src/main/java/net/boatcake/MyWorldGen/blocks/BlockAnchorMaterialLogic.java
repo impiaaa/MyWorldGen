@@ -43,32 +43,56 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 	@Override
 	public BlockPos getQuickMatchingBlockInChunk(int myMeta,
 			TileEntity myTileEntity, Chunk chunk, Random rand) {
-		int xPos = rand.nextInt(16);
-		int zPos = rand.nextInt(16);
-		int height = chunk.getHeight(xPos, zPos);
-		switch (AnchorType.get(myMeta)) {
-		case AIR:
-			return new BlockPos(xPos+chunk.xPosition*16, rand.nextInt(chunk.getWorld().getHeight()-height)+height, zPos+chunk.zPosition*16);
-		case GROUND:
-			return new BlockPos(xPos+chunk.xPosition*16, height, zPos+chunk.zPosition*16);
-		case LAVA:
-			String providerName = chunk.getWorld().getChunkProvider().makeString();
-			if (providerName.equals("HellRandomLevelSource")) {
-				return new BlockPos(xPos+chunk.xPosition*16, rand.nextInt(32), zPos+chunk.zPosition*16);
+		int xPosInChunk = rand.nextInt(16);
+		int zPosInChunk = rand.nextInt(16);
+		int height = chunk.getHeight(xPosInChunk, zPosInChunk);
+		int xPos = xPosInChunk+chunk.xPosition*16;
+		int zPos = zPosInChunk+chunk.zPosition*16;
+		World world = chunk.getWorld();
+		BlockPos pos = new BlockPos(xPos, 0, zPos);
+		BiomeGenBase currentBiome = world.getBiomeGenForCoords(pos);
+		AnchorType type = AnchorType.get(myMeta);
+		boolean isHell = chunk.getWorld().getChunkProvider().makeString().equals("HellRandomLevelSource");
+		do {
+			switch (type) {
+			case AIR:
+				// Anywhere between the ground and the top of the world
+				pos = new BlockPos(xPos, rand.nextInt(world.getActualHeight()-height)+height, zPos);
+				break;
+			case GROUND:
+				// Ground level.
+				pos = new BlockPos(xPos, height, zPos);
+				height--;
+				break;
+			case LAVA:
+				if (isHell) {
+					// Lava ocean
+					pos = new BlockPos(xPos, rand.nextInt(32), zPos);
+				}
+				else {
+					// Bedrock lava
+					pos = new BlockPos(xPos, rand.nextInt(11), zPos);
+				}
+				break;
+			case STONE:
+				// Anywhere below ground
+				pos = new BlockPos(xPos, rand.nextInt(height), zPos);
+				break;
+			case WATER:
+				// Ocean
+				pos = new BlockPos(xPos, rand.nextInt(15)+48, zPos);
+				break;
+			case DIRT:
+			case LEAVES:
+			case SAND:
+			case WOOD:
+			default:
+				return null;
 			}
-			else {
-				return new BlockPos(xPos+chunk.xPosition*16, rand.nextInt(11), zPos+chunk.zPosition*16);
+			if (BlockAnchorMaterialLogic.matchesStatic(type, chunk.getBlockState(pos), currentBiome)) {
+				return pos;
 			}
-		case STONE:
-			return new BlockPos(xPos+chunk.xPosition*16, rand.nextInt(height), zPos+chunk.zPosition*16);
-		case WATER:
-			return new BlockPos(xPos+chunk.xPosition*16, rand.nextInt(15)+48, zPos+chunk.zPosition*16);
-		case DIRT:
-		case LEAVES:
-		case SAND:
-		case WOOD:
-		default:
-			return null;
-		}
+		} while (height >= 62);
+		return null;
 	}
 }
