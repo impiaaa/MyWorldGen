@@ -14,11 +14,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 	public enum AnchorType {
-		AIR(1, "Air", null), DIRT(5, "Dirt", Material.ground), GROUND(0,
-				"Ground", null), LAVA(4, "Lava", Material.lava), LEAVES(7,
-				"Leaves", Material.leaves), SAND(8, "Sand", Material.sand), STONE(
-				2, "Stone", Material.rock), WATER(3, "Water", Material.water), WOOD(
-				6, "Wood", Material.wood);
+		GROUND(0, "Ground", null), AIR(1, "Air", null), STONE(2, "Stone",
+				Material.rock), WATER(3, "Water", Material.water), LAVA(4,
+				"Lava", Material.lava), DIRT(5, "Dirt", Material.ground), WOOD(
+				6, "Wood", Material.wood), LEAVES(7, "Leaves", Material.leaves), SAND(
+				8, "Sand", Material.sand);
 
 		public static AnchorType get(int id) {
 			for (AnchorType a : AnchorType.values()) {

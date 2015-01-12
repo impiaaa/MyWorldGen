@@ -17,6 +17,8 @@ public class SchematicInfo {
 	public boolean lockRotation;
 	public int randomWeight;
 	public boolean generateSpawners;
+	public boolean fuzzyMatching;
+	public boolean terrainSmoothing;
 
 	public SchematicInfo() {
 		chestType = ChestGenHooks.DUNGEON_CHEST;
@@ -24,6 +26,8 @@ public class SchematicInfo {
 		onlyIncludeBiomes = null;
 		lockRotation = false;
 		randomWeight = 10;
+		fuzzyMatching = false;
+		terrainSmoothing = false;
 	}
 
 	public boolean matchesBiome(BiomeGenBase biome) {
@@ -70,6 +74,14 @@ public class SchematicInfo {
 		if (tag.hasKey("generateSpawners")) {
 			generateSpawners = tag.getBoolean("generateSpawners");
 		}
+
+		if (tag.hasKey("fuzzyMatching")) {
+			fuzzyMatching = tag.getBoolean("fuzzyMatching");
+		}
+
+		if (tag.hasKey("terrainSmoothing")) {
+			terrainSmoothing = tag.getBoolean("terrainSmoothing");
+		}
 	}
 
 	public void writeToNBT(NBTTagCompound base) {
@@ -94,6 +106,8 @@ public class SchematicInfo {
 		base.setBoolean("lockRotation", lockRotation);
 		base.setInteger("randomWeight", randomWeight);
 		base.setBoolean("generateSpawners", generateSpawners);
+		base.setBoolean("fuzzyMatching", fuzzyMatching);
+		base.setBoolean("terrainSmoothing", terrainSmoothing);
 	}
 
 	public static boolean containsIgnoreCase(List<String> list, String thing) {

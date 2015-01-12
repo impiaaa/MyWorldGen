@@ -1,4 +1,4 @@
-package net.boatcake.MyWorldGen;
+package net.boatcake.MyWorldGen.utils;
 
 import java.io.File;
 import java.io.FilenameFilter;

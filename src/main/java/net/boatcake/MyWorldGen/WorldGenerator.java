@@ -11,9 +11,11 @@ import java.util.List;
 import java.util.Random;
 
 import net.boatcake.MyWorldGen.utils.DirectionUtils;
+import net.boatcake.MyWorldGen.utils.SchematicFilenameFilter;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -43,6 +45,8 @@ public class WorldGenerator implements IWorldGenerator {
 				e.printStackTrace();
 			}
 		}
+		MyWorldGen.log.log(Level.INFO, "Loaded {} schematics from {}",
+				schemFiles.length, schemDirectory.toString());
 	}
 
 	public void addSchemFromStream(Collection<Schematic> section,
@@ -77,10 +81,9 @@ public class WorldGenerator implements IWorldGenerator {
 						.getRandomItem(random, applicableSchematics);
 				if (selectedItem != noStructureItem) {
 					Schematic schemToGenerate = ((WeightedRandomSchematic) selectedItem).schematic;
-					for (int i = 0; i < MyWorldGen.generateTries; i++) {
-						int x = random.nextInt(16) + chunkX * 16;
-						int y = random.nextInt(world.getHeight());
-						int z = random.nextInt(16) + chunkZ * 16;
+					if (schemToGenerate.info.fuzzyMatching) {
+						Chunk chunk = world.getChunkFromChunkCoords(chunkX,
+								chunkZ);
 						ForgeDirection randomDirection;
 						if (schemToGenerate.info.lockRotation) {
 							randomDirection = ForgeDirection.SOUTH;
@@ -88,17 +91,43 @@ public class WorldGenerator implements IWorldGenerator {
 							randomDirection = DirectionUtils.cardinalDirections[random
 									.nextInt(4)];
 						}
-						if (schemToGenerate.fitsIntoWorldAt(world, x, y, z,
-								randomDirection)) {
-							schemToGenerate.placeInWorld(world, x, y, z,
-									randomDirection, true, true, true, random);
-							MyWorldGen.log
-									.log(Level.DEBUG,
-											"Generated {} at {}, {}, {}; took {} tries",
-											new Object[] {
-													schemToGenerate.info.name,
-													x, y, z, i + 1 });
-							break;
+						Integer[] pos = schemToGenerate
+								.getFuzzyMatchingLocation(chunk,
+										randomDirection, random);
+						if (pos != null) {
+							schemToGenerate.placeInWorld(world, pos[0], pos[1],
+									pos[2], randomDirection, true, true, true,
+									random);
+							MyWorldGen.log.log(Level.INFO,
+									"Generated {} at {}, {}, {}", new Object[] {
+											schemToGenerate.info.name, pos[0],
+											pos[1], pos[2] });
+						}
+					} else {
+						for (int i = 0; i < MyWorldGen.generateTries; i++) {
+							int x = random.nextInt(16) + chunkX * 16;
+							int y = random.nextInt(world.getHeight());
+							int z = random.nextInt(16) + chunkZ * 16;
+							ForgeDirection randomDirection;
+							if (schemToGenerate.info.lockRotation) {
+								randomDirection = ForgeDirection.SOUTH;
+							} else {
+								randomDirection = DirectionUtils.cardinalDirections[random
+										.nextInt(4)];
+							}
+							if (schemToGenerate.fitsIntoWorldAt(world, x, y, z,
+									randomDirection)) {
+								schemToGenerate.placeInWorld(world, x, y, z,
+										randomDirection, true, true, true,
+										random);
+								MyWorldGen.log
+										.log(Level.DEBUG,
+												"Generated {} at {}, {}, {}; took {} tries",
+												new Object[] {
+														schemToGenerate.info.name,
+														x, y, z, i + 1 });
+								return;
+							}
 						}
 					}
 				}

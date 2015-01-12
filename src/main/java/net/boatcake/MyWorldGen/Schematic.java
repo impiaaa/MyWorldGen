@@ -1,6 +1,7 @@
 package net.boatcake.MyWorldGen;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,6 +27,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DungeonHooks;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -290,10 +292,10 @@ public class Schematic {
 			int otherMetaAbove = world.getBlockMetadata(midX, midY + 1, midZ);
 			BiomeGenBase biome = world.getBiomeGenForCoords(midX, midZ);
 			return BlockAnchorMaterialLogic.matchesStatic(
-					BlockAnchorMaterial.AnchorType.GROUND.id, otherBlockBelow,
+					BlockAnchorMaterial.AnchorType.GROUND, otherBlockBelow,
 					otherMetaBelow, biome)
 					&& BlockAnchorMaterialLogic.matchesStatic(
-							BlockAnchorMaterial.AnchorType.AIR.id,
+							BlockAnchorMaterial.AnchorType.AIR,
 							otherBlockAbove, otherMetaAbove, biome);
 		} else {
 			for (int i = 0; i < anchorBlockLocations.size(); i++) {
@@ -302,17 +304,15 @@ public class Schematic {
 						.createVectorHelper(origCoords[0], origCoords[1],
 								origCoords[2]), offset, rotationAxis,
 						rotationCount);
-				if (!world.blockExists((int) rotatedCoords.xCoord,
-						(int) rotatedCoords.yCoord, (int) rotatedCoords.zCoord)
-						|| !(matchingMap
-								.get(blocks[origCoords[0]][origCoords[1]][origCoords[2]]))
-								.matches(
-										meta[origCoords[0]][origCoords[1]][origCoords[2]],
-										getTileEntityAt(origCoords[0],
-												origCoords[1], origCoords[2]),
-										world, (int) rotatedCoords.xCoord,
-										(int) rotatedCoords.yCoord,
-										(int) rotatedCoords.zCoord)) {
+				if (!(matchingMap
+						.get(blocks[origCoords[0]][origCoords[1]][origCoords[2]]))
+						.matches(
+								meta[origCoords[0]][origCoords[1]][origCoords[2]],
+								getTileEntityAt(origCoords[0], origCoords[1],
+										origCoords[2]), world,
+								(int) rotatedCoords.xCoord,
+								(int) rotatedCoords.yCoord,
+								(int) rotatedCoords.zCoord)) {
 					return false;
 				}
 			}
@@ -408,7 +408,10 @@ public class Schematic {
 							&& followPlacementRules) {
 						placingMap.get(blocks[x][y][z]).affectWorld(
 								meta[x][y][z], getTileEntityAt(x, y, z), world,
-								x, y, z);
+								(int) rotatedCoords.xCoord,
+								(int) rotatedCoords.yCoord,
+								(int) rotatedCoords.zCoord,
+								info.terrainSmoothing);
 					} else if (idMap.containsKey(blocks[x][y][z])) {
 						Block block = idMap.get(blocks[x][y][z]);
 						world.setBlock((int) rotatedCoords.xCoord,
@@ -483,13 +486,15 @@ public class Schematic {
 							(int) rotatedCoords.yCoord,
 							(int) rotatedCoords.zCoord);
 					if (generateChests && !info.chestType.isEmpty()) {
-						if ((block == Blocks.chest || block == Blocks.trapped_chest) && (e instanceof TileEntityChest)) {
+						if ((block == Blocks.chest || block == Blocks.trapped_chest)
+								&& (e instanceof TileEntityChest)) {
 							ChestGenHooks hook = ChestGenHooks
 									.getInfo(info.chestType);
 							WeightedRandomChestContent.generateChestContents(
 									rand, hook.getItems(rand),
 									(TileEntityChest) e, hook.getCount(rand));
-						} else if (block == Blocks.dispenser && (e instanceof TileEntityDispenser)) {
+						} else if (block == Blocks.dispenser
+								&& (e instanceof TileEntityDispenser)) {
 							ChestGenHooks info = ChestGenHooks
 									.getInfo(ChestGenHooks.PYRAMID_JUNGLE_DISPENSER);
 							WeightedRandomChestContent
@@ -499,8 +504,12 @@ public class Schematic {
 											info.getCount(rand));
 						}
 					}
-					if (info.generateSpawners && generateSpawners && block == Blocks.mob_spawner && e instanceof TileEntityMobSpawner) {
-						((TileEntityMobSpawner)e).func_145881_a().setEntityName(DungeonHooks.getRandomDungeonMob(rand));
+					if (info.generateSpawners && generateSpawners
+							&& block == Blocks.mob_spawner
+							&& e instanceof TileEntityMobSpawner) {
+						((TileEntityMobSpawner) e).func_145881_a()
+								.setEntityName(
+										DungeonHooks.getRandomDungeonMob(rand));
 					}
 				}
 			}
@@ -536,5 +545,37 @@ public class Schematic {
 				}
 			}
 		}
+	}
+
+	public Integer[] getFuzzyMatchingLocation(Chunk chunk,
+			ForgeDirection rotationDirection, Random rand) {
+		ArrayList<Integer[]> shuffledAnchors = (ArrayList<Integer[]>) anchorBlockLocations
+				.clone();
+		Collections.shuffle(shuffledAnchors, rand);
+		ForgeDirection rotationAxis = DirectionUtils
+				.axisForDirection(rotationDirection);
+		int rotationCount = DirectionUtils
+				.rotationCountForDirection(rotationDirection);
+		for (Integer[] anchorPos : shuffledAnchors) {
+			BlockAnchorLogic matching = matchingMap
+					.get(blocks[anchorPos[0]][anchorPos[1]][anchorPos[2]]);
+			int anchorMeta = meta[anchorPos[0]][anchorPos[1]][anchorPos[2]];
+			TileEntity anchorEntity = getTileEntityAt(anchorPos[0],
+					anchorPos[1], anchorPos[2]);
+			Integer[] worldAnchorPos = matching.getQuickMatchingBlockInChunk(
+					anchorMeta, anchorEntity, chunk, rand);
+			if (worldAnchorPos != null) {
+				Vec3 worldSchematicPos = DirectionUtils.rotateCoords(Vec3
+						.createVectorHelper(-anchorPos[0], -anchorPos[1],
+								-anchorPos[2]), Vec3
+						.createVectorHelper(worldAnchorPos[0],
+								worldAnchorPos[1], worldAnchorPos[2]),
+						rotationAxis, rotationCount);
+				return new Integer[] { (int) worldSchematicPos.xCoord,
+						(int) worldSchematicPos.yCoord,
+						(int) worldSchematicPos.zCoord };
+			}
+		}
+		return null;
 	}
 }

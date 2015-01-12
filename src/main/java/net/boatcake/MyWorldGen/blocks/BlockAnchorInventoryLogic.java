@@ -1,7 +1,10 @@
 package net.boatcake.MyWorldGen.blocks;
 
+import java.util.Random;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 public class BlockAnchorInventoryLogic extends BlockAnchorLogic {
 
@@ -14,6 +17,12 @@ public class BlockAnchorInventoryLogic extends BlockAnchorLogic {
 			int x, int y, int z) {
 		return ((TileEntityAnchorInventory) myTileEntity).matches(world
 				.getBlock(x, y, z));
+	}
+
+	@Override
+	public Integer[] getQuickMatchingBlockInChunk(int myMeta,
+			TileEntity myTileEntity, Chunk chunk, Random rand) {
+		return null;
 	}
 
 }

@@ -9,6 +9,7 @@ import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterialLogic;
 import net.boatcake.MyWorldGen.blocks.BlockIgnore;
 import net.boatcake.MyWorldGen.blocks.BlockPlacementIgnore;
+import net.boatcake.MyWorldGen.blocks.BlockPlacementMaterialAnchor;
 import net.boatcake.MyWorldGen.blocks.TileEntityAnchorInventory;
 import net.boatcake.MyWorldGen.items.BlockAnchorItem;
 import net.boatcake.MyWorldGen.items.ItemWandLoad;
@@ -67,9 +68,10 @@ public class MyWorldGen {
 	private boolean enableItemsAndBlocks;
 
 	private File sourceFile;
+	private Configuration cfg;
 
 	@EventHandler
-	public void init(FMLInitializationEvent event) {
+	public void postInit(FMLPostInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 		NetUtils.init();
 
@@ -91,8 +93,11 @@ public class MyWorldGen {
 	public void preInit(FMLPreInitializationEvent event) {
 		log = event.getModLog();
 		sourceFile = event.getSourceFile();
-		Configuration cfg = new Configuration(
-				event.getSuggestedConfigurationFile());
+		cfg = new Configuration(event.getSuggestedConfigurationFile());
+	}
+
+	@EventHandler
+	public void init(FMLInitializationEvent event) throws Exception {
 		cfg.load();
 
 		enableItemsAndBlocks = cfg
@@ -121,50 +126,53 @@ public class MyWorldGen {
 			materialAnchorBlock = registerBlock("anchor",
 					BlockAnchorMaterial.class, BlockAnchorItem.class,
 					BlockAnchorMaterialLogic.class);
+			new BlockPlacementMaterialAnchor(MODID + ":anchor");
+
+			int defaultId;
+			if (materialAnchorBlock == null) {
+				defaultId = 1575;
+			} else {
+				defaultId = GameData.getBlockRegistry().getId(
+						materialAnchorBlock);
+			}
 			prop = cfg
 					.get("blocks", "materialAnchorBlock",
 							"Default ID for when an ID map is not found in a schematic");
-			if (materialAnchorBlock == null) {
-				materialAnchorBlockId = prop.getInt(1575);
-			} else {
-				materialAnchorBlockId = prop.getInt(GameData.getBlockRegistry()
-						.getId(materialAnchorBlock));
-			}
+			materialAnchorBlockId = prop.getInt(defaultId);
 
-			ignoreBlock = registerBlock("ignore", BlockIgnore.class, null, null);
+			ignoreBlock = registerBlock("ignore", BlockIgnore.class);
+			new BlockPlacementIgnore(MODID + ":ignore");
+			if (ignoreBlock == null) {
+				defaultId = 1576;
+			} else {
+				defaultId = GameData.getBlockRegistry().getId(ignoreBlock);
+			}
 			prop = cfg
 					.get("blocks", "ignoreBlock",
 							"Default ID for when an ID map is not found in a schematic");
-			if (ignoreBlock == null) {
-				ignoreBlockId = prop.getInt(1576);
-			} else {
-				ignoreBlockId = prop.getInt(GameData.getBlockRegistry().getId(
-						ignoreBlock));
-			}
+			ignoreBlockId = prop.getInt(defaultId);
 
 			inventoryAnchorBlock = registerBlock("anchorInventory",
-					BlockAnchorInventory.class, null,
+					BlockAnchorInventory.class, ItemBlock.class,
 					BlockAnchorInventoryLogic.class);
+			new BlockPlacementIgnore(MODID + ":anchorInventory");
+			if (inventoryAnchorBlock == null) {
+				defaultId = 1577;
+			} else {
+				defaultId = GameData.getBlockRegistry().getId(
+						inventoryAnchorBlock);
+			}
 			prop = cfg
 					.get("blocks", "inventoryAnchorBlock",
 							"Default ID for when an ID map is not found in a schematic");
-			if (inventoryAnchorBlock == null) {
-				inventoryAnchorBlockId = prop.getInt(1577);
-			} else {
-				inventoryAnchorBlockId = prop.getInt(GameData
-						.getBlockRegistry().getId(inventoryAnchorBlock));
-			}
+			inventoryAnchorBlockId = prop.getInt(defaultId);
 
 			wandSave = registerItem("wandSave", ItemWandSave.class, cfg);
 			wandLoad = registerItem("wandLoad", ItemWandLoad.class, cfg);
 		} catch (RuntimeException e) {
-			log.fatal("Could not load configuration");
-			e.printStackTrace();
-			return;
+			throw new Exception("Could not load configuration", e);
 		} catch (Exception e) {
-			log.fatal("Self-reflection failed. Is the mod intact?");
-			e.printStackTrace();
-			return;
+			throw new Exception("Self-reflection failed. Is the mod intact?", e);
 		}
 
 		String worldGenDir = cfg.get("configuration", "schematicDirectory",
@@ -195,7 +203,7 @@ public class MyWorldGen {
 
 	private Block registerBlock(String name, Class<? extends Block> blockClass,
 			Class<? extends ItemBlock> itemBlockClass,
-			Class<? extends BlockAnchorLogic> matching)
+			Class<? extends BlockAnchorLogic> matching, Object... itemCtorArgs)
 			throws Exception {
 		Block block = null;
 		if (enableItemsAndBlocks) {
@@ -207,14 +215,19 @@ public class MyWorldGen {
 			GameRegistry
 					.registerBlock(block,
 							(itemBlockClass == null) ? ItemBlock.class
-									: itemBlockClass, name);
+									: itemBlockClass, name, itemCtorArgs);
 		}
-		new BlockPlacementIgnore(MyWorldGen.MODID + ":" + name);
 		if (matching != null) {
 			matching.getConstructor(String.class).newInstance(
 					MyWorldGen.MODID + ":" + name);
 		}
 		return block;
+	}
+
+	private Block registerBlock(String name, Class<? extends Block> blockClass)
+			throws Exception {
+		return registerBlock(name, blockClass, ItemBlock.class, null,
+				new Object[] {});
 	}
 
 	private Item registerItem(String name, Class<? extends Item> itemClass,
@@ -233,10 +246,5 @@ public class MyWorldGen {
 	@EventHandler
 	public void serverStart(FMLServerAboutToStartEvent event) {
 		worldGen.addSchematicsFromDirectory(globalSchemDir);
-	}
-
-	@EventHandler
-	public void postInit(FMLPostInitializationEvent e) {
-		// JUnitCore.runClasses(TestAnchors.class);
 	}
 }
