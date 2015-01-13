@@ -91,7 +91,8 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 			}
 			if (BlockAnchorMaterialLogic.matchesStatic(type,
 					chunk.getBlock(xPosInChunk, yPos, zPosInChunk),
-					chunk.getBlockMetadata(xPosInChunk, yPos, zPosInChunk), currentBiome)) {
+					chunk.getBlockMetadata(xPosInChunk, yPos, zPosInChunk),
+					currentBiome)) {
 				return new Integer[] { xPos, yPos, zPos };
 			}
 		} while (height >= 62);

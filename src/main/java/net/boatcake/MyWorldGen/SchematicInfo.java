@@ -28,6 +28,7 @@ public class SchematicInfo {
 		randomWeight = 10;
 		fuzzyMatching = false;
 		terrainSmoothing = false;
+		generateSpawners = true;
 	}
 
 	public boolean matchesBiome(BiomeGenBase biome) {
