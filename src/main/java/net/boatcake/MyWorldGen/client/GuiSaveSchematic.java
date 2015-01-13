@@ -24,6 +24,11 @@ public class GuiSaveSchematic extends GuiScreen {
 	private GuiButton saveBtn;
 	public Schematic schematicToSave;
 
+	private GuiButton lockRotationButton;
+	private GuiButton generateSpawnersButton;
+	private GuiButton fuzzyMatchingButton;
+	private GuiButton terrainSmoothingButton;
+
 	public GuiSaveSchematic() {
 		super();
 		// The schematicToSave is filled out for us in PacketHandler
@@ -54,6 +59,34 @@ public class GuiSaveSchematic extends GuiScreen {
 			mc.displayGuiScreen(null);
 		} else if (button.id == cancelBtn.id) {
 			mc.displayGuiScreen(null);
+		} else if (button.id == lockRotationButton.id) {
+			if (schematicToSave != null) {
+				schematicToSave.info.lockRotation = !schematicToSave.info.lockRotation;
+				lockRotationButton.displayString = I18n
+						.format("gui.lockRotation."
+								+ schematicToSave.info.lockRotation);
+			}
+		} else if (button.id == generateSpawnersButton.id) {
+			if (schematicToSave != null) {
+				schematicToSave.info.generateSpawners = !schematicToSave.info.generateSpawners;
+				generateSpawnersButton.displayString = I18n
+						.format("gui.generateSpawners."
+								+ schematicToSave.info.generateSpawners);
+			}
+		} else if (button.id == fuzzyMatchingButton.id) {
+			if (schematicToSave != null) {
+				schematicToSave.info.fuzzyMatching = !schematicToSave.info.fuzzyMatching;
+				fuzzyMatchingButton.displayString = I18n
+						.format("gui.fuzzyMatching."
+								+ schematicToSave.info.fuzzyMatching);
+			}
+		} else if (button.id == terrainSmoothingButton.id) {
+			if (schematicToSave != null) {
+				schematicToSave.info.terrainSmoothing = !schematicToSave.info.terrainSmoothing;
+				terrainSmoothingButton.displayString = I18n
+						.format("gui.terrainSmoothing."
+								+ schematicToSave.info.terrainSmoothing);
+			}
 		}
 	}
 
@@ -81,10 +114,36 @@ public class GuiSaveSchematic extends GuiScreen {
 		super.initGui();
 		Keyboard.enableRepeatEvents(true);
 		this.buttonList.clear();
-		buttonList.add(saveBtn = new GuiButton(0, this.width / 2 - 100,
-				this.height / 4 + 72, I18n.format("gui.save")));
-		buttonList.add(cancelBtn = new GuiButton(1, this.width / 2 - 100,
-				this.height / 4 + 96, I18n.format("gui.cancel")));
+		buttonList.add(saveBtn = new GuiButton(0, this.width / 2 + 4,
+				this.height - 52, 150, 20, I18n.format("gui.save")));
+		buttonList.add(cancelBtn = new GuiButton(1, this.width / 2 - 154,
+				this.height - 52, 150, 20, I18n.format("gui.cancel")));
+
+		boolean lockRotation, generateSpawners, fuzzyMatching, terrainSmoothing;
+		if (schematicToSave == null) {
+			lockRotation = false;
+			generateSpawners = true;
+			fuzzyMatching = false;
+			terrainSmoothing = false;
+		} else {
+			lockRotation = schematicToSave.info.lockRotation;
+			generateSpawners = schematicToSave.info.generateSpawners;
+			fuzzyMatching = schematicToSave.info.fuzzyMatching;
+			terrainSmoothing = schematicToSave.info.terrainSmoothing;
+		}
+		buttonList.add(lockRotationButton = new GuiButton(2,
+				this.width / 2 + 4, this.height / 4 + 72, 150, 20, I18n
+						.format("gui.lockRotation." + lockRotation)));
+		buttonList.add(generateSpawnersButton = new GuiButton(3,
+				this.width / 2 - 154, this.height / 4 + 72, 150, 20, I18n
+						.format("gui.generateSpawners." + generateSpawners)));
+		buttonList.add(fuzzyMatchingButton = new GuiButton(4,
+				this.width / 2 + 4, this.height / 4 + 96, 150, 20, I18n
+						.format("gui.fuzzyMatching." + fuzzyMatching)));
+		buttonList.add(terrainSmoothingButton = new GuiButton(5,
+				this.width / 2 - 154, this.height / 4 + 96, 150, 20, I18n
+						.format("gui.terrainSmoothing." + terrainSmoothing)));
+
 		fileNameField = new GuiTextField(0, this.fontRendererObj,
 				this.width / 2 - 150, 60, 300, 20);
 		fileNameField.setMaxStringLength(32767);

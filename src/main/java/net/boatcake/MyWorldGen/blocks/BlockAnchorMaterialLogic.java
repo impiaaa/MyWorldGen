@@ -46,18 +46,21 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 		int xPosInChunk = rand.nextInt(16);
 		int zPosInChunk = rand.nextInt(16);
 		int height = chunk.getHeight(xPosInChunk, zPosInChunk);
-		int xPos = xPosInChunk+chunk.xPosition*16;
-		int zPos = zPosInChunk+chunk.zPosition*16;
+		int xPos = xPosInChunk + chunk.xPosition * 16;
+		int zPos = zPosInChunk + chunk.zPosition * 16;
 		World world = chunk.getWorld();
 		BlockPos pos = new BlockPos(xPos, 0, zPos);
 		BiomeGenBase currentBiome = world.getBiomeGenForCoords(pos);
 		AnchorType type = AnchorType.get(myMeta);
-		boolean isHell = chunk.getWorld().getChunkProvider().makeString().equals("HellRandomLevelSource");
+		boolean isHell = chunk.getWorld().getChunkProvider().makeString()
+				.equals("HellRandomLevelSource");
 		do {
 			switch (type) {
 			case AIR:
 				// Anywhere between the ground and the top of the world
-				pos = new BlockPos(xPos, rand.nextInt(world.getActualHeight()-height)+height, zPos);
+				pos = new BlockPos(xPos, rand.nextInt(world.getActualHeight()
+						- height)
+						+ height, zPos);
 				break;
 			case GROUND:
 				// Ground level.
@@ -68,8 +71,7 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 				if (isHell) {
 					// Lava ocean
 					pos = new BlockPos(xPos, rand.nextInt(32), zPos);
-				}
-				else {
+				} else {
 					// Bedrock lava
 					pos = new BlockPos(xPos, rand.nextInt(11), zPos);
 				}
@@ -80,7 +82,7 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 				break;
 			case WATER:
 				// Ocean
-				pos = new BlockPos(xPos, rand.nextInt(15)+48, zPos);
+				pos = new BlockPos(xPos, rand.nextInt(15) + 48, zPos);
 				break;
 			case DIRT:
 			case LEAVES:
@@ -89,7 +91,8 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 			default:
 				return null;
 			}
-			if (BlockAnchorMaterialLogic.matchesStatic(type, chunk.getBlockState(pos), currentBiome)) {
+			if (BlockAnchorMaterialLogic.matchesStatic(type,
+					chunk.getBlockState(pos), currentBiome)) {
 				return pos;
 			}
 		} while (height >= 62);

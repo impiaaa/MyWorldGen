@@ -27,7 +27,7 @@ public abstract class BlockAnchorLogic {
 
 	public abstract boolean matches(int myMeta, TileEntity myTileEntity,
 			World world, BlockPos pos);
-	
+
 	public abstract BlockPos getQuickMatchingBlockInChunk(int myMeta,
 			TileEntity myTileEntity, Chunk chunk, Random rand);
 }

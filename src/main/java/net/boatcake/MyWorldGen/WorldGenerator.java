@@ -96,10 +96,13 @@ public class WorldGenerator implements IWorldGenerator {
 						if (pos != null) {
 							schemToGenerate.placeInWorld(world, pos,
 									randomDirection, true, true, true, random);
-							MyWorldGen.log.log(Level.INFO,
-									"Generated {} at {}, {}, {}", new Object[] {
-											schemToGenerate.info.name, pos.getX(),
-											pos.getY(), pos.getZ() });
+							MyWorldGen.log
+									.log(Level.INFO,
+											"Generated {} at {}, {}, {}",
+											new Object[] {
+													schemToGenerate.info.name,
+													pos.getX(), pos.getY(),
+													pos.getZ() });
 						}
 					} else {
 						for (int i = 0; i < MyWorldGen.generateTries; i++) {

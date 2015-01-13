@@ -37,7 +37,6 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DungeonHooks;
-import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fml.common.registry.GameData;
 
 import org.apache.logging.log4j.Level;
@@ -393,11 +392,9 @@ public class Schematic {
 					BlockPos rotatedPos = new BlockPos(rotatedCoords);
 					if (placingMap.containsKey(blocks[x][y][z])
 							&& followPlacementRules) {
-						BlockPlacementLogic placing = placingMap.get(blocks[x][y][z]);
-						placing.affectWorld(
+						placingMap.get(blocks[x][y][z]).affectWorld(
 								meta[x][y][z], getTileEntityAt(pos), world,
 								rotatedPos, info.terrainSmoothing);
-						
 					} else if (idMap.containsKey(blocks[x][y][z])) {
 						IBlockState blockState = idMap.get(blocks[x][y][z])
 								.getStateFromMeta(meta[x][y][z]);

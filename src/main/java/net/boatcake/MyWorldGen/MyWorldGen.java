@@ -146,7 +146,7 @@ public class MyWorldGen {
 			materialAnchorBlock = registerBlock("anchor",
 					BlockAnchorMaterial.class, BlockAnchorItem.class,
 					BlockAnchorMaterialLogic.class);
-			new BlockPlacementMaterialAnchor(MODID+":anchor");
+			new BlockPlacementMaterialAnchor(MODID + ":anchor");
 
 			if (materialAnchorBlock != null) {
 				sidedProxy.registerVariants(materialAnchorBlock,
@@ -166,7 +166,7 @@ public class MyWorldGen {
 			materialAnchorBlockId = prop.getInt(defaultId);
 
 			ignoreBlock = registerBlock("ignore", BlockIgnore.class);
-			new BlockPlacementIgnore(MODID+":ignore");
+			new BlockPlacementIgnore(MODID + ":ignore");
 			if (ignoreBlock == null) {
 				defaultId = 1576;
 			} else {
@@ -180,7 +180,7 @@ public class MyWorldGen {
 			inventoryAnchorBlock = registerBlock("anchorInventory",
 					BlockAnchorInventory.class, ItemBlock.class,
 					BlockAnchorInventoryLogic.class);
-			new BlockPlacementIgnore(MODID+":anchorInventory");
+			new BlockPlacementIgnore(MODID + ":anchorInventory");
 			if (inventoryAnchorBlock == null) {
 				defaultId = 1577;
 			} else {

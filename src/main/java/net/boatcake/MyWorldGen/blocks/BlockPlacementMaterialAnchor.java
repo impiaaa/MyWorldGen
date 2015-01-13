@@ -50,7 +50,8 @@ public class BlockPlacementMaterialAnchor extends BlockPlacementLogic {
 		}
 	}
 
-	private void setBlocksDownward(World world, BlockPos pos, IBlockState blockState) {
+	private void setBlocksDownward(World world, BlockPos pos,
+			IBlockState blockState) {
 		while (!world.getBlockState(pos).getBlock().isSolidFullCube()) {
 			world.setBlockState(pos, blockState);
 			pos = pos.offsetDown();
