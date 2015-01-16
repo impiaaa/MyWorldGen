@@ -46,7 +46,7 @@ public class WorldGenerator implements IWorldGenerator {
 			}
 		}
 		MyWorldGen.log.log(Level.INFO, "Loaded {} schematics from {}",
-				schemFiles.length, schemDirectory.toString());
+				worldgenFolderSchemList.size(), schemDirectory.toString());
 	}
 
 	public void addSchemFromStream(Collection<Schematic> section,
