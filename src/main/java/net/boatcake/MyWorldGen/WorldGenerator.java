@@ -46,7 +46,7 @@ public class WorldGenerator implements IWorldGenerator {
 			}
 		}
 		MyWorldGen.log.log(Level.INFO, "Loaded {} schematics from {}",
-				schemFiles.length, schemDirectory.toString());
+				worldgenFolderSchemList.size(), schemDirectory.toString());
 	}
 
 	public void addSchemFromStream(Collection<Schematic> section,
@@ -98,7 +98,7 @@ public class WorldGenerator implements IWorldGenerator {
 							schemToGenerate.placeInWorld(world, pos[0], pos[1],
 									pos[2], randomDirection, true, true, true,
 									random);
-							MyWorldGen.log.log(Level.INFO,
+							MyWorldGen.log.log(Level.DEBUG,
 									"Generated {} at {}, {}, {}", new Object[] {
 											schemToGenerate.info.name, pos[0],
 											pos[1], pos[2] });
