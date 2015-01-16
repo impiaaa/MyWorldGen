@@ -97,7 +97,7 @@ public class WorldGenerator implements IWorldGenerator {
 							schemToGenerate.placeInWorld(world, pos,
 									randomDirection, true, true, true, random);
 							MyWorldGen.log
-									.log(Level.INFO,
+									.log(Level.DEBUG,
 											"Generated {} at {}, {}, {}",
 											new Object[] {
 													schemToGenerate.info.name,
