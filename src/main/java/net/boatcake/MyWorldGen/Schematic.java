@@ -457,21 +457,19 @@ public class Schematic {
 					Block block = world.getBlockState(rotatedPos).getBlock();
 					TileEntity e = world.getTileEntity(rotatedPos);
 					if (generateChests && !info.chestType.isEmpty()) {
-						if ((block == Blocks.chest || block == Blocks.trapped_chest)
-								&& (e instanceof TileEntityChest)) {
+						if (e instanceof TileEntityChest) {
 							ChestGenHooks hook = ChestGenHooks
 									.getInfo(info.chestType);
 							WeightedRandomChestContent.generateChestContents(
 									rand, hook.getItems(rand),
 									(TileEntityChest) e, hook.getCount(rand));
-						} else if (block == Blocks.dispenser
-								&& (e instanceof TileEntityDispenser)) {
-							ChestGenHooks info = ChestGenHooks
+						} else if (e instanceof TileEntityDispenser) {
+							ChestGenHooks hook = ChestGenHooks
 									.getInfo(ChestGenHooks.PYRAMID_JUNGLE_DISPENSER);
 							WeightedRandomChestContent.func_177631_a(rand,
-									info.getItems(rand),
+									hook.getItems(rand),
 									(TileEntityDispenser) e,
-									info.getCount(rand));
+									hook.getCount(rand));
 						}
 					}
 					if (info.generateSpawners && generateSpawners

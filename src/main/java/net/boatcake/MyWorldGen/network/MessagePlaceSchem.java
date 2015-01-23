@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 
 import java.io.IOException;
+import java.util.Random;
 
 import net.boatcake.MyWorldGen.BlockPlacementOption;
 import net.boatcake.MyWorldGen.Schematic;
@@ -51,7 +52,7 @@ public class MessagePlaceSchem implements IMessage,
 					playerMP.worldObj, message.pos, message.direction,
 					message.placementOption.generateChests,
 					message.placementOption.generateSpawners,
-					message.placementOption.followPlacementRules, null);
+					message.placementOption.followPlacementRules, new Random());
 		}
 		return null;
 	}
