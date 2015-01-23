@@ -39,7 +39,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-@Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.3.5", dependencies = "after:OpenBlocks")
+@Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.3.6", dependencies = "after:OpenBlocks")
 public class MyWorldGen {
 	@Instance("MyWorldGen")
 	public static MyWorldGen instance;
