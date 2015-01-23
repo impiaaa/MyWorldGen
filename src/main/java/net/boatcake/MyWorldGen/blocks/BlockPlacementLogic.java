@@ -10,11 +10,11 @@ public abstract class BlockPlacementLogic {
 	private static Map<String, BlockPlacementLogic> blockNameToLogic = new HashMap<String, BlockPlacementLogic>();
 
 	public static BlockPlacementLogic get(String blockName) {
-		return blockNameToLogic.get(blockName);
+		return blockNameToLogic.get(blockName.toLowerCase(Locale.ROOT));
 	}
 
 	public static boolean placementLogicExists(String blockName) {
-		return blockNameToLogic.containsKey(blockName);
+		return blockNameToLogic.containsKey(blockName.toLowerCase(Locale.ROOT));
 	}
 
 	public BlockPlacementLogic(String blockName) {
