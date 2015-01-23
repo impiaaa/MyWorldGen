@@ -13,11 +13,11 @@ public abstract class BlockAnchorLogic {
 	private static Map<String, BlockAnchorLogic> blockNameToLogic = new HashMap<String, BlockAnchorLogic>();
 
 	public static BlockAnchorLogic get(String blockName) {
-		return blockNameToLogic.get(blockName);
+		return blockNameToLogic.get(blockName.toLowerCase(Locale.ROOT));
 	}
 
 	public static boolean isAnchorBlock(String blockName) {
-		return blockNameToLogic.containsKey(blockName);
+		return blockNameToLogic.containsKey(blockName.toLowerCase(Locale.ROOT));
 	}
 
 	public BlockAnchorLogic(String blockName) {
