@@ -61,12 +61,36 @@ public class Schematic {
 
 	public SchematicInfo info;
 
+	// Designated constructor
+	public Schematic(short w, short h, short d, String n) {
+		width = w;
+		height = h;
+		length = d;
+		blocks = new int[w][h][d];
+		meta = new int[w][h][d];
+		entities = null;
+		tileEntities = null;
+		idMap = new HashMap<Integer, Block>();
+		matchingMap = new HashMap<Integer, BlockAnchorLogic>();
+		placingMap = new HashMap<Integer, BlockPlacementLogic>();
+		anchorBlockLocations = new ArrayList<BlockPos>();
+		info = new SchematicInfo();
+		info.excludeBiomes = new ArrayList<String>();
+		info.excludeBiomes.add(BiomeGenBase.hell.biomeName);
+		info.excludeBiomes.add(BiomeGenBase.sky.biomeName);
+		info.name = n;
+	}
+
 	public Schematic() {
 		this((short) 0, (short) 0, (short) 0, null);
 	}
 
 	public Schematic(NBTTagCompound tag, String n) {
-		info = new SchematicInfo();
+		this();
+		readFromNBT(tag, n);
+	}
+	
+	public void readFromNBT(NBTTagCompound tag, String n) {
 		info.name = n;
 		if (!tag.getString("Materials").equals("Alpha")) {
 			throw new RuntimeException(
@@ -75,10 +99,6 @@ public class Schematic {
 		width = tag.getShort("Width");
 		height = tag.getShort("Height");
 		length = tag.getShort("Length");
-
-		idMap = new HashMap<Integer, Block>(2);
-		matchingMap = new HashMap<Integer, BlockAnchorLogic>();
-		placingMap = new HashMap<Integer, BlockPlacementLogic>();
 
 		if (tag.hasKey("MWGIDMap")) {
 			NBTTagCompound mapTag = tag.getCompoundTag("MWGIDMap");
@@ -177,7 +197,7 @@ public class Schematic {
 									+ ":anchorInventory"));
 		}
 
-		anchorBlockLocations = new ArrayList<BlockPos>();
+		anchorBlockLocations.clear();
 		blocks = new int[width][height][length];
 		meta = new int[width][height][length];
 		byte blockBytes[] = tag.getByteArray("Blocks");
@@ -214,25 +234,6 @@ public class Schematic {
 		}
 
 		info.readFromNBT(tag);
-	}
-
-	public Schematic(short w, short h, short d, String n) {
-		width = w;
-		height = h;
-		length = d;
-		blocks = new int[w][h][d];
-		meta = new int[w][h][d];
-		entities = null;
-		tileEntities = null;
-		idMap = new HashMap<Integer, Block>();
-		matchingMap = new HashMap<Integer, BlockAnchorLogic>();
-		placingMap = new HashMap<Integer, BlockPlacementLogic>();
-		anchorBlockLocations = new ArrayList<BlockPos>();
-		info = new SchematicInfo();
-		info.excludeBiomes = new ArrayList<String>();
-		info.excludeBiomes.add(BiomeGenBase.hell.biomeName);
-		info.excludeBiomes.add(BiomeGenBase.sky.biomeName);
-		info.name = n;
 	}
 
 	public Schematic(World world, BlockPos pos1, BlockPos pos2) {

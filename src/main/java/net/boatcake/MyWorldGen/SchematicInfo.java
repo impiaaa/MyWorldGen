@@ -3,6 +3,10 @@ package net.boatcake.MyWorldGen;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -118,5 +122,49 @@ public class SchematicInfo {
 			}
 		}
 		return false;
+	}
+	
+	public void readFromJson(JsonObject jsonobject) {
+		if (jsonobject.has("chestType")) {
+			this.chestType = jsonobject.get("chestType").getAsString();
+		}
+
+		if (jsonobject.has("excludeBiomes")) {
+			JsonArray l = jsonobject.get("excludeBiomes").getAsJsonArray();
+			this.excludeBiomes = new ArrayList<String>(l.size());
+			for (JsonElement el : l) {
+				this.excludeBiomes.add(el.getAsString());
+			}
+		}
+
+		if (jsonobject.has("onlyIncludeBiomes")) {
+			JsonArray l = jsonobject.get("onlyIncludeBiomes").getAsJsonArray();
+			this.onlyIncludeBiomes = new ArrayList<String>(l.size());
+			for (JsonElement el : l) {
+				this.onlyIncludeBiomes.add(el.getAsString());
+			}
+		}
+
+		if (jsonobject.has("lockRotation")) {
+			this.lockRotation = jsonobject.get("lockRotation").getAsBoolean();
+		}
+
+		if (jsonobject.has("randomWeight")) {
+			this.randomWeight = jsonobject.get("randomWeight").getAsInt();
+		}
+
+		if (jsonobject.has("generateSpawners")) {
+			this.generateSpawners = jsonobject.get("generateSpawners")
+					.getAsBoolean();
+		}
+
+		if (jsonobject.has("fuzzyMatching")) {
+			this.fuzzyMatching = jsonobject.get("fuzzyMatching").getAsBoolean();
+		}
+
+		if (jsonobject.has("terrainSmoothing")) {
+			this.terrainSmoothing = jsonobject.get("terrainSmoothing")
+					.getAsBoolean();
+		}
 	}
 }
