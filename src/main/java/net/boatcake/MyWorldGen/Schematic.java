@@ -75,9 +75,6 @@ public class Schematic {
 		placingMap = new HashMap<Integer, BlockPlacementLogic>();
 		anchorBlockLocations = new ArrayList<BlockPos>();
 		info = new SchematicInfo();
-		info.excludeBiomes = new ArrayList<String>();
-		info.excludeBiomes.add(BiomeGenBase.hell.biomeName);
-		info.excludeBiomes.add(BiomeGenBase.sky.biomeName);
 		info.name = n;
 	}
 
