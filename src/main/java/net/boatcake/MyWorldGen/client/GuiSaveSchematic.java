@@ -2,7 +2,6 @@ package net.boatcake.MyWorldGen.client;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.Schematic;
@@ -42,7 +41,7 @@ public class GuiSaveSchematic extends GuiScreen {
 		super.initGui();
 		Keyboard.enableRepeatEvents(true);
 		this.buttonList.clear();
-		
+
 		fileNameField = new GuiTextField(this.fontRendererObj,
 				this.width / 2 - 150, 20, 300, 20);
 		fileNameField.setMaxStringLength(32767);
@@ -76,7 +75,7 @@ public class GuiSaveSchematic extends GuiScreen {
 		slot = new GuiSlotChestGenTypes(this.mc, this, this.fontRendererObj,
 				this.width / 2 - 152, 108, 150, this.height - 132);
 		slot.registerScrollButtons(6, 7);
-		
+
 		buttonList.add(saveBtn = new GuiButton(0, this.width / 2 + 2,
 				this.height - 20, 150, 20, I18n.format("gui.save")));
 		buttonList.add(cancelBtn = new GuiButton(1, this.width / 2 - 152,
