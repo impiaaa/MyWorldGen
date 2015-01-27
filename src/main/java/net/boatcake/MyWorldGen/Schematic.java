@@ -56,6 +56,23 @@ public class Schematic {
 
 	public SchematicInfo info;
 
+	// Designated constructor
+	public Schematic(short w, short h, short d, String n) {
+		width = w;
+		height = h;
+		length = d;
+		blocks = new int[w][h][d];
+		meta = new int[w][h][d];
+		entities = null;
+		tileEntities = null;
+		idMap = new HashMap<Integer, Block>();
+		matchingMap = new HashMap<Integer, BlockAnchorLogic>();
+		placingMap = new HashMap<Integer, BlockPlacementLogic>();
+		anchorBlockLocations = new ArrayList<Integer[]>();
+		info = new SchematicInfo();
+		info.name = n;
+	}
+
 	public Schematic() {
 		this((short) 0, (short) 0, (short) 0, null);
 	}
@@ -209,25 +226,6 @@ public class Schematic {
 		}
 
 		info.readFromNBT(tag);
-	}
-
-	public Schematic(short w, short h, short d, String n) {
-		width = w;
-		height = h;
-		length = d;
-		blocks = new int[w][h][d];
-		meta = new int[w][h][d];
-		entities = null;
-		tileEntities = null;
-		idMap = new HashMap<Integer, Block>();
-		matchingMap = new HashMap<Integer, BlockAnchorLogic>();
-		placingMap = new HashMap<Integer, BlockPlacementLogic>();
-		anchorBlockLocations = new ArrayList<Integer[]>();
-		info = new SchematicInfo();
-		info.excludeBiomes = new ArrayList<String>();
-		info.excludeBiomes.add(BiomeGenBase.hell.biomeName);
-		info.excludeBiomes.add(BiomeGenBase.sky.biomeName);
-		info.name = n;
 	}
 
 	public Schematic(World world, int x1, int y1, int z1, int x2, int y2, int z2) {

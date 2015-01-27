@@ -27,6 +27,8 @@ gui.fuzzyMatching.true=Fuzzy matching
 gui.fuzzyMatching.false=Strict matching
 gui.terrainSmoothing.true=Match terrain
 gui.terrainSmoothing.false=Preserve terrain
+gui.biomeListType.ONLYINCLUDE=Only spawn in:
+gui.biomeListType.EXCLUDE=Never spawn in:
 
 itemGroup.tabMyWorldGen=MyWorldGen
 

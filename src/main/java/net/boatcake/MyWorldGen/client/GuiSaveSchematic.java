@@ -2,6 +2,7 @@ package net.boatcake.MyWorldGen.client;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.Schematic;
@@ -22,7 +23,15 @@ public class GuiSaveSchematic extends GuiScreen {
 	private GuiButton cancelBtn;
 	private GuiTextField fileNameField;
 	private GuiButton saveBtn;
-	private GuiSlotChestGenTypes slot;
+	private GuiSlotChestGenTypes chestGenSlot;
+
+	private enum BiomeListType {
+		ONLYINCLUDE, EXCLUDE
+	};
+
+	private BiomeListType biomeListType;
+	private GuiButton biomeListTypeButton;
+	private GuiSlotBiomes biomeSlot;
 
 	private GuiButton lockRotationButton;
 	private GuiButton generateSpawnersButton;
@@ -33,6 +42,7 @@ public class GuiSaveSchematic extends GuiScreen {
 
 	public GuiSaveSchematic() {
 		super();
+		biomeListType = BiomeListType.EXCLUDE;
 		// The schematicToSave is filled out for us in PacketHandler
 	}
 
@@ -72,28 +82,38 @@ public class GuiSaveSchematic extends GuiScreen {
 				this.width / 2 - 152, 84, 150, 20, I18n
 						.format("gui.terrainSmoothing." + terrainSmoothing)));
 
-		slot = new GuiSlotChestGenTypes(this.mc, this, this.fontRendererObj,
-				this.width / 2 - 152, 108, 150, this.height - 132);
-		slot.registerScrollButtons(6, 7);
+		chestGenSlot = new GuiSlotChestGenTypes(this.mc, this,
+				this.fontRendererObj, this.width / 2 - 152, 108, 150,
+				this.height - 134);
+		chestGenSlot.registerScrollButtons(6, 7);
+
+		buttonList.add(biomeListTypeButton = new GuiButton(8,
+				this.width / 2 + 2, 108, 150, 20,
+				I18n.format("gui.biomeListType." + biomeListType.toString())));
+
+		biomeSlot = new GuiSlotBiomes(this.mc, this, this.fontRendererObj,
+				this.width / 2 + 2, 128, 150, this.height - 154);
+		biomeSlot.registerScrollButtons(9, 10);
 
 		buttonList.add(saveBtn = new GuiButton(0, this.width / 2 + 2,
-				this.height - 20, 150, 20, I18n.format("gui.save")));
+				this.height - 22, 150, 20, I18n.format("gui.save")));
 		buttonList.add(cancelBtn = new GuiButton(1, this.width / 2 - 152,
-				this.height - 20, 150, 20, I18n.format("gui.cancel")));
+				this.height - 22, 150, 20, I18n.format("gui.cancel")));
 
 		updateSaveButton();
 	}
 
 	@Override
 	public void drawScreen(int par1, int par2, float par3) {
-		if (slot == null) {
+		if (biomeSlot == null) {
 			// Sometimes, initGui will not have been called yet. I think it's a
 			// race condition on my platform that I can't easily fix right now,
 			// but this works anyway.
 			return;
 		}
 		drawDefaultBackground();
-		slot.drawScreen(par1, par2, par3);
+		chestGenSlot.drawScreen(par1, par2, par3);
+		biomeSlot.drawScreen(par1, par2, par3);
 		drawCenteredString(fontRendererObj, I18n.format("gui.filename"),
 				this.width / 2, 5, 0xFFFFFF);
 		drawCenteredString(fontRendererObj,
@@ -110,7 +130,25 @@ public class GuiSaveSchematic extends GuiScreen {
 		if (button.id == saveBtn.id && saveBtn.enabled) {
 			// Step 5: Now that we have the block data and entity and tile
 			// entity data, saving it to a file should be trivial.
-			schematicToSave.info.chestType = slot.hooks[slot.selected];
+			schematicToSave.info.chestType = chestGenSlot.hooks[chestGenSlot.selected];
+
+			ArrayList<String> biomeNames = new ArrayList<String>(
+					biomeSlot.selected.size());
+			for (int i : biomeSlot.selected) {
+				biomeNames.add(biomeSlot.biomeNames.get(i));
+			}
+
+			switch (biomeListType) {
+			case EXCLUDE:
+				schematicToSave.info.excludeBiomes = biomeNames;
+				break;
+			case ONLYINCLUDE:
+				schematicToSave.info.onlyIncludeBiomes = biomeNames;
+				break;
+			default:
+				break;
+			}
+
 			String name = fileNameField.getText();
 			if (!name.contains(".")) {
 				name += ".schematic";
@@ -158,8 +196,22 @@ public class GuiSaveSchematic extends GuiScreen {
 						.format("gui.terrainSmoothing."
 								+ schematicToSave.info.terrainSmoothing);
 			}
+		} else if (button.id == biomeListTypeButton.id) {
+			switch (biomeListType) {
+			case EXCLUDE:
+				biomeListType = BiomeListType.ONLYINCLUDE;
+				break;
+			case ONLYINCLUDE:
+				biomeListType = BiomeListType.EXCLUDE;
+				break;
+			default:
+				return;
+			}
+			biomeListTypeButton.displayString = I18n
+					.format("gui.biomeListType." + biomeListType.toString());
 		} else {
-			slot.actionPerformed(button);
+			chestGenSlot.actionPerformed(button);
+			biomeSlot.actionPerformed(button);
 		}
 	}
 
@@ -185,6 +237,16 @@ public class GuiSaveSchematic extends GuiScreen {
 	public void onGuiClosed() {
 		super.onGuiClosed();
 		Keyboard.enableRepeatEvents(false);
+	}
+
+	@Override
+	public void handleMouseInput() {
+		if (biomeSlot == null) {
+			return;
+		}
+		super.handleMouseInput();
+		chestGenSlot.handleMouseInput();
+		biomeSlot.handleMouseInput();
 	}
 
 	public void updateSaveButton() {
