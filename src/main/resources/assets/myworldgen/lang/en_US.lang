@@ -35,6 +35,7 @@ chestGenType.bonusChest.name=Bonus chest
 chestGenType.villageBlacksmith.name=Village blacksmith chest
 chestGenType.dungeonChest.name=Dungeon chest
 chestGenType.pyramidJungleDispenser.name=Jungle temple dispenser
+chestGenType.strongholdLibrary.name=Stronghold library chest
 chestGenType.mineshaftCorridor.name=Mine shaft chest
 chestGenType.pyramidDesertyChest.name=Desert temple chest
 chestGenType.pyramidJungleChest.name=Jungle temple chest

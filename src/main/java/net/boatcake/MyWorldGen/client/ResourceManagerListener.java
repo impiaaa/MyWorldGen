@@ -11,7 +11,6 @@ import java.util.Set;
 
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.Schematic;
-import net.boatcake.MyWorldGen.SchematicInfo;
 import net.boatcake.MyWorldGen.WorldGenerator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
@@ -33,8 +32,8 @@ import com.google.gson.JsonObject;
 public class ResourceManagerListener implements IResourceManagerReloadListener {
 	private WorldGenerator worldGen;
 	private static final Gson gsonReader = (new GsonBuilder())
-			.registerTypeAdapter(JsonObject.class,
-					new StupidDeserializer()).create();
+			.registerTypeAdapter(JsonObject.class, new StupidDeserializer())
+			.create();
 	private static final ParameterizedType paramType = new ParameterizedType() {
 		@Override
 		public Type[] getActualTypeArguments() {

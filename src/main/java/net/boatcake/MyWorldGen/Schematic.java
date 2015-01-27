@@ -89,7 +89,7 @@ public class Schematic {
 		this();
 		readFromNBT(tag, n);
 	}
-	
+
 	public void readFromNBT(NBTTagCompound tag, String n) {
 		info.name = n;
 		if (!tag.getString("Materials").equals("Alpha")) {

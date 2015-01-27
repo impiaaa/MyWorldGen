@@ -3,15 +3,15 @@ package net.boatcake.MyWorldGen;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.ChestGenHooks;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class SchematicInfo {
 	public ArrayList<String> excludeBiomes;
@@ -123,7 +123,7 @@ public class SchematicInfo {
 		}
 		return false;
 	}
-	
+
 	public void readFromJson(JsonObject jsonobject) {
 		if (jsonobject.has("chestType")) {
 			this.chestType = jsonobject.get("chestType").getAsString();
