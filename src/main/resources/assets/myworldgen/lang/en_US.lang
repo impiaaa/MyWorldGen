@@ -9,9 +9,12 @@ tile.anchor.wood.name=Wood Anchor
 tile.anchor.leaves.name=Leaves Anchor
 tile.anchor.sand.name=Sand Anchor
 tile.anchorInventory.name=Inventory Anchor
+
 container.anchorInventory=Inventory Anchor
+
 item.wandSave.name=Schematic Save Wand
 item.wandLoad.name=Schematic Load Wand
+
 gui.save=Save
 gui.filename=Enter a file name:
 gui.placement.asgenerated=Place as generated
@@ -24,4 +27,16 @@ gui.fuzzyMatching.true=Fuzzy matching
 gui.fuzzyMatching.false=Strict matching
 gui.terrainSmoothing.true=Match terrain
 gui.terrainSmoothing.false=Preserve terrain
+
 itemGroup.tabMyWorldGen=MyWorldGen
+
+chestGenType.none.name=Preserve chests
+chestGenType.bonusChest.name=Bonus chest
+chestGenType.villageBlacksmith.name=Village blacksmith chest
+chestGenType.dungeonChest.name=Dungeon chest
+chestGenType.pyramidJungleDispenser.name=Jungle temple dispenser
+chestGenType.mineshaftCorridor.name=Mine shaft chest
+chestGenType.pyramidDesertyChest.name=Desert temple chest
+chestGenType.pyramidJungleChest.name=Jungle temple chest
+chestGenType.strongholdCrossing.name=Stronghold crossing chest
+chestGenType.strongholdCorridor.name=Stronghold corridor chest

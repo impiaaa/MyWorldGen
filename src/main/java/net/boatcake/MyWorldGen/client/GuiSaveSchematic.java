@@ -22,16 +22,86 @@ public class GuiSaveSchematic extends GuiScreen {
 	private GuiButton cancelBtn;
 	private GuiTextField fileNameField;
 	private GuiButton saveBtn;
-	public Schematic schematicToSave;
+	private GuiSlotChestGenTypes slot;
 
 	private GuiButton lockRotationButton;
 	private GuiButton generateSpawnersButton;
 	private GuiButton fuzzyMatchingButton;
 	private GuiButton terrainSmoothingButton;
 
+	public Schematic schematicToSave;
+
 	public GuiSaveSchematic() {
 		super();
 		// The schematicToSave is filled out for us in PacketHandler
+	}
+
+	@Override
+	public void initGui() {
+		super.initGui();
+		Keyboard.enableRepeatEvents(true);
+		this.buttonList.clear();
+		
+		fileNameField = new GuiTextField(0, this.fontRendererObj,
+				this.width / 2 - 150, 20, 300, 20);
+		fileNameField.setMaxStringLength(32767);
+		fileNameField.setFocused(true);
+
+		boolean lockRotation, generateSpawners, fuzzyMatching, terrainSmoothing;
+		if (schematicToSave == null) {
+			lockRotation = false;
+			generateSpawners = true;
+			fuzzyMatching = false;
+			terrainSmoothing = false;
+		} else {
+			lockRotation = schematicToSave.info.lockRotation;
+			generateSpawners = schematicToSave.info.generateSpawners;
+			fuzzyMatching = schematicToSave.info.fuzzyMatching;
+			terrainSmoothing = schematicToSave.info.terrainSmoothing;
+		}
+		buttonList.add(lockRotationButton = new GuiButton(2,
+				this.width / 2 + 2, 60, 150, 20, I18n
+						.format("gui.lockRotation." + lockRotation)));
+		buttonList.add(generateSpawnersButton = new GuiButton(3,
+				this.width / 2 - 152, 60, 150, 20, I18n
+						.format("gui.generateSpawners." + generateSpawners)));
+		buttonList.add(fuzzyMatchingButton = new GuiButton(4,
+				this.width / 2 + 2, 84, 150, 20, I18n
+						.format("gui.fuzzyMatching." + fuzzyMatching)));
+		buttonList.add(terrainSmoothingButton = new GuiButton(5,
+				this.width / 2 - 152, 84, 150, 20, I18n
+						.format("gui.terrainSmoothing." + terrainSmoothing)));
+
+		slot = new GuiSlotChestGenTypes(this.mc, this, this.fontRendererObj,
+				this.width / 2 - 152, 108, 150, this.height - 132);
+		slot.registerScrollButtons(6, 7);
+		
+		buttonList.add(saveBtn = new GuiButton(0, this.width / 2 + 2,
+				this.height - 20, 150, 20, I18n.format("gui.save")));
+		buttonList.add(cancelBtn = new GuiButton(1, this.width / 2 - 152,
+				this.height - 20, 150, 20, I18n.format("gui.cancel")));
+
+		updateSaveButton();
+	}
+
+	@Override
+	public void drawScreen(int par1, int par2, float par3) {
+		if (slot == null) {
+			// Sometimes, initGui will not have been called yet. I think it's a
+			// race condition on my platform that I can't easily fix right now,
+			// but this works anyway.
+			return;
+		}
+		drawDefaultBackground();
+		slot.drawScreen(par1, par2, par3);
+		drawCenteredString(fontRendererObj, I18n.format("gui.filename"),
+				this.width / 2, 5, 0xFFFFFF);
+		drawCenteredString(fontRendererObj,
+				I18n.format("selectWorld.resultFolder") + " "
+						+ MyWorldGen.globalSchemDir.getAbsolutePath(),
+				this.width / 2, 45, 0xA0A0A0);
+		fileNameField.drawTextBox();
+		super.drawScreen(par1, par2, par3);
 	}
 
 	@Override
@@ -40,6 +110,7 @@ public class GuiSaveSchematic extends GuiScreen {
 		if (button.id == saveBtn.id && saveBtn.enabled) {
 			// Step 5: Now that we have the block data and entity and tile
 			// entity data, saving it to a file should be trivial.
+			schematicToSave.info.chestType = slot.hooks[slot.selected];
 			String name = fileNameField.getText();
 			if (!name.contains(".")) {
 				name += ".schematic";
@@ -87,68 +158,9 @@ public class GuiSaveSchematic extends GuiScreen {
 						.format("gui.terrainSmoothing."
 								+ schematicToSave.info.terrainSmoothing);
 			}
-		}
-	}
-
-	@Override
-	public void drawScreen(int par1, int par2, float par3) {
-		if (fileNameField == null) {
-			// Sometimes, initGui will not have been called yet. I think it's a
-			// race condition on my platform that I can't easily fix right now,
-			// but this works anyway.
-			return;
-		}
-		drawDefaultBackground();
-		drawCenteredString(fontRendererObj, I18n.format("gui.filename"),
-				this.width / 2, 20, 0xFFFFFF);
-		drawCenteredString(fontRendererObj,
-				I18n.format("selectWorld.resultFolder") + " "
-						+ MyWorldGen.globalSchemDir.getAbsolutePath(),
-				this.width / 2, 97, 0xA0A0A0);
-		fileNameField.drawTextBox();
-		super.drawScreen(par1, par2, par3);
-	}
-
-	@Override
-	public void initGui() {
-		super.initGui();
-		Keyboard.enableRepeatEvents(true);
-		this.buttonList.clear();
-		buttonList.add(saveBtn = new GuiButton(0, this.width / 2 + 4,
-				this.height - 52, 150, 20, I18n.format("gui.save")));
-		buttonList.add(cancelBtn = new GuiButton(1, this.width / 2 - 154,
-				this.height - 52, 150, 20, I18n.format("gui.cancel")));
-
-		boolean lockRotation, generateSpawners, fuzzyMatching, terrainSmoothing;
-		if (schematicToSave == null) {
-			lockRotation = false;
-			generateSpawners = true;
-			fuzzyMatching = false;
-			terrainSmoothing = false;
 		} else {
-			lockRotation = schematicToSave.info.lockRotation;
-			generateSpawners = schematicToSave.info.generateSpawners;
-			fuzzyMatching = schematicToSave.info.fuzzyMatching;
-			terrainSmoothing = schematicToSave.info.terrainSmoothing;
+			slot.actionPerformed(button);
 		}
-		buttonList.add(lockRotationButton = new GuiButton(2,
-				this.width / 2 + 4, this.height / 4 + 72, 150, 20, I18n
-						.format("gui.lockRotation." + lockRotation)));
-		buttonList.add(generateSpawnersButton = new GuiButton(3,
-				this.width / 2 - 154, this.height / 4 + 72, 150, 20, I18n
-						.format("gui.generateSpawners." + generateSpawners)));
-		buttonList.add(fuzzyMatchingButton = new GuiButton(4,
-				this.width / 2 + 4, this.height / 4 + 96, 150, 20, I18n
-						.format("gui.fuzzyMatching." + fuzzyMatching)));
-		buttonList.add(terrainSmoothingButton = new GuiButton(5,
-				this.width / 2 - 154, this.height / 4 + 96, 150, 20, I18n
-						.format("gui.terrainSmoothing." + terrainSmoothing)));
-
-		fileNameField = new GuiTextField(0, this.fontRendererObj,
-				this.width / 2 - 150, 60, 300, 20);
-		fileNameField.setMaxStringLength(32767);
-		fileNameField.setFocused(true);
-		updateSaveButton();
 	}
 
 	@Override
@@ -175,6 +187,15 @@ public class GuiSaveSchematic extends GuiScreen {
 		Keyboard.enableRepeatEvents(false);
 	}
 
+	@Override
+	public void handleMouseInput() throws IOException {
+		if (slot == null) {
+			return;
+		}
+		super.handleMouseInput();
+		slot.handleMouseInput();
+	}
+
 	public void updateSaveButton() {
 		// Call this every so often to make sure we have a valid file name and a
 		// valid schematic
@@ -185,6 +206,9 @@ public class GuiSaveSchematic extends GuiScreen {
 
 	@Override
 	public void updateScreen() {
+		if (fileNameField == null) {
+			return;
+		}
 		super.updateScreen();
 		fileNameField.updateCursorCounter();
 	}
