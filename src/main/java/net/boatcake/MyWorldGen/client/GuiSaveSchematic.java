@@ -239,16 +239,6 @@ public class GuiSaveSchematic extends GuiScreen {
 		Keyboard.enableRepeatEvents(false);
 	}
 
-	@Override
-	public void handleMouseInput() {
-		if (biomeSlot == null) {
-			return;
-		}
-		super.handleMouseInput();
-		chestGenSlot.handleMouseInput();
-		biomeSlot.handleMouseInput();
-	}
-
 	public void updateSaveButton() {
 		// Call this every so often to make sure we have a valid file name and a
 		// valid schematic

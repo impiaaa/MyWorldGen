@@ -7,6 +7,7 @@ import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenMutated;
 
@@ -26,11 +27,9 @@ public class GuiSlotBiomes extends GuiSlotResizable {
 		BiomeGenBase[] biomes = BiomeGenBase.getBiomeGenArray();
 
 		biomeNames = new ArrayList<String>(biomes.length);
-		int i = 0;
 		for (BiomeGenBase b : biomes) {
 			if (b != null && !(b instanceof BiomeGenMutated)) {
 				biomeNames.add(b.biomeName);
-				i++;
 			}
 		}
 
@@ -60,7 +59,8 @@ public class GuiSlotBiomes extends GuiSlotResizable {
 	}
 
 	@Override
-	protected void drawSlot(int i, int j, int k, int l, int var6, int var7) {
+	protected void drawSlot(int i, int j, int k, int l, Tessellator tessellator,
+			int var6, int var7) {
 		parent.drawString(fr, biomeNames.get(i), j + 2, k + 1, 0xFFFFFF);
 	}
 }

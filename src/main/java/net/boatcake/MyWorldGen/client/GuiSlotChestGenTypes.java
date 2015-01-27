@@ -22,12 +22,10 @@ public class GuiSlotChestGenTypes extends GuiSlotResizable {
 	public String[] hooks;
 	public String[] hooksTranslated;
 	public GuiScreen parent;
-	private Minecraft minecraft;
 
 	public GuiSlotChestGenTypes(Minecraft minecraft, GuiScreen parent,
 			FontRenderer fr, int x, int y, int width, int height) {
 		super(minecraft, x, y, width, height, 18);
-		this.minecraft = minecraft;
 		selected = 0;
 		this.fr = fr;
 		this.parent = parent;
