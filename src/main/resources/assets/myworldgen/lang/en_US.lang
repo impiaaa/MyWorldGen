@@ -29,17 +29,8 @@ gui.terrainSmoothing.true=Match terrain
 gui.terrainSmoothing.false=Preserve terrain
 gui.biomeListType.ONLYINCLUDE=Only spawn in:
 gui.biomeListType.EXCLUDE=Never spawn in:
+gui.randomWeight=Randomness weight
 
 itemGroup.tabMyWorldGen=MyWorldGen
 
 chestGenType.none.name=Preserve chests
-chestGenType.bonusChest.name=Bonus chest
-chestGenType.villageBlacksmith.name=Village blacksmith chest
-chestGenType.dungeonChest.name=Dungeon chest
-chestGenType.pyramidJungleDispenser.name=Jungle temple dispenser
-chestGenType.strongholdLibrary.name=Stronghold library chest
-chestGenType.mineshaftCorridor.name=Mine shaft chest
-chestGenType.pyramidDesertyChest.name=Desert temple chest
-chestGenType.pyramidJungleChest.name=Jungle temple chest
-chestGenType.strongholdCrossing.name=Stronghold crossing chest
-chestGenType.strongholdCorridor.name=Stronghold corridor chest

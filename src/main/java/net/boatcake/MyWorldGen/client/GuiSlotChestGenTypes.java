@@ -51,8 +51,7 @@ public class GuiSlotChestGenTypes extends GuiSlotResizable {
 			if (hooks[i].equals("")) {
 				hooksTranslated[i] = I18n.format("chestGenType.none.name");
 			} else {
-				hooksTranslated[i] = I18n.format("chestGenType." + hooks[i]
-						+ ".name");
+				hooksTranslated[i] = hooks[i];
 			}
 			if (hooks[i].equals(ChestGenHooks.DUNGEON_CHEST)) {
 				selected = i;
