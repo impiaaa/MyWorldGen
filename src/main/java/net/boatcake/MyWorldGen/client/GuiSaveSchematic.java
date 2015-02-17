@@ -9,7 +9,9 @@ import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.Schematic;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
+import net.minecraft.client.gui.GuiPageButtonList;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiSlider;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -19,12 +21,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 @SideOnly(Side.CLIENT)
-public class GuiSaveSchematic extends GuiScreen {
+public class GuiSaveSchematic extends GuiScreen implements GuiSlider.FormatHelper, GuiPageButtonList.GuiResponder {
 	private GuiButton cancelBtn;
 	private GuiTextField fileNameField;
 	private GuiButton saveBtn;
 	private GuiSlotChestGenTypes chestGenSlot;
-
 	private enum BiomeListType {
 		ONLYINCLUDE, EXCLUDE
 	};
@@ -81,10 +82,14 @@ public class GuiSaveSchematic extends GuiScreen {
 		buttonList.add(terrainSmoothingButton = new GuiButton(5,
 				this.width / 2 - 152, 84, 150, 20, I18n
 						.format("gui.terrainSmoothing." + terrainSmoothing)));
-
+		
+		buttonList.add(new GuiSlider(this, 11,
+				this.width / 2 - 152, 108, I18n.format("gui.randomWeight"),
+				1.0f, 100.0f, 10.0f, this));
+		
 		chestGenSlot = new GuiSlotChestGenTypes(this.mc, this,
-				this.fontRendererObj, this.width / 2 - 152, 108, 150,
-				this.height - 134);
+				this.fontRendererObj, this.width / 2 - 152, 132, 150,
+				this.height - 158);
 		chestGenSlot.registerScrollButtons(6, 7);
 
 		buttonList.add(biomeListTypeButton = new GuiButton(8,
@@ -264,5 +269,24 @@ public class GuiSaveSchematic extends GuiScreen {
 		}
 		super.updateScreen();
 		fileNameField.updateCursorCounter();
+	}
+
+	@Override
+	public String func_175318_a(int p_175318_1_, String p_175318_2_,
+			float p_175318_3_) {
+		return p_175318_2_ + ": " + String.format("%.0f", p_175318_3_);
+	}
+
+	@Override
+	public void func_175321_a(int id, boolean p_175321_2_) {
+	}
+
+	@Override
+	public void func_175320_a(int id, float val) {
+		schematicToSave.info.randomWeight = (int) val;
+	}
+
+	@Override
+	public void func_175319_a(int id, String p_175319_2_) {
 	}
 }
