@@ -8,9 +8,7 @@ import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.Schematic;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
-import net.minecraft.client.gui.GuiPageButtonList;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiSlider;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -21,11 +19,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiSaveSchematic extends GuiScreen implements GuiSlider.FormatHelper, GuiPageButtonList.GuiResponder {
+public class GuiSaveSchematic extends GuiScreen {
 	private GuiButton cancelBtn;
 	private GuiTextField fileNameField;
 	private GuiButton saveBtn;
+	private GuiTextField weightField;
 	private GuiSlotChestGenTypes chestGenSlot;
+
 	private enum BiomeListType {
 		ONLYINCLUDE, EXCLUDE
 	};
@@ -82,11 +82,11 @@ public class GuiSaveSchematic extends GuiScreen implements GuiSlider.FormatHelpe
 		buttonList.add(terrainSmoothingButton = new GuiButton(5,
 				this.width / 2 - 152, 84, 150, 20, I18n
 						.format("gui.terrainSmoothing." + terrainSmoothing)));
-		
-		buttonList.add(new GuiSlider(this, 11,
-				this.width / 2 - 152, 108, I18n.format("gui.randomWeight"),
-				1.0f, 100.0f, 10.0f, this));
-		
+
+		weightField = new GuiTextField(this.fontRendererObj,
+				this.width / 2 - 152, 108, 150, 20);
+		weightField.setMaxStringLength(5);
+
 		chestGenSlot = new GuiSlotChestGenTypes(this.mc, this,
 				this.fontRendererObj, this.width / 2 - 152, 132, 150,
 				this.height - 158);
@@ -126,6 +126,7 @@ public class GuiSaveSchematic extends GuiScreen implements GuiSlider.FormatHelpe
 						+ MyWorldGen.globalSchemDir.getAbsolutePath(),
 				this.width / 2, 45, 0xA0A0A0);
 		fileNameField.drawTextBox();
+		weightField.drawTextBox();
 		super.drawScreen(par1, par2, par3);
 	}
 
@@ -152,6 +153,13 @@ public class GuiSaveSchematic extends GuiScreen implements GuiSlider.FormatHelpe
 				break;
 			default:
 				break;
+			}
+
+			try {
+				schematicToSave.info.randomWeight = Integer.valueOf(weightField
+						.getText());
+			} catch (NumberFormatException e) {
+
 			}
 
 			String name = fileNameField.getText();
@@ -222,7 +230,13 @@ public class GuiSaveSchematic extends GuiScreen implements GuiSlider.FormatHelpe
 
 	@Override
 	protected void keyTyped(char character, int keycode) {
-		fileNameField.textboxKeyTyped(character, keycode);
+		if (this.fileNameField.isFocused()) {
+			this.fileNameField.textboxKeyTyped(character, keycode);
+		} else if (this.weightField.isFocused()) {
+			if (Character.isDigit(character) || Character.isISOControl(character)) {
+				this.weightField.textboxKeyTyped(character, keycode);
+			}
+		}
 		updateSaveButton();
 
 		switch (keycode) {
@@ -254,29 +268,17 @@ public class GuiSaveSchematic extends GuiScreen implements GuiSlider.FormatHelpe
 
 	@Override
 	public void updateScreen() {
-		if (fileNameField == null) {
+		if (fileNameField == null || weightField == null) {
 			return;
 		}
 		super.updateScreen();
 		fileNameField.updateCursorCounter();
+		weightField.updateCursorCounter();
 	}
 
-	@Override
-	public String func_175318_a(int p_175318_1_, String p_175318_2_,
-			float p_175318_3_) {
-		return p_175318_2_ + ": " + String.format("%.0f", p_175318_3_);
-	}
-
-	@Override
-	public void func_175321_a(int id, boolean p_175321_2_) {
-	}
-
-	@Override
-	public void func_175320_a(int id, float val) {
-		schematicToSave.info.randomWeight = (int) val;
-	}
-
-	@Override
-	public void func_175319_a(int id, String p_175319_2_) {
+	protected void mouseClicked(int p_73864_1_, int p_73864_2_, int p_73864_3_) {
+		super.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
+		this.fileNameField.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
+		this.weightField.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
 	}
 }
