@@ -21,11 +21,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 @SideOnly(Side.CLIENT)
-public class GuiSaveSchematic extends GuiScreen implements GuiSlider.FormatHelper, GuiPageButtonList.GuiResponder {
+public class GuiSaveSchematic extends GuiScreen implements
+		GuiSlider.FormatHelper, GuiPageButtonList.GuiResponder {
 	private GuiButton cancelBtn;
 	private GuiTextField fileNameField;
 	private GuiButton saveBtn;
 	private GuiSlotChestGenTypes chestGenSlot;
+
 	private enum BiomeListType {
 		ONLYINCLUDE, EXCLUDE
 	};
@@ -82,11 +84,10 @@ public class GuiSaveSchematic extends GuiScreen implements GuiSlider.FormatHelpe
 		buttonList.add(terrainSmoothingButton = new GuiButton(5,
 				this.width / 2 - 152, 84, 150, 20, I18n
 						.format("gui.terrainSmoothing." + terrainSmoothing)));
-		
-		buttonList.add(new GuiSlider(this, 11,
-				this.width / 2 - 152, 108, I18n.format("gui.randomWeight"),
-				1.0f, 100.0f, 10.0f, this));
-		
+
+		buttonList.add(new GuiSlider(this, 11, this.width / 2 - 152, 108, I18n
+				.format("gui.randomWeight"), 1.0f, 100.0f, 10.0f, this));
+
 		chestGenSlot = new GuiSlotChestGenTypes(this.mc, this,
 				this.fontRendererObj, this.width / 2 - 152, 132, 150,
 				this.height - 158);

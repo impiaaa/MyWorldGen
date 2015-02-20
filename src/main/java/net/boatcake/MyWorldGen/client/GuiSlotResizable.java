@@ -1,7 +1,6 @@
 package net.boatcake.MyWorldGen.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.gui.GuiSlot;
 import net.minecraft.client.gui.ScaledResolution;
 

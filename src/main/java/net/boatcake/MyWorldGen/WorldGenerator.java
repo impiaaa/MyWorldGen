@@ -59,7 +59,8 @@ public class WorldGenerator implements IWorldGenerator {
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world,
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
-		if (world.getWorldInfo().isMapFeaturesEnabled() && random.nextBoolean()) {
+		if (world.getWorldInfo().isMapFeaturesEnabled()
+				&& random.nextDouble() < MyWorldGen.baseGenerateChance) {
 			List<WeightedRandom.Item> applicableSchematics = new ArrayList<WeightedRandom.Item>();
 			BlockPos chunkPos = new BlockPos(chunkX * 16, 0, chunkZ * 16);
 			for (Schematic s : worldgenFolderSchemList) {
