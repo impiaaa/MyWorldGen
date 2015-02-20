@@ -48,24 +48,25 @@ public class MyWorldGen {
 	@SidedProxy(clientSide = "net.boatcake.MyWorldGen.client.ClientProxy", serverSide = "net.boatcake.MyWorldGen.ServerProxy")
 	public static CommonProxy sidedProxy;
 
-	public static CreativeTabs creativeTab;
+	private static boolean enableItemsAndBlocks;
 	public static int generateNothingWeight;
 	public static int generateTries;
 	public static File globalSchemDir;
-	public static Block ignoreBlock;
 	public static int ignoreBlockId;
-	public static Block inventoryAnchorBlock;
 	public static int inventoryAnchorBlockId;
+	public static int materialAnchorBlockId;
+	public static double baseGenerateChance;
+
+	public static CreativeTabs creativeTab;
+	public static Block ignoreBlock;
+	public static Block inventoryAnchorBlock;
 	public static Logger log;
 	public static Block materialAnchorBlock;
-	public static int materialAnchorBlockId;
 	public final static String MODID = "MyWorldGen";
 	public static String resourcePath = "assets/myworldgen/worldgen";
 	public static Item wandLoad;
 	public static Item wandSave;
 	public static WorldGenerator worldGen;
-
-	private boolean enableItemsAndBlocks;
 
 	private File sourceFile;
 	private Configuration cfg;
@@ -181,7 +182,7 @@ public class MyWorldGen {
 
 		generateNothingWeight = cfg
 				.get("configuration", "generateNothingWeight", 10,
-						"Increase this number to generate fewer structures, decrease to generate more")
+						"Increase this number to generate fewer structures, decrease to generate more.")
 				.getInt(10);
 		generateTries = cfg
 				.get("configuration",
@@ -189,6 +190,13 @@ public class MyWorldGen {
 						128,
 						"Increase this if you have structures with complex anchor block layouts. Higher numbers will make longer load times.")
 				.getInt(128);
+
+		baseGenerateChance = cfg
+				.get("configuration",
+						"baseGenerateChance",
+						1.0,
+						"Base chance for generating in a given chunk. Compounds with generateNothingWeight.",
+						0.0, 1.0).getDouble(1.0);
 
 		if (cfg.hasChanged()) {
 			cfg.save();

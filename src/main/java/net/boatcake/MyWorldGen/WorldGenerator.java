@@ -59,7 +59,8 @@ public class WorldGenerator implements IWorldGenerator {
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world,
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
-		if (world.getWorldInfo().isMapFeaturesEnabled() && random.nextBoolean()) {
+		if (world.getWorldInfo().isMapFeaturesEnabled()
+				&& random.nextDouble() < MyWorldGen.baseGenerateChance) {
 			List<WeightedRandom.Item> applicableSchematics = new ArrayList<WeightedRandom.Item>();
 			for (Schematic s : worldgenFolderSchemList) {
 				if (s.info.matchesBiome(world.getBiomeGenForCoords(chunkX * 16,
