@@ -14,8 +14,6 @@ import net.boatcake.MyWorldGen.blocks.BlockPlacementLogic;
 import net.boatcake.MyWorldGen.utils.DirectionUtils;
 import net.boatcake.MyWorldGen.utils.WorldUtils;
 import net.minecraft.block.Block;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -396,12 +394,12 @@ public class Schematic {
 					} else if (idMap.containsKey(blocks[x][y][z])) {
 						IBlockState blockState = idMap.get(blocks[x][y][z])
 								.getStateFromMeta(meta[x][y][z]);
-						world.setBlockState(rotatedPos, blockState, 0x2);
+						world.setBlockState(rotatedPos, blockState, 0x3);
 					} else {
 						IBlockState blockState = Block.getBlockById(
 								blocks[x][y][z])
 								.getStateFromMeta(meta[x][y][z]);
-						world.setBlockState(rotatedPos, blockState, 0x2);
+						world.setBlockState(rotatedPos, blockState, 0x3);
 					}
 				}
 			}
@@ -494,20 +492,10 @@ public class Schematic {
 							DirectionUtils.rotateCoords(new Vec3(x, y, z),
 									offset, rotationAxis, rotationCount));
 					IBlockState state = world.getBlockState(rotatedCoords);
-					for (IProperty prop : (java.util.Set<IProperty>) state
-							.getProperties().keySet()) {
-						if (prop.getName().equals("facing")
-								&& prop instanceof PropertyDirection) {
-							EnumFacing facing = (EnumFacing) state
-									.getValue(prop);
-							for (int i = 0; i < rotationCount; i++) {
-								facing = DirectionUtils.rotateAround(facing,
-										rotationAxis);
-							}
-							IBlockState rotatedState = state.withProperty(prop,
-									facing);
-							world.setBlockState(rotatedCoords, rotatedState);
-						}
+					IBlockState rotatedState = BlockRotation.getRotatedState(
+							state, rotationCount, rotationAxis);
+					if (rotatedState != null) {
+						world.setBlockState(rotatedCoords, rotatedState);
 					}
 				}
 			}
