@@ -33,12 +33,12 @@ tasks.withType(JavaCompile) {
     options.deprecation = true
 }
 
-curse {
-    apiKey = project.curseforge_key
-    projectId = "72733"
-    changelog = ""
-    releaseType = "release"
-}
+//curse {
+//    apiKey = project.curseforge_key
+//    projectId = "72733"
+//    changelog = ""
+//    releaseType = "release"
+//}
 
 processResources
 {
