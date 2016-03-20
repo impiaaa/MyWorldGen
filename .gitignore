@@ -15,3 +15,5 @@ bin/
 *~
 repo/
 .settings/
+gradle.properties
+
