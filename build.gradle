@@ -20,7 +20,7 @@ apply plugin: 'com.matthewprenger.cursegradle'
 
 version = "1.4"
 group= "net.boatcake.myworldgen" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "MyWorldGen-1.8"
+archivesBaseName = "MyWorldGen-1.8.9"
 
 minecraft {
     version = "1.8.9-11.15.1.1722"
