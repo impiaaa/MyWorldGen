@@ -35,8 +35,7 @@ public abstract class GuiSlotResizable extends GuiSlot {
 		// out-of-bounds text by drawing the header and footer on top. However,
 		// I'd like the view to only cover up its designated area, so I can just
 		// use OpenGL scissoring to clip it to bounds.
-		ScaledResolution scaledresolution = new ScaledResolution(this.mc,
-				this.mc.displayWidth, this.mc.displayHeight);
+		ScaledResolution scaledresolution = new ScaledResolution(this.mc);
 		int f = scaledresolution.getScaleFactor();
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor(this.left * f, this.mc.displayHeight - this.bottom * f,

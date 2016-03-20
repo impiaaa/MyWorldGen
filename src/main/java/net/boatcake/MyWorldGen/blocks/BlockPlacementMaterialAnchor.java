@@ -28,7 +28,7 @@ public class BlockPlacementMaterialAnchor extends BlockPlacementLogic {
 			case GROUND:
 				BiomeGenBase biome = world.getBiomeGenForCoords(pos);
 				world.setBlockState(pos, biome.topBlock);
-				setBlocksDownward(world, pos.offsetDown(), biome.fillerBlock);
+				setBlocksDownward(world, pos.down(), biome.fillerBlock);
 				break;
 			case LAVA:
 				world.setBlockState(pos, Blocks.lava.getDefaultState());
@@ -52,9 +52,9 @@ public class BlockPlacementMaterialAnchor extends BlockPlacementLogic {
 
 	private void setBlocksDownward(World world, BlockPos pos,
 			IBlockState blockState) {
-		while (!world.getBlockState(pos).getBlock().isSolidFullCube()) {
+		while (!world.getBlockState(pos).getBlock().isFullCube()) {
 			world.setBlockState(pos, blockState);
-			pos = pos.offsetDown();
+			pos = pos.down();
 		}
 	}
 }

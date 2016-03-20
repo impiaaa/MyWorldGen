@@ -98,7 +98,7 @@ public class ResourceManagerListener implements IResourceManagerReloadListener {
 					}
 					MyWorldGen.log.log(Level.INFO,
 							"Loaded {} schematics from {}", count,
-							jsonResource.func_177240_d());
+							jsonResource);
 				}
 			} catch (IOException ioexception) {
 				;

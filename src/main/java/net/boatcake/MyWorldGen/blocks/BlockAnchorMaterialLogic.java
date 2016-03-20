@@ -45,7 +45,7 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 			TileEntity myTileEntity, Chunk chunk, Random rand) {
 		int xPosInChunk = rand.nextInt(16);
 		int zPosInChunk = rand.nextInt(16);
-		int height = chunk.getHeight(xPosInChunk, zPosInChunk);
+		int height = chunk.getHeightValue(xPosInChunk, zPosInChunk);
 		int xPos = xPosInChunk + chunk.xPosition * 16;
 		int zPos = zPosInChunk + chunk.zPosition * 16;
 		World world = chunk.getWorld();

@@ -8,6 +8,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -116,7 +117,7 @@ public class ItemWandSave extends Item {
 		EntityPlayerSP player = mc.thePlayer;
 		if (player != null && mc.objectMouseOver != null) {
 			ItemStack stack = player.getHeldItem();
-			BlockPos lookAtPos = mc.objectMouseOver.func_178782_a();
+			BlockPos lookAtPos = mc.objectMouseOver.getBlockPos();
 			if (stack != null && stack.getItem() == this
 					&& stack.hasTagCompound() && lookAtPos != null) {
 				NBTTagCompound tag = stack.getTagCompound();
@@ -157,7 +158,7 @@ public class ItemWandSave extends Item {
 				GlStateManager.blendFunc(GL11.GL_SRC_ALPHA,
 						GL11.GL_ONE_MINUS_SRC_ALPHA);
 				GlStateManager.disableLighting();
-				GlStateManager.func_179090_x();
+				GlStateManager.disableTexture2D();
 				GlStateManager.color(0.5F, 0.75F, 1.0F, 0.5F);
 
 				GlStateManager.pushMatrix();
@@ -168,43 +169,43 @@ public class ItemWandSave extends Item {
 				Tessellator tess = Tessellator.getInstance();
 				WorldRenderer render = tess.getWorldRenderer();
 
-				render.startDrawingQuads();
-				render.addVertex(x1, y1, z2);
-				render.addVertex(x1, y2, z2);
-				render.addVertex(x2, y2, z2);
-				render.addVertex(x2, y1, z2);
+				render.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+				render.pos(x1, y1, z2).endVertex();
+				render.pos(x1, y2, z2).endVertex();
+				render.pos(x2, y2, z2).endVertex();
+				render.pos(x2, y1, z2).endVertex();
 
-				render.addVertex(x1, y1, z1);
-				render.addVertex(x2, y1, z1);
-				render.addVertex(x2, y2, z1);
-				render.addVertex(x1, y2, z1);
+				render.pos(x1, y1, z1).endVertex();
+				render.pos(x2, y1, z1).endVertex();
+				render.pos(x2, y2, z1).endVertex();
+				render.pos(x1, y2, z1).endVertex();
 
-				render.addVertex(x1, y1, z2);
-				render.addVertex(x1, y1, z1);
-				render.addVertex(x1, y2, z1);
-				render.addVertex(x1, y2, z2);
+				render.pos(x1, y1, z2).endVertex();
+				render.pos(x1, y1, z1).endVertex();
+				render.pos(x1, y2, z1).endVertex();
+				render.pos(x1, y2, z2).endVertex();
 
-				render.addVertex(x1, y2, z2);
-				render.addVertex(x1, y2, z1);
-				render.addVertex(x2, y2, z1);
-				render.addVertex(x2, y2, z2);
+				render.pos(x1, y2, z2).endVertex();
+				render.pos(x1, y2, z1).endVertex();
+				render.pos(x2, y2, z1).endVertex();
+				render.pos(x2, y2, z2).endVertex();
 
-				render.addVertex(x2, y2, z2);
-				render.addVertex(x2, y2, z1);
-				render.addVertex(x2, y1, z1);
-				render.addVertex(x2, y1, z2);
+				render.pos(x2, y2, z2).endVertex();
+				render.pos(x2, y2, z1).endVertex();
+				render.pos(x2, y1, z1).endVertex();
+				render.pos(x2, y1, z2).endVertex();
 
-				render.addVertex(x1, y1, z1);
-				render.addVertex(x1, y1, z2);
-				render.addVertex(x2, y1, z2);
-				render.addVertex(x2, y1, z1);
+				render.pos(x1, y1, z1).endVertex();
+				render.pos(x1, y1, z2).endVertex();
+				render.pos(x2, y1, z2).endVertex();
+				render.pos(x2, y1, z1).endVertex();
 				tess.draw();
 
 				GlStateManager.popMatrix();
 
 				GlStateManager.disableBlend();
 				GlStateManager.enableLighting();
-				GlStateManager.func_179098_w();
+				GlStateManager.enableTexture2D();
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			}
 		}

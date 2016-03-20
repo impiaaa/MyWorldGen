@@ -273,7 +273,7 @@ public class GuiSaveSchematic extends GuiScreen implements
 	}
 
 	@Override
-	public String func_175318_a(int p_175318_1_, String p_175318_2_,
+	public String getText(int p_175318_1_, String p_175318_2_,
 			float p_175318_3_) {
 		return p_175318_2_ + ": " + String.format("%.0f", p_175318_3_);
 	}
@@ -283,11 +283,12 @@ public class GuiSaveSchematic extends GuiScreen implements
 	}
 
 	@Override
-	public void func_175320_a(int id, float val) {
+	public void onTick(int id, float val) {
 		schematicToSave.info.randomWeight = (int) val;
 	}
 
 	@Override
 	public void func_175319_a(int id, String p_175319_2_) {
 	}
+
 }

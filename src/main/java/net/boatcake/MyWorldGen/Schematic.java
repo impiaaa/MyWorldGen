@@ -273,7 +273,7 @@ public class Schematic {
 			Vec3 middle = DirectionUtils.rotateCoords(new Vec3(width / 2, 0,
 					length / 2), offset, rotationAxis, rotationCount);
 			BlockPos mid = new BlockPos(middle);
-			BlockPos midDown = mid.offsetDown();
+			BlockPos midDown = mid.down();
 			IBlockState otherBlockBelow = world.getBlockState(mid);
 			IBlockState otherBlockAbove = world.getBlockState(midDown);
 			BiomeGenBase biome = world.getBiomeGenForCoords(mid);
@@ -462,7 +462,7 @@ public class Schematic {
 						} else if (e instanceof TileEntityDispenser) {
 							ChestGenHooks hook = ChestGenHooks
 									.getInfo(ChestGenHooks.PYRAMID_JUNGLE_DISPENSER);
-							WeightedRandomChestContent.func_177631_a(rand,
+							WeightedRandomChestContent.generateDispenserContents(rand,
 									hook.getItems(rand),
 									(TileEntityDispenser) e,
 									hook.getCount(rand));
@@ -520,10 +520,9 @@ public class Schematic {
 			BlockPos worldAnchorPos = matching.getQuickMatchingBlockInChunk(
 					anchorMeta, anchorEntity, chunk, rand);
 			if (worldAnchorPos != null) {
-				Vec3 worldSchematicPos = DirectionUtils.rotateCoords(anchorPos
-						.multiply(-1), new Vec3(worldAnchorPos.getX(),
-						worldAnchorPos.getY(), worldAnchorPos.getZ()),
-						rotationAxis, rotationCount);
+				Vec3 worldSchematicPos = DirectionUtils.rotateCoords(new BlockPos(0, 0, 0).subtract(anchorPos),
+						new Vec3(worldAnchorPos.getX(), worldAnchorPos.getY(), worldAnchorPos.getZ()), rotationAxis,
+						rotationCount);
 				return new BlockPos(worldSchematicPos);
 			}
 		}

@@ -52,6 +52,6 @@ public class ClientProxy extends CommonProxy {
 		ModelBakery.addVariantName(Item.getItemFromBlock(block), names);
 		Minecraft.getMinecraft().getRenderItem().getItemModelMesher()
 				.getModelManager().getBlockModelShapes()
-				.func_178121_a(block, new NamespacedStateMap(prop, postfix));
+				.registerBlockWithStateMapper(block, new NamespacedStateMap(prop, postfix));
 	}
 }

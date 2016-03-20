@@ -9,14 +9,9 @@ import com.google.common.base.Function;
 
 public class BlockAnchorItem extends ItemMultiTexture {
 	public BlockAnchorItem(Block block) {
-		super(block, block, new Function<Object, Object>() {
+		super(block, block, new Function<ItemStack, String>() {
 			public String apply(ItemStack stack) {
 				return BlockAnchorMaterial.AnchorType.get(stack.getMetadata()).name;
-			}
-
-			@Override
-			public Object apply(Object input) {
-				return apply((ItemStack) input);
 			}
 		});
 	}

@@ -29,9 +29,9 @@ public class WorldUtils {
 				continue;
 			}
 			NBTTagList posNBT = (NBTTagList) enbt.getTag("Pos");
-			posNBT.set(0, new NBTTagDouble(posNBT.getDouble(0) - min.getX()));
-			posNBT.set(1, new NBTTagDouble(posNBT.getDouble(1) - min.getY()));
-			posNBT.set(2, new NBTTagDouble(posNBT.getDouble(2) - min.getZ()));
+			posNBT.set(0, new NBTTagDouble(posNBT.getDoubleAt(0) - min.getX()));
+			posNBT.set(1, new NBTTagDouble(posNBT.getDoubleAt(1) - min.getY()));
+			posNBT.set(2, new NBTTagDouble(posNBT.getDoubleAt(2) - min.getZ()));
 			entities.appendTag(enbt);
 		}
 		return entities;

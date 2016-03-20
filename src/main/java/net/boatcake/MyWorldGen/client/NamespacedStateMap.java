@@ -21,7 +21,7 @@ public class NamespacedStateMap extends StateMapperBase {
 	}
 
 	@Override
-	protected ModelResourceLocation func_178132_a(IBlockState arg0) {
+	protected ModelResourceLocation getModelResourceLocation(IBlockState arg0) {
 		String s = ((IStringSerializable) arg0.getValue(prop)).getName();
 		return new ModelResourceLocation(new ResourceLocation(MyWorldGen.MODID,
 				s + postfix), "normal");
