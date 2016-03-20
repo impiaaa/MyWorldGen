@@ -6,7 +6,7 @@ import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial.AnchorType;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
@@ -20,12 +20,12 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 			return otherState.equals(currentBiome.topBlock);
 		case AIR:
 			return otherState.getBlock() instanceof BlockAir
-					|| (otherState.getBlock().getMaterial().isReplaceable() && !otherState
-							.getBlock().getMaterial().isLiquid());
+					|| (otherState.getMaterial().isReplaceable() && !otherState
+							.getMaterial().isLiquid());
 		default:
 			return !(otherState.getBlock() instanceof BlockAir)
 					&& myType != null && myType.material != null
-					&& otherState.getBlock().getMaterial() == myType.material;
+					&& otherState.getMaterial() == myType.material;
 		}
 	}
 

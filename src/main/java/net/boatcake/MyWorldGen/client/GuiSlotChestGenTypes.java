@@ -1,23 +1,23 @@
 package net.boatcake.MyWorldGen.client;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.Set;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-import net.minecraftforge.common.ChestGenHooks;
-
-import org.apache.commons.lang3.ArrayUtils;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.storage.loot.LootTableList;
 
 public class GuiSlotChestGenTypes extends GuiSlotResizable {
 	public FontRenderer fr;
 	public int selected;
-	public String[] hooks;
-	public String[] hooksTranslated;
+	public ResourceLocation[] tables;
+	public String[] tablesTranslated;
 	public GuiScreen parent;
 
 	public GuiSlotChestGenTypes(Minecraft mc, GuiScreen parent,
@@ -27,30 +27,24 @@ public class GuiSlotChestGenTypes extends GuiSlotResizable {
 		this.fr = fr;
 		this.parent = parent;
 
-		try {
-			Field chestInfoField = ChestGenHooks.class
-					.getDeclaredField("chestInfo");
-			chestInfoField.setAccessible(true);
-			HashMap<String, ChestGenHooks> chestInfo = (HashMap<String, ChestGenHooks>) chestInfoField
-					.get(null);
-			Set<String> keySet = chestInfo.keySet();
-			hooks = ArrayUtils.add(Arrays.copyOf(keySet.toArray(),
-					keySet.size(), String[].class), "");
-		} catch (ReflectiveOperationException e) {
-			hooks = new String[] { "" };
-			e.printStackTrace();
-		}
-
-		Arrays.sort(hooks);
-
-		hooksTranslated = new String[hooks.length];
-		for (int i = 0; i < hooks.length; i++) {
-			if (hooks[i].equals("")) {
-				hooksTranslated[i] = I18n.format("chestGenType.none.name");
-			} else {
-				hooksTranslated[i] = hooks[i];
+		Set<ResourceLocation> allTables = LootTableList.getAll();
+		tables = ArrayUtils.add(Arrays.copyOf(allTables.toArray(), allTables.size(), ResourceLocation[].class), null);
+		
+		Arrays.sort(tables, new Comparator<ResourceLocation>() {
+			@Override
+			public int compare(ResourceLocation x, ResourceLocation y) {
+				return (x == null ? "" : x.toString()).compareTo(y == null ? "" : y.toString());
 			}
-			if (hooks[i].equals(ChestGenHooks.DUNGEON_CHEST)) {
+		});
+
+		tablesTranslated = new String[tables.length];
+		for (int i = 0; i < tables.length; i++) {
+			if (tables[i] == null) {
+				tablesTranslated[i] = I18n.format("chestGenType.none.name");
+			} else {
+				tablesTranslated[i] = tables[i].toString();
+			}
+			if (tables[i] != null && tables[i] == LootTableList.CHESTS_SIMPLE_DUNGEON) {
 				selected = i;
 			}
 		}
@@ -58,7 +52,7 @@ public class GuiSlotChestGenTypes extends GuiSlotResizable {
 
 	@Override
 	protected int getSize() {
-		return hooks.length;
+		return tables.length;
 	}
 
 	@Override
@@ -74,6 +68,6 @@ public class GuiSlotChestGenTypes extends GuiSlotResizable {
 
 	@Override
 	protected void drawSlot(int i, int j, int k, int l, int var6, int var7) {
-		parent.drawString(fr, hooksTranslated[i], j + 2, k + 1, 0xFFFFFF);
+		parent.drawString(fr, tablesTranslated[i], j + 2, k + 1, 0xFFFFFF);
 	}
 }

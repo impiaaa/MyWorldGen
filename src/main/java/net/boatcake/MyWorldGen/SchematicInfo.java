@@ -3,19 +3,19 @@ package net.boatcake.MyWorldGen;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.ChestGenHooks;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.storage.loot.LootTableList;
+
 public class SchematicInfo {
 	public ArrayList<String> excludeBiomes;
-	public String chestType;
+	public String chestLootTable;
 	public ArrayList<String> onlyIncludeBiomes;
 	public String name;
 	public boolean lockRotation;
@@ -25,7 +25,7 @@ public class SchematicInfo {
 	public boolean terrainSmoothing;
 
 	public SchematicInfo() {
-		chestType = ChestGenHooks.DUNGEON_CHEST;
+		chestLootTable = LootTableList.CHESTS_SIMPLE_DUNGEON.toString();
 		excludeBiomes = null;
 		onlyIncludeBiomes = null;
 		lockRotation = false;
@@ -37,11 +37,11 @@ public class SchematicInfo {
 
 	public boolean matchesBiome(BiomeGenBase biome) {
 		if ((excludeBiomes != null)
-				&& (containsIgnoreCase(excludeBiomes, biome.biomeName))) {
+				&& (containsIgnoreCase(excludeBiomes, biome.getBiomeName()))) {
 			return false;
 		}
 		if ((onlyIncludeBiomes != null)
-				&& (!containsIgnoreCase(onlyIncludeBiomes, biome.biomeName))) {
+				&& (!containsIgnoreCase(onlyIncludeBiomes, biome.getBiomeName()))) {
 			return false;
 		}
 		return true;
@@ -49,7 +49,7 @@ public class SchematicInfo {
 
 	public void readFromNBT(NBTTagCompound tag) {
 		if (tag.hasKey("chestType")) {
-			chestType = tag.getString("chestType");
+			chestLootTable = tag.getString("chestType");
 		}
 
 		if (tag.hasKey("excludeBiomes")) {
@@ -90,7 +90,7 @@ public class SchematicInfo {
 	}
 
 	public void writeToNBT(NBTTagCompound base) {
-		base.setString("chestType", chestType);
+		base.setString("chestType", chestLootTable);
 
 		if (excludeBiomes != null) {
 			NBTTagList t = new NBTTagList();
@@ -126,7 +126,7 @@ public class SchematicInfo {
 
 	public void readFromJson(JsonObject jsonobject) {
 		if (jsonobject.has("chestType")) {
-			this.chestType = jsonobject.get("chestType").getAsString();
+			this.chestLootTable = jsonobject.get("chestType").getAsString();
 		}
 
 		if (jsonobject.has("excludeBiomes")) {

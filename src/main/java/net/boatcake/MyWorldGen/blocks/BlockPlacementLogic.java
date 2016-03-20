@@ -5,7 +5,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public abstract class BlockPlacementLogic {

@@ -1,10 +1,10 @@
 package net.boatcake.MyWorldGen.client;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiSlot;
 import net.minecraft.client.gui.ScaledResolution;
-
-import org.lwjgl.opengl.GL11;
 
 public abstract class GuiSlotResizable extends GuiSlot {
 

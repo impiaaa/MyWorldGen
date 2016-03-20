@@ -6,6 +6,7 @@ import java.io.IOException;
 import net.boatcake.MyWorldGen.BlockPlacementOption;
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.network.MessagePlaceSchem;
+import net.boatcake.MyWorldGen.utils.DirectionUtils;
 import net.boatcake.MyWorldGen.utils.NetUtils;
 import net.boatcake.MyWorldGen.utils.SchematicFilenameFilter;
 import net.minecraft.client.gui.GuiButton;
@@ -13,8 +14,8 @@ import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -47,7 +48,7 @@ public class GuiLoadSchematic extends GuiScreen {
 			if (button.id == doneButton.id) {
 				MessagePlaceSchem message = new MessagePlaceSchem();
 				message.pos = pos;
-				message.direction = direction;
+				message.rotation = DirectionUtils.rotationForFacing(direction);
 				message.placementOption = placementOption;
 				// We might be able to send the file data directly, but it's
 				// better to make sure that it's valid NBT first.

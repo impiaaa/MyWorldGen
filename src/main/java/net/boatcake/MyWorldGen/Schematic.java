@@ -3,9 +3,14 @@ package net.boatcake.MyWorldGen;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+
+import org.apache.logging.log4j.Level;
+
+import com.google.common.collect.Lists;
 
 import net.boatcake.MyWorldGen.blocks.BlockAnchorLogic;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
@@ -18,26 +23,25 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.tileentity.TileEntityMobSpawner;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.Vec3;
-import net.minecraft.util.Vec3i;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.WeightedRandomChestContent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DungeonHooks;
 import net.minecraftforge.fml.common.registry.GameData;
-
-import org.apache.logging.log4j.Level;
 
 public class Schematic {
 	public short width;
@@ -262,16 +266,13 @@ public class Schematic {
 	}
 
 	public boolean fitsIntoWorldAt(World world, BlockPos at,
-			EnumFacing rotationDirection) {
+			Rotation rotation) {
 		// used for world generation to determine if all anchor blocks in the
 		// schematic match up with the world
-		Axis rotationAxis = DirectionUtils.axisForDirection(rotationDirection);
-		int rotationCount = DirectionUtils
-				.rotationCountForDirection(rotationDirection);
-		Vec3 offset = new Vec3(at.getX(), at.getY(), at.getZ());
+		Vec3d offset = new Vec3d(at.getX(), at.getY(), at.getZ());
 		if (anchorBlockLocations.isEmpty()) {
-			Vec3 middle = DirectionUtils.rotateCoords(new Vec3(width / 2, 0,
-					length / 2), offset, rotationAxis, rotationCount);
+			Vec3d middle = DirectionUtils.rotateCoords(new Vec3d(width / 2, 0,
+					length / 2), offset, rotation);
 			BlockPos mid = new BlockPos(middle);
 			BlockPos midDown = mid.down();
 			IBlockState otherBlockBelow = world.getBlockState(mid);
@@ -286,14 +287,14 @@ public class Schematic {
 		} else {
 			for (int i = 0; i < anchorBlockLocations.size(); i++) {
 				BlockPos origCoords = anchorBlockLocations.get(i);
-				Vec3 rotatedCoords = DirectionUtils.rotateCoords(origCoords,
-						offset, rotationAxis, rotationCount);
+				Vec3d rotatedCoords = DirectionUtils.rotateCoords(origCoords,
+						offset, rotation);
 				BlockPos rotatedPos = new BlockPos(rotatedCoords);
 				int blockId = blocks[origCoords.getX()][origCoords.getY()][origCoords
 						.getZ()];
 				if (!(matchingMap.get(blockId)).matches(
 						meta[origCoords.getX()][origCoords.getY()][origCoords
-								.getZ()], getTileEntityAt(origCoords), world,
+								.getZ()], getTileEntityAt(world.getMinecraftServer(), origCoords), world,
 						rotatedPos)) {
 					return false;
 				}
@@ -355,50 +356,47 @@ public class Schematic {
 		return base;
 	}
 
-	public TileEntity getTileEntityAt(BlockPos pos) {
+	public TileEntity getTileEntityAt(MinecraftServer server, BlockPos pos) {
 		for (int i = 0; i < tileEntities.tagCount(); i++) {
 			NBTTagCompound tileEntityTag = tileEntities.getCompoundTagAt(i);
 			if (tileEntityTag.getInteger("x") == pos.getX()
 					&& tileEntityTag.getInteger("y") == pos.getY()
 					&& tileEntityTag.getInteger("z") == pos.getZ()) {
-				TileEntity e = TileEntity.createAndLoadEntity(tileEntityTag);
+				TileEntity e = TileEntity.createTileEntity(server, tileEntityTag);
 				return e;
 			}
 		}
 		return null;
 	}
 
+	private static final List<WeightedRandomChestContent> jungleDispenserContents = Lists.newArrayList(new WeightedRandomChestContent[] {new WeightedRandomChestContent(Items.arrow, 0, 2, 7, 30)});
+	
 	public void placeInWorld(World world, BlockPos at,
-			EnumFacing rotationDirection, boolean generateChests,
+			Rotation rot, boolean generateChests,
 			boolean generateSpawners, boolean followPlacementRules, Random rand) {
-		Axis rotationAxis = DirectionUtils.axisForDirection(rotationDirection);
-		int rotationCount = DirectionUtils
-				.rotationCountForDirection(rotationDirection);
-		float pitchOffset = DirectionUtils
-				.pitchOffsetForDirection(rotationDirection);
 		float yawOffset = DirectionUtils
-				.yawOffsetForDirection(rotationDirection);
-		Vec3 offset = new Vec3(at.getX(), at.getY(), at.getZ());
+				.yawOffsetForRotation(rot);
+		Vec3d offset = new Vec3d(at.getX(), at.getY(), at.getZ());
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
 					BlockPos pos = new BlockPos(x, y, z);
-					Vec3 rotatedCoords = DirectionUtils.rotateCoords(pos,
-							offset, rotationAxis, rotationCount);
+					Vec3d rotatedCoords = DirectionUtils.rotateCoords(pos,
+							offset, rot);
 					BlockPos rotatedPos = new BlockPos(rotatedCoords);
 					if (placingMap.containsKey(blocks[x][y][z])
 							&& followPlacementRules) {
 						placingMap.get(blocks[x][y][z]).affectWorld(
-								meta[x][y][z], getTileEntityAt(pos), world,
+								meta[x][y][z], getTileEntityAt(world.getMinecraftServer(), pos), world,
 								rotatedPos, info.terrainSmoothing);
 					} else if (idMap.containsKey(blocks[x][y][z])) {
 						IBlockState blockState = idMap.get(blocks[x][y][z])
-								.getStateFromMeta(meta[x][y][z]);
+								.getStateFromMeta(meta[x][y][z]).withRotation(rot);
 						world.setBlockState(rotatedPos, blockState, 0x3);
 					} else {
 						IBlockState blockState = Block.getBlockById(
 								blocks[x][y][z])
-								.getStateFromMeta(meta[x][y][z]);
+								.getStateFromMeta(meta[x][y][z]).withRotation(rot);
 						world.setBlockState(rotatedPos, blockState, 0x3);
 					}
 				}
@@ -413,12 +411,10 @@ public class Schematic {
 					MyWorldGen.log.log(Level.WARN, "Not loading entity ID {}",
 							entityTag.getString("id"));
 				} else {
-					Vec3 newCoords = DirectionUtils.rotateCoords(new Vec3(
-							e.posX, e.posY, e.posZ), offset, rotationAxis,
-							rotationCount);
+					Vec3d newCoords = DirectionUtils.rotateCoords(new Vec3d(
+							e.posX, e.posY, e.posZ), offset, rot);
 					e.setPositionAndRotation(newCoords.xCoord,
-							newCoords.yCoord, newCoords.zCoord, e.rotationPitch
-									+ pitchOffset, e.rotationYaw + yawOffset);
+							newCoords.yCoord, newCoords.zCoord, e.rotationPitch, e.rotationYaw + yawOffset);
 					world.spawnEntityInWorld(e);
 				}
 			}
@@ -427,20 +423,22 @@ public class Schematic {
 		if (tileEntities != null) {
 			for (int i = 0; i < tileEntities.tagCount(); i++) {
 				NBTTagCompound tileEntityTag = tileEntities.getCompoundTagAt(i);
-				TileEntity e = TileEntity.createAndLoadEntity(tileEntityTag);
+				TileEntity e = TileEntity.createTileEntity(world.getMinecraftServer(), tileEntityTag);
 				if (e == null) {
 					MyWorldGen.log.log(Level.WARN,
 							"Not loading tile entity ID {}",
 							tileEntityTag.getString("id"));
 				} else {
 					BlockPos newPos = new BlockPos(DirectionUtils.rotateCoords(
-							e.getPos(), offset, rotationAxis, rotationCount));
+							e.getPos(), offset, rot));
 					e.setPos(newPos);
 					world.addTileEntity(e);
 				}
 			}
 		}
 
+		ResourceLocation chestLootTable = new ResourceLocation(info.chestLootTable);
+		
 		// Check for chests *after* we place the ones from the schematic,
 		// because the schematic may not have defined the tile entities
 		// properly.
@@ -448,24 +446,18 @@ public class Schematic {
 			for (int y = 0; y < height; y++) {
 				for (int z = 0; z < length; z++) {
 					BlockPos rotatedPos = new BlockPos(
-							DirectionUtils.rotateCoords(new Vec3(x, y, z),
-									offset, rotationAxis, rotationCount));
+							DirectionUtils.rotateCoords(new Vec3d(x, y, z),
+									offset, rot));
 					Block block = world.getBlockState(rotatedPos).getBlock();
 					TileEntity e = world.getTileEntity(rotatedPos);
-					if (generateChests && !info.chestType.isEmpty()) {
+					if (generateChests && !info.chestLootTable.isEmpty()) {
 						if (e instanceof TileEntityChest) {
-							ChestGenHooks hook = ChestGenHooks
-									.getInfo(info.chestType);
-							WeightedRandomChestContent.generateChestContents(
-									rand, hook.getItems(rand),
-									(TileEntityChest) e, hook.getCount(rand));
+							((TileEntityChest)e).setLoot(chestLootTable, rand.nextLong());
 						} else if (e instanceof TileEntityDispenser) {
-							ChestGenHooks hook = ChestGenHooks
-									.getInfo(ChestGenHooks.PYRAMID_JUNGLE_DISPENSER);
 							WeightedRandomChestContent.generateDispenserContents(rand,
-									hook.getItems(rand),
+									jungleDispenserContents,
 									(TileEntityDispenser) e,
-									hook.getCount(rand));
+									2);
 						}
 					}
 					if (info.generateSpawners && generateSpawners
@@ -478,51 +470,25 @@ public class Schematic {
 				}
 			}
 		}
-
-		/*
-		 * Rotate blocks afterward to try to avoid block updates making invalid
-		 * configurations (torches on air). Sometimes that still happens though.
-		 * Also, some blocks might have their rotation in tile entity data.
-		 * TODO: Look into some common rotation API.
-		 */
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				for (int z = 0; z < length; z++) {
-					BlockPos rotatedCoords = new BlockPos(
-							DirectionUtils.rotateCoords(new Vec3(x, y, z),
-									offset, rotationAxis, rotationCount));
-					IBlockState state = world.getBlockState(rotatedCoords);
-					IBlockState rotatedState = BlockRotation.getRotatedState(
-							state, rotationCount, rotationAxis);
-					if (rotatedState != null) {
-						world.setBlockState(rotatedCoords, rotatedState);
-					}
-				}
-			}
-		}
 	}
 
 	public BlockPos getFuzzyMatchingLocation(Chunk chunk,
-			EnumFacing rotationDirection, Random rand) {
+			Rotation rotation, Random rand) {
 		ArrayList<BlockPos> shuffledAnchors = (ArrayList<BlockPos>) anchorBlockLocations
 				.clone();
 		Collections.shuffle(shuffledAnchors, rand);
-		Axis rotationAxis = DirectionUtils.axisForDirection(rotationDirection);
-		int rotationCount = DirectionUtils
-				.rotationCountForDirection(rotationDirection);
 		for (BlockPos anchorPos : shuffledAnchors) {
 			BlockAnchorLogic matching = matchingMap
 					.get(blocks[anchorPos.getX()][anchorPos.getY()][anchorPos
 							.getZ()]);
 			int anchorMeta = meta[anchorPos.getX()][anchorPos.getY()][anchorPos
 					.getZ()];
-			TileEntity anchorEntity = getTileEntityAt(anchorPos);
+			TileEntity anchorEntity = getTileEntityAt(chunk.getWorld().getMinecraftServer(), anchorPos);
 			BlockPos worldAnchorPos = matching.getQuickMatchingBlockInChunk(
 					anchorMeta, anchorEntity, chunk, rand);
 			if (worldAnchorPos != null) {
-				Vec3 worldSchematicPos = DirectionUtils.rotateCoords(new BlockPos(0, 0, 0).subtract(anchorPos),
-						new Vec3(worldAnchorPos.getX(), worldAnchorPos.getY(), worldAnchorPos.getZ()), rotationAxis,
-						rotationCount);
+				Vec3d worldSchematicPos = DirectionUtils.rotateCoords(new BlockPos(0, 0, 0).subtract(anchorPos),
+						new Vec3d(worldAnchorPos), rotation);
 				return new BlockPos(worldSchematicPos);
 			}
 		}

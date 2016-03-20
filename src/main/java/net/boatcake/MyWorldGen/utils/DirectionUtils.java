@@ -2,9 +2,10 @@ package net.boatcake.MyWorldGen.utils;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
-import net.minecraft.util.Vec3i;
+import net.minecraft.util.Rotation;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 
 public class DirectionUtils {
 	// To rotate facing A, rotate around B, N times
@@ -75,64 +76,70 @@ public class DirectionUtils {
 		}
 	}
 
+	public static float yawOffsetForRotation(Rotation rotation) {
+		switch (rotation) {
+		case NONE:
+			return 0;
+		case CLOCKWISE_90:
+			return 90;
+		case CLOCKWISE_180:
+			return 180;
+		case COUNTERCLOCKWISE_90:
+			return -90;
+		default:
+			return 0;
+		}
+	}
+	
 	public static float yawOffsetForDirection(EnumFacing rotationDirection) {
 		switch (rotationDirection) {
-		case UP:
+		case SOUTH:
 			return 0;
 		case WEST:
 			return 90;
 		case NORTH:
 			return 180;
-		case DOWN:
-			return 0;
 		case EAST:
 			return -90;
-		case SOUTH:
 		default:
 			return 0;
 		}
 	}
+	
+	public static Rotation rotationForFacing(EnumFacing facing) {
+		switch (facing) {
+		case SOUTH:
+			return Rotation.NONE;
+		case WEST:
+			return Rotation.CLOCKWISE_90;
+		case NORTH:
+			return Rotation.CLOCKWISE_180;
+		case EAST:
+			return Rotation.COUNTERCLOCKWISE_90;
+		default:
+			return null;
+		}
+	}
 
-	public static Vec3 rotateCoords(Vec3 coords, Vec3 at, Axis rotationAxis,
-			int rotationCount) {
+	public static Vec3d rotateCoords(Vec3d coords, Vec3d at, Rotation rot) {
 		double worldX = coords.xCoord;
 		double worldY = coords.yCoord;
 		double worldZ = coords.zCoord;
-		for (int i = 0; i < rotationCount; i++) {
-			double temp;
-			switch (rotationAxis) {
-			case X:
-				temp = worldY;
-				worldY = -worldZ;
-				worldZ = temp;
-				break;
-			case Y:
-				temp = worldX;
-				worldX = -worldZ;
-				worldZ = temp;
-				break;
-			case Z:
-				temp = worldX;
-				worldX = -worldY;
-				worldY = temp;
-				break;
-			default:
-				return null;
-			}
+		switch (rot) {
+		case CLOCKWISE_180:
+			return new Vec3d(-worldX+at.xCoord, worldY+at.yCoord, -worldZ+at.zCoord);
+		case CLOCKWISE_90:
+			return new Vec3d(-worldZ+at.xCoord, worldY+at.yCoord, worldX+at.zCoord);
+		case COUNTERCLOCKWISE_90:
+			return new Vec3d(worldZ+at.xCoord, worldY+at.yCoord, -worldX+at.zCoord);
+		case NONE:
+		default:
+			return new Vec3d(worldX+at.xCoord, worldY+at.yCoord, worldZ+at.zCoord);
 		}
-
-		worldX += at.xCoord;
-		worldY += at.yCoord;
-		worldZ += at.zCoord;
-
-		return new Vec3(worldX, worldY, worldZ);
 	}
 
-	public static Vec3 rotateCoords(Vec3i coords, Vec3 at, Axis rotationAxis,
-			int rotationCount) {
-		return rotateCoords(
-				new Vec3(coords.getX(), coords.getY(), coords.getZ()), at,
-				rotationAxis, rotationCount);
+	public static Vec3d rotateCoords(Vec3i coords, Vec3d at, Rotation rot) {
+		return rotateCoords(new Vec3d(coords), at,rot);
 	}
 
 	public static EnumFacing[] cardinalDirections = new EnumFacing[] {
@@ -141,6 +148,11 @@ public class DirectionUtils {
 
 	public static EnumFacing getDirectionFromYaw(float yaw) {
 		return cardinalDirections[MathHelper
+				.floor_double(yaw * 4.0F / 360.0F + 0.5D) & 0x3];
+	}
+
+	public static Rotation getRotationFromYaw(float yaw) {
+		return Rotation.values()[MathHelper
 				.floor_double(yaw * 4.0F / 360.0F + 0.5D) & 0x3];
 	}
 

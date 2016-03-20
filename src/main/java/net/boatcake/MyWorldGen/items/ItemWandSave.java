@@ -1,5 +1,7 @@
 package net.boatcake.MyWorldGen.items;
 
+import org.lwjgl.opengl.GL11;
+
 import net.boatcake.MyWorldGen.network.MessageGetSchemClient;
 import net.boatcake.MyWorldGen.utils.NetUtils;
 import net.boatcake.MyWorldGen.utils.WorldUtils;
@@ -7,7 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,8 +17,10 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -24,13 +28,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import org.lwjgl.opengl.GL11;
-
 public class ItemWandSave extends Item {
 
 	public ItemWandSave() {
 		super();
-		setMaxStackSize(1);
+        this.maxStackSize = 1;
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -38,10 +40,10 @@ public class ItemWandSave extends Item {
 	public boolean hasEffect(ItemStack stack) {
 		return stack.hasTagCompound();
 	}
-
+	
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world,
-			BlockPos blockPos, EnumFacing side, float hitX, float hitY,
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world,
+			BlockPos blockPos, EnumHand hand, EnumFacing side, float hitX, float hitY,
 			float hitZ) {
 		if (!world.isRemote) {
 			if (stack.hasTagCompound()) {
@@ -96,7 +98,7 @@ public class ItemWandSave extends Item {
 				stack.setTagCompound(tag);
 			}
 		}
-		return true;
+		return EnumActionResult.SUCCESS;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -116,7 +118,10 @@ public class ItemWandSave extends Item {
 		Minecraft mc = Minecraft.getMinecraft();
 		EntityPlayerSP player = mc.thePlayer;
 		if (player != null && mc.objectMouseOver != null) {
-			ItemStack stack = player.getHeldItem();
+			ItemStack stack = null;
+			for (EnumHand hand : EnumHand.values()) {
+				stack = player.getHeldItem(hand);
+			}
 			BlockPos lookAtPos = mc.objectMouseOver.getBlockPos();
 			if (stack != null && stack.getItem() == this
 					&& stack.hasTagCompound() && lookAtPos != null) {
@@ -154,9 +159,13 @@ public class ItemWandSave extends Item {
 					z1 = t;
 				}
 
+                GlStateManager.disableCull();
 				GlStateManager.enableBlend();
-				GlStateManager.blendFunc(GL11.GL_SRC_ALPHA,
-						GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                		GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                		GlStateManager.SourceFactor.ONE,
+                		GlStateManager.DestFactor.ZERO);
+				
 				GlStateManager.disableLighting();
 				GlStateManager.disableTexture2D();
 				GlStateManager.color(0.5F, 0.75F, 1.0F, 0.5F);
@@ -167,7 +176,7 @@ public class ItemWandSave extends Item {
 				translateToWorldCoords(entity, event.partialTicks);
 
 				Tessellator tess = Tessellator.getInstance();
-				WorldRenderer render = tess.getWorldRenderer();
+				VertexBuffer render = tess.getBuffer();
 
 				render.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
 				render.pos(x1, y1, z2).endVertex();
@@ -199,14 +208,16 @@ public class ItemWandSave extends Item {
 				render.pos(x1, y1, z2).endVertex();
 				render.pos(x2, y1, z2).endVertex();
 				render.pos(x2, y1, z1).endVertex();
+				
 				tess.draw();
 
 				GlStateManager.popMatrix();
 
-				GlStateManager.disableBlend();
+                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                GlStateManager.disableBlend();
+                GlStateManager.enableCull();
 				GlStateManager.enableLighting();
 				GlStateManager.enableTexture2D();
-				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			}
 		}
 	}

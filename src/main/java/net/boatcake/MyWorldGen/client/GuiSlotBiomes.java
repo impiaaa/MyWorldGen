@@ -7,8 +7,12 @@ import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.BiomeGenMutated;
+import net.minecraft.world.biome.BiomeGenEnd;
+import net.minecraft.world.biome.BiomeGenForestMutated;
+import net.minecraft.world.biome.BiomeGenHell;
+import net.minecraft.world.biome.BiomeGenSavannaMutated;
 
 public class GuiSlotBiomes extends GuiSlotResizable {
 	public FontRenderer fr;
@@ -23,20 +27,25 @@ public class GuiSlotBiomes extends GuiSlotResizable {
 		this.fr = fr;
 		this.parent = parent;
 
-		BiomeGenBase[] biomes = BiomeGenBase.getBiomeGenArray();
+		Set<ResourceLocation> biomes = BiomeGenBase.biomeRegistry.getKeys();
 
-		biomeNames = new ArrayList<String>(biomes.length);
-		int i = 0;
-		for (BiomeGenBase b : biomes) {
-			if (b != null && !(b instanceof BiomeGenMutated)) {
-				biomeNames.add(b.biomeName);
-				i++;
+		biomeNames = new ArrayList<String>(biomes.size());
+		ArrayList<String> otherWorldBiomes = new ArrayList<String>(biomes.size());
+		for (ResourceLocation res : biomes) {
+			BiomeGenBase b = BiomeGenBase.biomeRegistry.getObject(res);
+			if (b != null && !(b instanceof BiomeGenSavannaMutated) && !(b instanceof BiomeGenForestMutated)) {
+				biomeNames.add(b.getBiomeName());
+				if (b instanceof BiomeGenHell || b instanceof BiomeGenEnd) {
+					otherWorldBiomes.add(b.getBiomeName());
+				}
 			}
 		}
 
 		biomeNames.sort(null);
-		selected.add(biomeNames.indexOf(BiomeGenBase.hell.biomeName));
-		selected.add(biomeNames.indexOf(BiomeGenBase.sky.biomeName));
+		// By default, do not generate in the Nether or End
+		for (String biomeName : otherWorldBiomes) {
+			selected.add(biomeNames.indexOf(biomeName));
+		}
 	}
 
 	@Override

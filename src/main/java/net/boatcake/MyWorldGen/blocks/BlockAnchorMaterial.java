@@ -3,10 +3,11 @@ package net.boatcake.MyWorldGen.blocks;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -48,14 +49,14 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 		}
 	}
 
-	public static final PropertyEnum TYPE_PROP = PropertyEnum.create("type",
+	public static final PropertyEnum<AnchorType> TYPE_PROP = PropertyEnum.create("type",
 			AnchorType.class);
 
 	public BlockAnchorMaterial(Material par2Material) {
 		super(par2Material);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
-		setStepSound(Block.soundTypeStone);
+		setStepSound(SoundType.STONE);
 		setDefaultState(blockState.getBaseState().withProperty(TYPE_PROP,
 				AnchorType.GROUND));
 	}
@@ -85,7 +86,7 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 	}
 
 	@Override
-	protected BlockState createBlockState() {
-		return new BlockState(this, new IProperty[] { TYPE_PROP });
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, new IProperty[] { TYPE_PROP });
 	}
 }

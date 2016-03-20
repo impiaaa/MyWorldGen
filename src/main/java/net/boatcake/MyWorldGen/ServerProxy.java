@@ -5,7 +5,6 @@ import java.io.File;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.item.Item;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -13,7 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ServerProxy extends CommonProxy {
 	@Override
 	public File getGlobalSchemDir(String worldGenDir) {
-		return MinecraftServer.getServer().getFile(worldGenDir);
+		return new File(".", worldGenDir);
 	}
 
 	@Override

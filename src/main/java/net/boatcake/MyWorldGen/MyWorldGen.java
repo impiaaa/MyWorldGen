@@ -2,6 +2,8 @@ package net.boatcake.MyWorldGen;
 
 import java.io.File;
 
+import org.apache.logging.log4j.Logger;
+
 import net.boatcake.MyWorldGen.blocks.BlockAnchorInventory;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorInventoryLogic;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorLogic;
@@ -36,8 +38,6 @@ import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-
-import org.apache.logging.log4j.Logger;
 
 @Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.4", dependencies = "after:OpenBlocks")
 public class MyWorldGen {

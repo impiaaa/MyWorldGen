@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.lwjgl.input.Keyboard;
+
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.Schematic;
 import net.minecraft.client.gui.GuiButton;
@@ -15,10 +17,9 @@ import net.minecraft.client.gui.GuiSlider;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import org.lwjgl.input.Keyboard;
 
 @SideOnly(Side.CLIENT)
 public class GuiSaveSchematic extends GuiScreen implements
@@ -136,7 +137,8 @@ public class GuiSaveSchematic extends GuiScreen implements
 		if (button.id == saveBtn.id && saveBtn.enabled) {
 			// Step 5: Now that we have the block data and entity and tile
 			// entity data, saving it to a file should be trivial.
-			schematicToSave.info.chestType = chestGenSlot.hooks[chestGenSlot.selected];
+			ResourceLocation lootTable = chestGenSlot.tables[chestGenSlot.selected];
+			schematicToSave.info.chestLootTable = lootTable == null ? "" : lootTable.toString();
 
 			ArrayList<String> biomeNames = new ArrayList<String>(
 					biomeSlot.selected.size());

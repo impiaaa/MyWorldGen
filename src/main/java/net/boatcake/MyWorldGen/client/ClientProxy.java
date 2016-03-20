@@ -9,9 +9,10 @@ import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -44,12 +45,12 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void registerVariants(Block block, PropertyEnum prop, String postfix) {
-		String[] names = new String[BlockAnchorMaterial.AnchorType.values().length];
-		for (int i = 0; i < names.length; i++) {
-			names[i] = MyWorldGen.MODID + ":"
-					+ BlockAnchorMaterial.AnchorType.get(i).name + postfix;
+		ResourceLocation[] resLocs = new ResourceLocation[BlockAnchorMaterial.AnchorType.values().length];
+		for (int i = 0; i < resLocs.length; i++) {
+			resLocs[i] = new ResourceLocation(MyWorldGen.MODID,
+					BlockAnchorMaterial.AnchorType.get(i).name + postfix);
 		}
-		ModelBakery.addVariantName(Item.getItemFromBlock(block), names);
+		ModelBakery.registerItemVariants(Item.getItemFromBlock(block), resLocs);
 		Minecraft.getMinecraft().getRenderItem().getItemModelMesher()
 				.getModelManager().getBlockModelShapes()
 				.registerBlockWithStateMapper(block, new NamespacedStateMap(prop, postfix));

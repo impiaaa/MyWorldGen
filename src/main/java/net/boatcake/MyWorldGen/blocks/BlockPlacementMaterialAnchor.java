@@ -4,7 +4,7 @@ import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial.AnchorType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
@@ -52,7 +52,7 @@ public class BlockPlacementMaterialAnchor extends BlockPlacementLogic {
 
 	private void setBlocksDownward(World world, BlockPos pos,
 			IBlockState blockState) {
-		while (!world.getBlockState(pos).getBlock().isFullCube()) {
+		while (!world.getBlockState(pos).isFullCube()) {
 			world.setBlockState(pos, blockState);
 			pos = pos.down();
 		}

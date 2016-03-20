@@ -10,18 +10,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-import net.boatcake.MyWorldGen.utils.DirectionUtils;
+import org.apache.logging.log4j.Level;
+
 import net.boatcake.MyWorldGen.utils.SchematicFilenameFilter;
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.WeightedRandom;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.fml.common.IWorldGenerator;
-
-import org.apache.logging.log4j.Level;
 
 public class WorldGenerator implements IWorldGenerator {
 	private List<Schematic> worldgenFolderSchemList;
@@ -58,7 +58,7 @@ public class WorldGenerator implements IWorldGenerator {
 
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world,
-			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
+			IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
 		if (world.getWorldInfo().isMapFeaturesEnabled()
 				&& random.nextDouble() < MyWorldGen.baseGenerateChance) {
 			List<WeightedRandom.Item> applicableSchematics = new ArrayList<WeightedRandom.Item>();
@@ -84,19 +84,18 @@ public class WorldGenerator implements IWorldGenerator {
 					if (schemToGenerate.info.fuzzyMatching) {
 						Chunk chunk = world.getChunkFromChunkCoords(chunkX,
 								chunkZ);
-						EnumFacing randomDirection;
+						Rotation randomRotation;
 						if (schemToGenerate.info.lockRotation) {
-							randomDirection = EnumFacing.SOUTH;
+							randomRotation = Rotation.NONE;
 						} else {
-							randomDirection = DirectionUtils.cardinalDirections[random
-									.nextInt(4)];
+							randomRotation = Rotation.values()[random.nextInt(4)];
 						}
 						BlockPos pos = schemToGenerate
 								.getFuzzyMatchingLocation(chunk,
-										randomDirection, random);
+										randomRotation, random);
 						if (pos != null) {
 							schemToGenerate.placeInWorld(world, pos,
-									randomDirection, true, true, true, random);
+									randomRotation, true, true, true, random);
 							MyWorldGen.log
 									.log(Level.DEBUG,
 											"Generated {} at {}, {}, {}",
@@ -111,17 +110,16 @@ public class WorldGenerator implements IWorldGenerator {
 							int y = random.nextInt(world.getHeight());
 							int z = random.nextInt(16) + chunkPos.getZ();
 							BlockPos pos = new BlockPos(x, y, z);
-							EnumFacing randomDirection;
+							Rotation randomRotation;
 							if (schemToGenerate.info.lockRotation) {
-								randomDirection = EnumFacing.SOUTH;
+								randomRotation = Rotation.NONE;
 							} else {
-								randomDirection = DirectionUtils.cardinalDirections[random
-										.nextInt(4)];
+								randomRotation = Rotation.values()[random.nextInt(4)];
 							}
 							if (schemToGenerate.fitsIntoWorldAt(world, pos,
-									randomDirection)) {
+									randomRotation)) {
 								schemToGenerate.placeInWorld(world, pos,
-										randomDirection, true, true, true,
+										randomRotation, true, true, true,
 										random);
 								MyWorldGen.log
 										.log(Level.DEBUG,
