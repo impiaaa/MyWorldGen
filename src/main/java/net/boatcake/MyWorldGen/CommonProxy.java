@@ -13,9 +13,7 @@ public abstract class CommonProxy {
 
 	public abstract void registerItem(Item item, int metadata, String itemName);
 
-	public abstract void registerBlock(Block block, int metadata,
-			String blockName);
+	public abstract void registerBlock(Block block, int metadata, String blockName);
 
-	public abstract void registerVariants(Block block, PropertyEnum prop,
-			String postfix);
+	public abstract void registerVariants(Block block, PropertyEnum prop, String postfix);
 }

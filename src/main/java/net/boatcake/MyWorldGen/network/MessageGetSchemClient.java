@@ -19,8 +19,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageGetSchemClient implements IMessage,
-		IMessageHandler<MessageGetSchemClient, IMessage> {
+public class MessageGetSchemClient implements IMessage, IMessageHandler<MessageGetSchemClient, IMessage> {
 	public NBTTagList entitiesTag;
 	public NBTTagList tileEntitiesTag;
 	public BlockPos pos1;
@@ -36,10 +35,8 @@ public class MessageGetSchemClient implements IMessage,
 			e.printStackTrace();
 			return;
 		}
-		pos1 = new BlockPos(packetTag.getInteger("x1"),
-				packetTag.getInteger("y1"), packetTag.getInteger("z1"));
-		pos2 = new BlockPos(packetTag.getInteger("x2"),
-				packetTag.getInteger("y2"), packetTag.getInteger("z2"));
+		pos1 = new BlockPos(packetTag.getInteger("x1"), packetTag.getInteger("y1"), packetTag.getInteger("z1"));
+		pos2 = new BlockPos(packetTag.getInteger("x2"), packetTag.getInteger("y2"), packetTag.getInteger("z2"));
 		entitiesTag = packetTag.getTagList("entities", 10);
 		tileEntitiesTag = packetTag.getTagList("tileEntities", 10);
 	}
@@ -62,8 +59,7 @@ public class MessageGetSchemClient implements IMessage,
 		if (currentScreen instanceof GuiSaveSchematic) {
 			GuiSaveSchematic guiSchematic = (GuiSaveSchematic) currentScreen;
 
-			guiSchematic.schematicToSave = new Schematic(player.worldObj,
-					message.pos1, message.pos2);
+			guiSchematic.schematicToSave = new Schematic(player.worldObj, message.pos1, message.pos2);
 			guiSchematic.schematicToSave.entities = message.entitiesTag;
 			guiSchematic.schematicToSave.tileEntities = message.tileEntitiesTag;
 			guiSchematic.updateSaveButton();

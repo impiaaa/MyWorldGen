@@ -13,18 +13,15 @@ import net.minecraft.world.chunk.Chunk;
 
 public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 
-	public static boolean matchesStatic(AnchorType myType,
-			IBlockState otherState, BiomeGenBase currentBiome) {
+	public static boolean matchesStatic(AnchorType myType, IBlockState otherState, BiomeGenBase currentBiome) {
 		switch (myType) {
 		case GROUND:
 			return otherState.equals(currentBiome.topBlock);
 		case AIR:
 			return otherState.getBlock() instanceof BlockAir
-					|| (otherState.getMaterial().isReplaceable() && !otherState
-							.getMaterial().isLiquid());
+					|| (otherState.getMaterial().isReplaceable() && !otherState.getMaterial().isLiquid());
 		default:
-			return !(otherState.getBlock() instanceof BlockAir)
-					&& myType != null && myType.material != null
+			return !(otherState.getBlock() instanceof BlockAir) && myType != null && myType.material != null
 					&& otherState.getMaterial() == myType.material;
 		}
 	}
@@ -34,15 +31,12 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 	}
 
 	@Override
-	public boolean matches(int myMeta, TileEntity myTileEntity, World world,
-			BlockPos pos) {
-		return matchesStatic(AnchorType.get(myMeta), world.getBlockState(pos),
-				world.getBiomeGenForCoords(pos));
+	public boolean matches(int myMeta, TileEntity myTileEntity, World world, BlockPos pos) {
+		return matchesStatic(AnchorType.get(myMeta), world.getBlockState(pos), world.getBiomeGenForCoords(pos));
 	}
 
 	@Override
-	public BlockPos getQuickMatchingBlockInChunk(int myMeta,
-			TileEntity myTileEntity, Chunk chunk, Random rand) {
+	public BlockPos getQuickMatchingBlockInChunk(int myMeta, TileEntity myTileEntity, Chunk chunk, Random rand) {
 		int xPosInChunk = rand.nextInt(16);
 		int zPosInChunk = rand.nextInt(16);
 		int height = chunk.getHeightValue(xPosInChunk, zPosInChunk);
@@ -52,15 +46,12 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 		BlockPos pos = new BlockPos(xPos, 0, zPos);
 		BiomeGenBase currentBiome = world.getBiomeGenForCoords(pos);
 		AnchorType type = AnchorType.get(myMeta);
-		boolean isHell = chunk.getWorld().getChunkProvider().makeString()
-				.equals("HellRandomLevelSource");
+		boolean isHell = chunk.getWorld().getChunkProvider().makeString().equals("HellRandomLevelSource");
 		do {
 			switch (type) {
 			case AIR:
 				// Anywhere between the ground and the top of the world
-				pos = new BlockPos(xPos, rand.nextInt(world.getActualHeight()
-						- height)
-						+ height, zPos);
+				pos = new BlockPos(xPos, rand.nextInt(world.getActualHeight() - height) + height, zPos);
 				break;
 			case GROUND:
 				// Ground level.
@@ -91,8 +82,7 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 			default:
 				return null;
 			}
-			if (BlockAnchorMaterialLogic.matchesStatic(type,
-					chunk.getBlockState(pos), currentBiome)) {
+			if (BlockAnchorMaterialLogic.matchesStatic(type, chunk.getBlockState(pos), currentBiome)) {
 				return pos;
 			}
 		} while (height >= 62);

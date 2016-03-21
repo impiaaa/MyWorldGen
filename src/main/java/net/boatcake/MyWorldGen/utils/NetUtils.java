@@ -24,9 +24,7 @@ public class NetUtils {
 	}
 
 	public static void init() {
-		INSTANCE.registerMessage(MessageGetSchemClient.class,
-				MessageGetSchemClient.class, 0, Side.CLIENT);
-		INSTANCE.registerMessage(MessagePlaceSchem.class,
-				MessagePlaceSchem.class, 2, Side.SERVER);
+		INSTANCE.registerMessage(MessageGetSchemClient.class, MessageGetSchemClient.class, 0, Side.CLIENT);
+		INSTANCE.registerMessage(MessagePlaceSchem.class, MessagePlaceSchem.class, 2, Side.SERVER);
 	}
 }

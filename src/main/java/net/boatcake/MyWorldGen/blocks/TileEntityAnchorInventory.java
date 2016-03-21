@@ -80,16 +80,13 @@ public class TileEntityAnchorInventory extends TileEntity implements IInventory 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
 		return worldObj.getTileEntity(getPos()) == this
-				&& player.getDistanceSq(getPos().getX() + 0.5,
-						getPos().getY() + 0.5, getPos().getZ() + 0.5) < 64;
+				&& player.getDistanceSq(getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5) < 64;
 	}
 
 	public boolean matches(IBlockState blockState) {
 		for (int i = 0; i < inv.length; i++) {
-			if (inv[i] != null
-					&& (inv[i].getItem() instanceof ItemBlock)
-					&& ((ItemBlock) inv[i].getItem()).block == blockState
-							.getBlock()) {
+			if (inv[i] != null && (inv[i].getItem() instanceof ItemBlock)
+					&& ((ItemBlock) inv[i].getItem()).block == blockState.getBlock()) {
 				return true;
 			}
 		}

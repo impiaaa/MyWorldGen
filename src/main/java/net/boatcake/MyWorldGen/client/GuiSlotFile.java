@@ -17,8 +17,7 @@ public class GuiSlotFile extends GuiSlot {
 	public GuiScreen parent;
 	public int selected;
 
-	public GuiSlotFile(Minecraft mc, GuiScreen parent, File file,
-			FontRenderer fr, FilenameFilter filter) {
+	public GuiSlotFile(Minecraft mc, GuiScreen parent, File file, FontRenderer fr, FilenameFilter filter) {
 		super(mc, parent.width, parent.height, 32, parent.height - 65 + 4, 18);
 		files = file.listFiles(filter);
 		selected = 0;

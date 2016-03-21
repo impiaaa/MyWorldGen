@@ -90,7 +90,7 @@ public class DirectionUtils {
 			return 0;
 		}
 	}
-	
+
 	public static float yawOffsetForDirection(EnumFacing rotationDirection) {
 		switch (rotationDirection) {
 		case SOUTH:
@@ -105,7 +105,7 @@ public class DirectionUtils {
 			return 0;
 		}
 	}
-	
+
 	public static Rotation rotationForFacing(EnumFacing facing) {
 		switch (facing) {
 		case SOUTH:
@@ -127,39 +127,35 @@ public class DirectionUtils {
 		double worldZ = coords.zCoord;
 		switch (rot) {
 		case CLOCKWISE_180:
-			return new Vec3d(-worldX+at.xCoord, worldY+at.yCoord, -worldZ+at.zCoord);
+			return new Vec3d(-worldX + at.xCoord, worldY + at.yCoord, -worldZ + at.zCoord);
 		case CLOCKWISE_90:
-			return new Vec3d(-worldZ+at.xCoord, worldY+at.yCoord, worldX+at.zCoord);
+			return new Vec3d(-worldZ + at.xCoord, worldY + at.yCoord, worldX + at.zCoord);
 		case COUNTERCLOCKWISE_90:
-			return new Vec3d(worldZ+at.xCoord, worldY+at.yCoord, -worldX+at.zCoord);
+			return new Vec3d(worldZ + at.xCoord, worldY + at.yCoord, -worldX + at.zCoord);
 		case NONE:
 		default:
-			return new Vec3d(worldX+at.xCoord, worldY+at.yCoord, worldZ+at.zCoord);
+			return new Vec3d(worldX + at.xCoord, worldY + at.yCoord, worldZ + at.zCoord);
 		}
 	}
 
 	public static Vec3d rotateCoords(Vec3i coords, Vec3d at, Rotation rot) {
-		return rotateCoords(new Vec3d(coords), at,rot);
+		return rotateCoords(new Vec3d(coords), at, rot);
 	}
 
-	public static EnumFacing[] cardinalDirections = new EnumFacing[] {
-			EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.SOUTH,
-			EnumFacing.WEST };
+	public static EnumFacing[] cardinalDirections = new EnumFacing[] { EnumFacing.NORTH, EnumFacing.EAST,
+			EnumFacing.SOUTH, EnumFacing.WEST };
 
 	public static EnumFacing getDirectionFromYaw(float yaw) {
-		return cardinalDirections[MathHelper
-				.floor_double(yaw * 4.0F / 360.0F + 0.5D) & 0x3];
+		return cardinalDirections[MathHelper.floor_double(yaw * 4.0F / 360.0F + 0.5D) & 0x3];
 	}
 
 	public static Rotation getRotationFromYaw(float yaw) {
-		return Rotation.values()[MathHelper
-				.floor_double(yaw * 4.0F / 360.0F + 0.5D) & 0x3];
+		return Rotation.values()[MathHelper.floor_double(yaw * 4.0F / 360.0F + 0.5D) & 0x3];
 	}
 
 	// This method already exists in EnumFacing, but it's SideOnly(CLIENT) for
 	// some reason >:(
-	public static EnumFacing rotateAround(EnumFacing facing,
-			EnumFacing.Axis axis) {
+	public static EnumFacing rotateAround(EnumFacing facing, EnumFacing.Axis axis) {
 		switch (axis) {
 		case X:
 			switch (facing) {
@@ -200,8 +196,7 @@ public class DirectionUtils {
 			}
 
 		default:
-			throw new IllegalStateException("Unable to get CW facing for axis "
-					+ axis);
+			throw new IllegalStateException("Unable to get CW facing for axis " + axis);
 		}
 	}
 }

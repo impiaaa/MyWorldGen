@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 public class BlockAnchorItem extends ItemMultiTexture {
 	public BlockAnchorItem(Block block) {
 		super(block, block, new Function<ItemStack, String>() {
+			@Override
 			public String apply(ItemStack stack) {
 				return BlockAnchorMaterial.AnchorType.get(stack.getMetadata()).name;
 			}

@@ -8,8 +8,7 @@ import net.minecraft.client.gui.ScaledResolution;
 
 public abstract class GuiSlotResizable extends GuiSlot {
 
-	public GuiSlotResizable(Minecraft mc, int x, int y, int width, int height,
-			int slotHeight) {
+	public GuiSlotResizable(Minecraft mc, int x, int y, int width, int height, int slotHeight) {
 		super(mc, width, height, y, y + height, slotHeight);
 		this.left = x;
 		this.right = x + width;
@@ -38,8 +37,7 @@ public abstract class GuiSlotResizable extends GuiSlot {
 		ScaledResolution scaledresolution = new ScaledResolution(this.mc);
 		int f = scaledresolution.getScaleFactor();
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor(this.left * f, this.mc.displayHeight - this.bottom * f,
-				this.width * f, this.height * f);
+		GL11.glScissor(this.left * f, this.mc.displayHeight - this.bottom * f, this.width * f, this.height * f);
 		super.drawScreen(i, j, k);
 		GL11.glScissor(0, 0, this.mc.displayWidth, this.mc.displayHeight);
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);

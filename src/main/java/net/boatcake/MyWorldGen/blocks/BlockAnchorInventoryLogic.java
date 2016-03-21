@@ -14,15 +14,12 @@ public class BlockAnchorInventoryLogic extends BlockAnchorLogic {
 	}
 
 	@Override
-	public boolean matches(int myMeta, TileEntity myTileEntity, World world,
-			BlockPos pos) {
-		return ((TileEntityAnchorInventory) myTileEntity).matches(world
-				.getBlockState(pos));
+	public boolean matches(int myMeta, TileEntity myTileEntity, World world, BlockPos pos) {
+		return ((TileEntityAnchorInventory) myTileEntity).matches(world.getBlockState(pos));
 	}
 
 	@Override
-	public BlockPos getQuickMatchingBlockInChunk(int myMeta,
-			TileEntity myTileEntity, Chunk chunk, Random rand) {
+	public BlockPos getQuickMatchingBlockInChunk(int myMeta, TileEntity myTileEntity, Chunk chunk, Random rand) {
 		return null;
 	}
 

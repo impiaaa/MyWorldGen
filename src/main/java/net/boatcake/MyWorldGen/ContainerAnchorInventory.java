@@ -10,8 +10,7 @@ import net.minecraft.item.ItemStack;
 public class ContainerAnchorInventory extends Container {
 	protected TileEntityAnchorInventory tileEntity;
 
-	public ContainerAnchorInventory(InventoryPlayer inventoryPlayer,
-			TileEntityAnchorInventory te) {
+	public ContainerAnchorInventory(InventoryPlayer inventoryPlayer, TileEntityAnchorInventory te) {
 		tileEntity = te;
 
 		/*
@@ -20,8 +19,7 @@ public class ContainerAnchorInventory extends Container {
 		 */
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
-				addSlotToContainer(new SlotPhantomBlock(tileEntity, j + i * 3,
-						62 + j * 18, 17 + i * 18));
+				addSlotToContainer(new SlotPhantomBlock(tileEntity, j + i * 3, 62 + j * 18, 17 + i * 18));
 			}
 		}
 		bindPlayerInventory(inventoryPlayer);
@@ -30,8 +28,7 @@ public class ContainerAnchorInventory extends Container {
 	protected void bindPlayerInventory(InventoryPlayer inventoryPlayer) {
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 9; j++) {
-				addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9,
-						8 + j * 18, 84 + i * 18));
+				addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
 			}
 		}
 
@@ -48,7 +45,7 @@ public class ContainerAnchorInventory extends Container {
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotIdx) {
 		ItemStack stackCopy = null;
-		Slot slot = (Slot) inventorySlots.get(slotIdx);
+		Slot slot = inventorySlots.get(slotIdx);
 
 		// null checks and checks if the item can be stacked (maxStackSize > 1)
 		if (slot != null && slot.getHasStack()) {
@@ -63,8 +60,7 @@ public class ContainerAnchorInventory extends Container {
 			}
 			// places it into the tileEntity is possible since its in the player
 			// inventory
-			else if (!slot.isItemValid(stackInSlot)
-					|| !this.mergeItemStack(stackInSlot, 0, 9, false)) {
+			else if (!slot.isItemValid(stackInSlot) || !this.mergeItemStack(stackInSlot, 0, 9, false)) {
 				return null;
 			}
 

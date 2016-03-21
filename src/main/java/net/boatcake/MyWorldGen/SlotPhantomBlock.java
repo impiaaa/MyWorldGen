@@ -7,8 +7,7 @@ import net.minecraft.item.ItemStack;
 
 public class SlotPhantomBlock extends Slot {
 
-	public SlotPhantomBlock(IInventory inventory, int slotIndex, int posX,
-			int posY) {
+	public SlotPhantomBlock(IInventory inventory, int slotIndex, int posX, int posY) {
 		super(inventory, slotIndex, posX, posY);
 	}
 

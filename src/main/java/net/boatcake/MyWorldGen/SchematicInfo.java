@@ -36,12 +36,10 @@ public class SchematicInfo {
 	}
 
 	public boolean matchesBiome(BiomeGenBase biome) {
-		if ((excludeBiomes != null)
-				&& (containsIgnoreCase(excludeBiomes, biome.getBiomeName()))) {
+		if ((excludeBiomes != null) && (containsIgnoreCase(excludeBiomes, biome.getBiomeName()))) {
 			return false;
 		}
-		if ((onlyIncludeBiomes != null)
-				&& (!containsIgnoreCase(onlyIncludeBiomes, biome.getBiomeName()))) {
+		if ((onlyIncludeBiomes != null) && (!containsIgnoreCase(onlyIncludeBiomes, biome.getBiomeName()))) {
 			return false;
 		}
 		return true;
@@ -154,8 +152,7 @@ public class SchematicInfo {
 		}
 
 		if (jsonobject.has("generateSpawners")) {
-			this.generateSpawners = jsonobject.get("generateSpawners")
-					.getAsBoolean();
+			this.generateSpawners = jsonobject.get("generateSpawners").getAsBoolean();
 		}
 
 		if (jsonobject.has("fuzzyMatching")) {
@@ -163,8 +160,7 @@ public class SchematicInfo {
 		}
 
 		if (jsonobject.has("terrainSmoothing")) {
-			this.terrainSmoothing = jsonobject.get("terrainSmoothing")
-					.getAsBoolean();
+			this.terrainSmoothing = jsonobject.get("terrainSmoothing").getAsBoolean();
 		}
 	}
 }

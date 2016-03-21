@@ -16,8 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 public class GuiHandler implements IGuiHandler {
 
 	@Override
-	public Object getClientGuiElement(int id, EntityPlayer player, World world,
-			int x, int y, int z) {
+	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 		if (FMLCommonHandler.instance().getSide() != Side.CLIENT) {
 			return null;
 		}
@@ -25,13 +24,11 @@ public class GuiHandler implements IGuiHandler {
 		case 0:
 			return new GuiSaveSchematic();
 		case 1:
-			return new GuiLoadSchematic(new BlockPos(x, y, z),
-					DirectionUtils.getDirectionFromYaw(player.rotationYaw));
+			return new GuiLoadSchematic(new BlockPos(x, y, z), DirectionUtils.getDirectionFromYaw(player.rotationYaw));
 		case 2:
 			TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 			if (tileEntity instanceof TileEntityAnchorInventory) {
-				return new GuiAnchorInventory(player.inventory,
-						(TileEntityAnchorInventory) tileEntity);
+				return new GuiAnchorInventory(player.inventory, (TileEntityAnchorInventory) tileEntity);
 			}
 			return null;
 		default:
@@ -40,13 +37,11 @@ public class GuiHandler implements IGuiHandler {
 	}
 
 	@Override
-	public Object getServerGuiElement(int id, EntityPlayer player, World world,
-			int x, int y, int z) {
+	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 		if (id == 2) {
 			TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 			if (tileEntity instanceof TileEntityAnchorInventory) {
-				return new ContainerAnchorInventory(player.inventory,
-						(TileEntityAnchorInventory) tileEntity);
+				return new ContainerAnchorInventory(player.inventory, (TileEntityAnchorInventory) tileEntity);
 			}
 		}
 		return null;

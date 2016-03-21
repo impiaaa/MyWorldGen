@@ -15,11 +15,9 @@ import net.boatcake.MyWorldGen.MyWorldGen;
 
 public class FileUtils {
 
-	public static void writeStream(InputStream inStream, String outName)
-			throws IOException {
+	public static void writeStream(InputStream inStream, String outName) throws IOException {
 		// Used for self-extracting files
-		OutputStream outStream = new FileOutputStream(new File(
-				MyWorldGen.globalSchemDir, new File(outName).getName()));
+		OutputStream outStream = new FileOutputStream(new File(MyWorldGen.globalSchemDir, new File(outName).getName()));
 		byte[] buffer = new byte[256];
 		int readLen;
 		while (true) {
@@ -42,11 +40,9 @@ public class FileUtils {
 			ZipFile zf = new ZipFile(sourceFile);
 			ZipEntry worldGenDir = zf.getEntry(MyWorldGen.resourcePath + "/");
 			if (worldGenDir != null && worldGenDir.isDirectory()) {
-				for (Enumeration<? extends ZipEntry> e = zf.entries(); e
-						.hasMoreElements();) {
+				for (Enumeration<? extends ZipEntry> e = zf.entries(); e.hasMoreElements();) {
 					ZipEntry ze = e.nextElement();
-					if (!ze.isDirectory()
-							&& ze.getName().startsWith(worldGenDir.getName())) {
+					if (!ze.isDirectory() && ze.getName().startsWith(worldGenDir.getName())) {
 						writeStream(zf.getInputStream(ze), ze.getName());
 					}
 				}
@@ -54,8 +50,7 @@ public class FileUtils {
 			zf.close();
 		} catch (FileNotFoundException e) {
 			// Not in a jar
-			File f = new File(MyWorldGen.class.getClassLoader()
-					.getResource(MyWorldGen.resourcePath).getPath());
+			File f = new File(MyWorldGen.class.getClassLoader().getResource(MyWorldGen.resourcePath).getPath());
 			if (f.isDirectory()) {
 				for (String s : f.list()) {
 					try {

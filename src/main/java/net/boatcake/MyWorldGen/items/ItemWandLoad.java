@@ -12,17 +12,15 @@ import net.minecraft.world.World;
 
 public class ItemWandLoad extends Item {
 	public ItemWandLoad() {
-        this.maxStackSize = 1;
+		this.maxStackSize = 1;
 	}
 
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world,
-			BlockPos blockPos, EnumHand hand, EnumFacing side, float hitX, float hitY,
-			float hitZ) {
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos blockPos,
+			EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (world.isRemote) {
 			BlockPos newPos = blockPos.offset(side);
-			player.openGui(MyWorldGen.instance, 1, world, newPos.getX(),
-					newPos.getY(), newPos.getZ());
+			player.openGui(MyWorldGen.instance, 1, world, newPos.getX(), newPos.getY(), newPos.getZ());
 		}
 		return EnumActionResult.SUCCESS;
 	}

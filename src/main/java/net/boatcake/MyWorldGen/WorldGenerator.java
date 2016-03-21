@@ -33,34 +33,29 @@ public class WorldGenerator implements IWorldGenerator {
 	}
 
 	public void addSchematicsFromDirectory(File schemDirectory) {
-		File[] schemFiles = schemDirectory
-				.listFiles(new SchematicFilenameFilter());
+		File[] schemFiles = schemDirectory.listFiles(new SchematicFilenameFilter());
 		Arrays.sort(schemFiles);
 		worldgenFolderSchemList.clear();
 		for (File schemFile : schemFiles) {
 			try {
-				addSchemFromStream(worldgenFolderSchemList,
-						new FileInputStream(schemFile), schemFile.getName());
+				addSchemFromStream(worldgenFolderSchemList, new FileInputStream(schemFile), schemFile.getName());
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}
-		MyWorldGen.log.log(Level.INFO, "Loaded {} schematics from {}",
-				worldgenFolderSchemList.size(), schemDirectory.toString());
+		MyWorldGen.log.log(Level.INFO, "Loaded {} schematics from {}", worldgenFolderSchemList.size(),
+				schemDirectory.toString());
 	}
 
-	public void addSchemFromStream(Collection<Schematic> section,
-			InputStream stream, String name) throws IOException {
-		Schematic newSchem = new Schematic(
-				CompressedStreamTools.readCompressed(stream), name);
+	public void addSchemFromStream(Collection<Schematic> section, InputStream stream, String name) throws IOException {
+		Schematic newSchem = new Schematic(CompressedStreamTools.readCompressed(stream), name);
 		section.add(newSchem);
 	}
 
 	@Override
-	public void generate(Random random, int chunkX, int chunkZ, World world,
-			IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
-		if (world.getWorldInfo().isMapFeaturesEnabled()
-				&& random.nextDouble() < MyWorldGen.baseGenerateChance) {
+	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator,
+			IChunkProvider chunkProvider) {
+		if (world.getWorldInfo().isMapFeaturesEnabled() && random.nextDouble() < MyWorldGen.baseGenerateChance) {
 			List<WeightedRandom.Item> applicableSchematics = new ArrayList<WeightedRandom.Item>();
 			BlockPos chunkPos = new BlockPos(chunkX * 16, 0, chunkZ * 16);
 			for (Schematic s : worldgenFolderSchemList) {
@@ -74,35 +69,24 @@ public class WorldGenerator implements IWorldGenerator {
 				}
 			}
 			if (!applicableSchematics.isEmpty()) {
-				WeightedRandom.Item noStructureItem = new WeightedRandom.Item(
-						MyWorldGen.generateNothingWeight);
+				WeightedRandom.Item noStructureItem = new WeightedRandom.Item(MyWorldGen.generateNothingWeight);
 				applicableSchematics.add(noStructureItem);
-				WeightedRandom.Item selectedItem = WeightedRandom
-						.getRandomItem(random, applicableSchematics);
+				WeightedRandom.Item selectedItem = WeightedRandom.getRandomItem(random, applicableSchematics);
 				if (selectedItem != noStructureItem) {
 					Schematic schemToGenerate = ((WeightedRandomSchematic) selectedItem).schematic;
 					if (schemToGenerate.info.fuzzyMatching) {
-						Chunk chunk = world.getChunkFromChunkCoords(chunkX,
-								chunkZ);
+						Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 						Rotation randomRotation;
 						if (schemToGenerate.info.lockRotation) {
 							randomRotation = Rotation.NONE;
 						} else {
 							randomRotation = Rotation.values()[random.nextInt(4)];
 						}
-						BlockPos pos = schemToGenerate
-								.getFuzzyMatchingLocation(chunk,
-										randomRotation, random);
+						BlockPos pos = schemToGenerate.getFuzzyMatchingLocation(chunk, randomRotation, random);
 						if (pos != null) {
-							schemToGenerate.placeInWorld(world, pos,
-									randomRotation, true, true, true, random);
-							MyWorldGen.log
-									.log(Level.DEBUG,
-											"Generated {} at {}, {}, {}",
-											new Object[] {
-													schemToGenerate.info.name,
-													pos.getX(), pos.getY(),
-													pos.getZ() });
+							schemToGenerate.placeInWorld(world, pos, randomRotation, true, true, true, random);
+							MyWorldGen.log.log(Level.DEBUG, "Generated {} at {}, {}, {}",
+									new Object[] { schemToGenerate.info.name, pos.getX(), pos.getY(), pos.getZ() });
 						}
 					} else {
 						for (int i = 0; i < MyWorldGen.generateTries; i++) {
@@ -116,17 +100,10 @@ public class WorldGenerator implements IWorldGenerator {
 							} else {
 								randomRotation = Rotation.values()[random.nextInt(4)];
 							}
-							if (schemToGenerate.fitsIntoWorldAt(world, pos,
-									randomRotation)) {
-								schemToGenerate.placeInWorld(world, pos,
-										randomRotation, true, true, true,
-										random);
-								MyWorldGen.log
-										.log(Level.DEBUG,
-												"Generated {} at {}, {}, {}; took {} tries",
-												new Object[] {
-														schemToGenerate.info.name,
-														x, y, z, i + 1 });
+							if (schemToGenerate.fitsIntoWorldAt(world, pos, randomRotation)) {
+								schemToGenerate.placeInWorld(world, pos, randomRotation, true, true, true, random);
+								MyWorldGen.log.log(Level.DEBUG, "Generated {} at {}, {}, {}; took {} tries",
+										new Object[] { schemToGenerate.info.name, x, y, z, i + 1 });
 								return;
 							}
 						}

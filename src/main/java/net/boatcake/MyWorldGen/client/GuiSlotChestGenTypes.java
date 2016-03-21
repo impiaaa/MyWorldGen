@@ -20,8 +20,7 @@ public class GuiSlotChestGenTypes extends GuiSlotResizable {
 	public String[] tablesTranslated;
 	public GuiScreen parent;
 
-	public GuiSlotChestGenTypes(Minecraft mc, GuiScreen parent,
-			FontRenderer fr, int x, int y, int width, int height) {
+	public GuiSlotChestGenTypes(Minecraft mc, GuiScreen parent, FontRenderer fr, int x, int y, int width, int height) {
 		super(mc, x, y, width, height, 18);
 		selected = 0;
 		this.fr = fr;
@@ -29,7 +28,7 @@ public class GuiSlotChestGenTypes extends GuiSlotResizable {
 
 		Set<ResourceLocation> allTables = LootTableList.getAll();
 		tables = ArrayUtils.add(Arrays.copyOf(allTables.toArray(), allTables.size(), ResourceLocation[].class), null);
-		
+
 		Arrays.sort(tables, new Comparator<ResourceLocation>() {
 			@Override
 			public int compare(ResourceLocation x, ResourceLocation y) {
@@ -56,8 +55,7 @@ public class GuiSlotChestGenTypes extends GuiSlotResizable {
 	}
 
 	@Override
-	protected void elementClicked(int slotIndex, boolean isDoubleClick,
-			int mouseX, int mouseY) {
+	protected void elementClicked(int slotIndex, boolean isDoubleClick, int mouseX, int mouseY) {
 		selected = slotIndex;
 	}
 
