@@ -29,10 +29,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemWandSave extends Item {
-
 	public ItemWandSave() {
-		super();
-        this.maxStackSize = 1;
+		this.maxStackSize = 1;
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -40,11 +38,10 @@ public class ItemWandSave extends Item {
 	public boolean hasEffect(ItemStack stack) {
 		return stack.hasTagCompound();
 	}
-	
+
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world,
-			BlockPos blockPos, EnumHand hand, EnumFacing side, float hitX, float hitY,
-			float hitZ) {
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos blockPos,
+			EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (!world.isRemote) {
 			if (stack.hasTagCompound()) {
 				/*
@@ -73,15 +70,11 @@ public class ItemWandSave extends Item {
 					 * block data later.
 					 */
 					MessageGetSchemClient message = new MessageGetSchemClient();
-					message.pos1 = new BlockPos(stack.getTagCompound()
-							.getInteger("x"), stack.getTagCompound()
-							.getInteger("y"), stack.getTagCompound()
-							.getInteger("z"));
+					message.pos1 = new BlockPos(stack.getTagCompound().getInteger("x"),
+							stack.getTagCompound().getInteger("y"), stack.getTagCompound().getInteger("z"));
 					message.pos2 = blockPos;
-					message.entitiesTag = WorldUtils.getEntities(
-							playerMP.worldObj, message.pos1, message.pos2);
-					message.tileEntitiesTag = WorldUtils.getTileEntities(
-							playerMP.worldObj, message.pos1, message.pos2);
+					message.entitiesTag = WorldUtils.getEntities(playerMP.worldObj, message.pos1, message.pos2);
+					message.tileEntitiesTag = WorldUtils.getTileEntities(playerMP.worldObj, message.pos1, message.pos2);
 					NetUtils.sendTo(message, playerMP);
 				}
 				// Clear the item data, so that we can make a new selection
@@ -103,12 +96,9 @@ public class ItemWandSave extends Item {
 
 	@SideOnly(Side.CLIENT)
 	public static void translateToWorldCoords(Entity entity, float frame) {
-		double interpPosX = entity.lastTickPosX
-				+ (entity.posX - entity.lastTickPosX) * frame;
-		double interpPosY = entity.lastTickPosY
-				+ (entity.posY - entity.lastTickPosY) * frame;
-		double interpPosZ = entity.lastTickPosZ
-				+ (entity.posZ - entity.lastTickPosZ) * frame;
+		double interpPosX = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * frame;
+		double interpPosY = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * frame;
+		double interpPosZ = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * frame;
 		GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
 	}
 
@@ -117,108 +107,112 @@ public class ItemWandSave extends Item {
 	public void onWorldRender(RenderWorldLastEvent event) {
 		Minecraft mc = Minecraft.getMinecraft();
 		EntityPlayerSP player = mc.thePlayer;
-		if (player != null && mc.objectMouseOver != null) {
-			ItemStack stack = null;
-			for (EnumHand hand : EnumHand.values()) {
-				stack = player.getHeldItem(hand);
-			}
-			BlockPos lookAtPos = mc.objectMouseOver.getBlockPos();
-			if (stack != null && stack.getItem() == this
-					&& stack.hasTagCompound() && lookAtPos != null) {
-				NBTTagCompound tag = stack.getTagCompound();
-				double x1 = tag.getInteger("x");
-				double y1 = tag.getInteger("y");
-				double z1 = tag.getInteger("z");
-				double x2 = lookAtPos.getX();
-				double y2 = lookAtPos.getY();
-				double z2 = lookAtPos.getZ();
-				double t;
-
-				if (x1 > x2) {
-					x1 += 1.03125;
-					x2 -= 0.03125;
-				} else {
-					t = x2 + 1.03125;
-					x2 = x1 - 0.03125;
-					x1 = t;
-				}
-				if (y1 > y2) {
-					y1 += 1.03125;
-					y2 -= 0.03125;
-				} else {
-					t = y2 + 1.03125;
-					y2 = y1 - 0.03125;
-					y1 = t;
-				}
-				if (z1 > z2) {
-					z1 += 1.03125;
-					z2 -= 0.03125;
-				} else {
-					t = z2 + 1.03125;
-					z2 = z1 - 0.03125;
-					z1 = t;
-				}
-
-                GlStateManager.disableCull();
-				GlStateManager.enableBlend();
-                GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
-                		GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-                		GlStateManager.SourceFactor.ONE,
-                		GlStateManager.DestFactor.ZERO);
-				
-				GlStateManager.disableLighting();
-				GlStateManager.disableTexture2D();
-				GlStateManager.color(0.5F, 0.75F, 1.0F, 0.5F);
-
-				GlStateManager.pushMatrix();
-
-				Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
-				translateToWorldCoords(entity, event.partialTicks);
-
-				Tessellator tess = Tessellator.getInstance();
-				VertexBuffer render = tess.getBuffer();
-
-				render.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-				render.pos(x1, y1, z2).endVertex();
-				render.pos(x1, y2, z2).endVertex();
-				render.pos(x2, y2, z2).endVertex();
-				render.pos(x2, y1, z2).endVertex();
-
-				render.pos(x1, y1, z1).endVertex();
-				render.pos(x2, y1, z1).endVertex();
-				render.pos(x2, y2, z1).endVertex();
-				render.pos(x1, y2, z1).endVertex();
-
-				render.pos(x1, y1, z2).endVertex();
-				render.pos(x1, y1, z1).endVertex();
-				render.pos(x1, y2, z1).endVertex();
-				render.pos(x1, y2, z2).endVertex();
-
-				render.pos(x1, y2, z2).endVertex();
-				render.pos(x1, y2, z1).endVertex();
-				render.pos(x2, y2, z1).endVertex();
-				render.pos(x2, y2, z2).endVertex();
-
-				render.pos(x2, y2, z2).endVertex();
-				render.pos(x2, y2, z1).endVertex();
-				render.pos(x2, y1, z1).endVertex();
-				render.pos(x2, y1, z2).endVertex();
-
-				render.pos(x1, y1, z1).endVertex();
-				render.pos(x1, y1, z2).endVertex();
-				render.pos(x2, y1, z2).endVertex();
-				render.pos(x2, y1, z1).endVertex();
-				
-				tess.draw();
-
-				GlStateManager.popMatrix();
-
-                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-                GlStateManager.disableBlend();
-                GlStateManager.enableCull();
-				GlStateManager.enableLighting();
-				GlStateManager.enableTexture2D();
+		if (player == null || mc.objectMouseOver == null) {
+			return;
+		}
+		ItemStack stack = null;
+		for (EnumHand hand : EnumHand.values()) {
+			stack = player.getHeldItem(hand);
+			if (stack != null && stack.getItem() == this && stack.hasTagCompound()) {
+				break;
 			}
 		}
+		if (stack == null) {
+			return;
+		}
+		BlockPos lookAtPos = mc.objectMouseOver.getBlockPos();
+		if (lookAtPos == null) {
+			return;
+		}
+		NBTTagCompound tag = stack.getTagCompound();
+		double x1 = tag.getInteger("x");
+		double y1 = tag.getInteger("y");
+		double z1 = tag.getInteger("z");
+		double x2 = lookAtPos.getX();
+		double y2 = lookAtPos.getY();
+		double z2 = lookAtPos.getZ();
+		double t;
+
+		if (x1 > x2) {
+			x1 += 1.03125;
+			x2 -= 0.03125;
+		} else {
+			t = x2 + 1.03125;
+			x2 = x1 - 0.03125;
+			x1 = t;
+		}
+		if (y1 > y2) {
+			y1 += 1.03125;
+			y2 -= 0.03125;
+		} else {
+			t = y2 + 1.03125;
+			y2 = y1 - 0.03125;
+			y1 = t;
+		}
+		if (z1 > z2) {
+			z1 += 1.03125;
+			z2 -= 0.03125;
+		} else {
+			t = z2 + 1.03125;
+			z2 = z1 - 0.03125;
+			z1 = t;
+		}
+
+		GlStateManager.enableCull();
+		GlStateManager.enableBlend();
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+				GlStateManager.DestFactor.ZERO);
+		GlStateManager.disableLighting();
+		GlStateManager.disableTexture2D();
+		GlStateManager.color(0.5F, 0.75F, 1.0F, 0.5F);
+
+		GlStateManager.pushMatrix();
+
+		Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
+		translateToWorldCoords(entity, event.partialTicks);
+
+		Tessellator tess = Tessellator.getInstance();
+		VertexBuffer render = tess.getBuffer();
+
+		render.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+		render.pos(x1, y1, z2).endVertex();
+		render.pos(x1, y2, z2).endVertex();
+		render.pos(x2, y2, z2).endVertex();
+		render.pos(x2, y1, z2).endVertex();
+
+		render.pos(x1, y1, z1).endVertex();
+		render.pos(x2, y1, z1).endVertex();
+		render.pos(x2, y2, z1).endVertex();
+		render.pos(x1, y2, z1).endVertex();
+
+		render.pos(x1, y1, z2).endVertex();
+		render.pos(x1, y1, z1).endVertex();
+		render.pos(x1, y2, z1).endVertex();
+		render.pos(x1, y2, z2).endVertex();
+
+		render.pos(x1, y2, z2).endVertex();
+		render.pos(x1, y2, z1).endVertex();
+		render.pos(x2, y2, z1).endVertex();
+		render.pos(x2, y2, z2).endVertex();
+
+		render.pos(x2, y2, z2).endVertex();
+		render.pos(x2, y2, z1).endVertex();
+		render.pos(x2, y1, z1).endVertex();
+		render.pos(x2, y1, z2).endVertex();
+
+		render.pos(x1, y1, z1).endVertex();
+		render.pos(x1, y1, z2).endVertex();
+		render.pos(x2, y1, z2).endVertex();
+		render.pos(x2, y1, z1).endVertex();
+
+		tess.draw();
+
+		GlStateManager.popMatrix();
+
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.disableBlend();
+		GlStateManager.enableLighting();
+		GlStateManager.enableTexture2D();
 	}
 }
