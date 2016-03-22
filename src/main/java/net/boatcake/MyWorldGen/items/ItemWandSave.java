@@ -110,21 +110,22 @@ public class ItemWandSave extends Item {
 		if (player == null || mc.objectMouseOver == null) {
 			return;
 		}
-		ItemStack stack = null;
+		ItemStack wandStack = null;
 		for (EnumHand hand : EnumHand.values()) {
-			stack = player.getHeldItem(hand);
-			if (stack != null && stack.getItem() == this && stack.hasTagCompound()) {
+			ItemStack heldStack = player.getHeldItem(hand);
+			if (heldStack != null && heldStack.getItem() == this && heldStack.hasTagCompound()) {
+				wandStack = heldStack;
 				break;
 			}
 		}
-		if (stack == null) {
+		if (wandStack == null) {
 			return;
 		}
 		BlockPos lookAtPos = mc.objectMouseOver.getBlockPos();
 		if (lookAtPos == null) {
 			return;
 		}
-		NBTTagCompound tag = stack.getTagCompound();
+		NBTTagCompound tag = wandStack.getTagCompound();
 		double x1 = tag.getInteger("x");
 		double y1 = tag.getInteger("y");
 		double z1 = tag.getInteger("z");
