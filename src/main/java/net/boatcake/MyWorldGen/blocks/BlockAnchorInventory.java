@@ -1,7 +1,6 @@
 package net.boatcake.MyWorldGen.blocks;
 
 import net.boatcake.MyWorldGen.MyWorldGen;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -19,7 +18,6 @@ public class BlockAnchorInventory extends BlockContainer implements
 		super(par2Material);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
-		setStepSound(Block.soundTypeStone);
 	}
 
 	@Override

@@ -240,8 +240,7 @@ public class MyWorldGen {
 			throws Exception {
 		Block block = null;
 		if (enableItemsAndBlocks) {
-			block = blockClass.getConstructor(Material.class).newInstance(
-					Material.circuits);
+			block = blockClass.getConstructor(Material.class).newInstance(Material.iron);
 			block.setUnlocalizedName(name);
 			block.setCreativeTab(creativeTab);
 			GameRegistry.registerBlock(block, itemBlockClass, name,
