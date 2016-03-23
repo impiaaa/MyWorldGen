@@ -53,7 +53,6 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 		super(par2Material);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
-		setStepSound(SoundType.STONE);
 		setDefaultState(blockState.getBaseState().withProperty(TYPE_PROP, AnchorType.GROUND));
 	}
 
@@ -64,7 +63,7 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTabs, List subBlockList) {
+	public void getSubBlocks(Item item, CreativeTabs creativeTabs, List<ItemStack> subBlockList) {
 		for (AnchorType a : AnchorType.values()) {
 			subBlockList.add(new ItemStack(item, 1, a.id));
 		}
