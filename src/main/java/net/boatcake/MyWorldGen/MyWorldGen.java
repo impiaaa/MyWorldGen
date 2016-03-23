@@ -215,8 +215,7 @@ public class MyWorldGen {
 			throws Exception {
 		Block block = null;
 		if (enableItemsAndBlocks) {
-			block = blockClass.getConstructor(Material.class).newInstance(
-					Material.circuits);
+			block = blockClass.getConstructor(Material.class).newInstance(Material.iron);
 			block.setBlockName(name);
 			block.setBlockTextureName(MyWorldGen.MODID + ":" + name);
 			block.setCreativeTab(creativeTab);

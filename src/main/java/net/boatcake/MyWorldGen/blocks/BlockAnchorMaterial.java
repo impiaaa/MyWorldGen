@@ -46,7 +46,6 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 		super(par2Material);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
-		setStepSound(Block.soundTypeStone);
 	}
 
 	@Override
