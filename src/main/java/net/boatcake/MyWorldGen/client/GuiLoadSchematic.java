@@ -50,7 +50,7 @@ public class GuiLoadSchematic extends GuiScreen {
 				message.x = x;
 				message.y = y;
 				message.z = z;
-				message.direction = direction;
+				message.direction = direction.getOpposite();
 				message.placementOption = placementOption;
 				// We might be able to send the file data directly, but it's
 				// better to make sure that it's valid NBT first.

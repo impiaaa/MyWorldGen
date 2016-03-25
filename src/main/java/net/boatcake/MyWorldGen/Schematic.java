@@ -427,6 +427,18 @@ public class Schematic {
 			}
 		}
 
+		// late update
+		for (int x = -1; x < width+1; x++) {
+			for (int y = -1; y < height+1; y++) {
+				for (int z = -1; z < length+1; z++) {
+					Vec3 rotatedCoords = DirectionUtils.rotateCoords(
+							Vec3.createVectorHelper(x, y, z), offset,
+							rotationAxis, rotationCount);
+                    world.notifyBlockChange((int)rotatedCoords.xCoord, (int)rotatedCoords.yCoord, (int)rotatedCoords.zCoord, world.getBlock((int)rotatedCoords.xCoord, (int)rotatedCoords.yCoord, (int)rotatedCoords.zCoord));
+				}
+			}
+		}
+
 		if (entities != null) {
 			for (int i = 0; i < entities.tagCount(); i++) {
 				NBTTagCompound entityTag = entities.getCompoundTagAt(i);
