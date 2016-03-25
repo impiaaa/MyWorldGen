@@ -341,12 +341,25 @@ public class Schematic {
 					} else if (idMap.containsKey(blocks[x][y][z])) {
 						IBlockState blockState = idMap.get(blocks[x][y][z]).getStateFromMeta(meta[x][y][z])
 								.withRotation(rot);
-						world.setBlockState(rotatedPos, blockState, 0x3);
+						world.setBlockState(rotatedPos, blockState, 0x2);
 					} else {
 						IBlockState blockState = Block.getBlockById(blocks[x][y][z]).getStateFromMeta(meta[x][y][z])
 								.withRotation(rot);
-						world.setBlockState(rotatedPos, blockState, 0x3);
+						world.setBlockState(rotatedPos, blockState, 0x2);
 					}
+				}
+			}
+		}
+
+		// late update
+		for (int x = -1; x < width+1; x++) {
+			for (int y = -1; y < height+1; y++) {
+				for (int z = -1; z < length+1; z++) {
+					BlockPos pos = new BlockPos(x, y, z);
+					Vec3d rotatedCoords = DirectionUtils.rotateCoords(pos, offset, rot);
+					BlockPos rotatedPos = new BlockPos(rotatedCoords);
+					
+                    world.notifyBlockOfStateChange(rotatedPos, world.getBlockState(rotatedPos).getBlock());
 				}
 			}
 		}

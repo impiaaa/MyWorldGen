@@ -23,7 +23,7 @@ group= "net.boatcake.myworldgen" // http://maven.apache.org/guides/mini/guide-na
 archivesBaseName = "MyWorldGen-1.9"
 
 minecraft {
-    version = "1.9-12.16.0.1776-1.9"
+    version = "1.9-12.16.0.1809-1.9"
     mappings = "snapshot_20160312"
     runDir = "run"
 }

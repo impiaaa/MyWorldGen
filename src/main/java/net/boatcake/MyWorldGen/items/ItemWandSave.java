@@ -171,7 +171,7 @@ public class ItemWandSave extends Item {
 		GlStateManager.pushMatrix();
 
 		Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
-		translateToWorldCoords(entity, event.partialTicks);
+		translateToWorldCoords(entity, event.getPartialTicks());
 
 		Tessellator tess = Tessellator.getInstance();
 		VertexBuffer render = tess.getBuffer();

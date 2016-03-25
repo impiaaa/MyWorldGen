@@ -48,7 +48,7 @@ public class GuiLoadSchematic extends GuiScreen {
 			if (button.id == doneButton.id) {
 				MessagePlaceSchem message = new MessagePlaceSchem();
 				message.pos = pos;
-				message.rotation = DirectionUtils.rotationForFacing(direction);
+				message.rotation = DirectionUtils.rotationForFacing(direction.getOpposite());
 				message.placementOption = placementOption;
 				// We might be able to send the file data directly, but it's
 				// better to make sure that it's valid NBT first.
