@@ -39,7 +39,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
-@Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.4", dependencies = "after:OpenBlocks")
+@Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.4.1", dependencies = "after:OpenBlocks")
 public class MyWorldGen {
 	@Instance("MyWorldGen")
 	public static MyWorldGen instance;
