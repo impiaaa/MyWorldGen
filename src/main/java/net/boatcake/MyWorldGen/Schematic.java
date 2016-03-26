@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 
 import net.boatcake.MyWorldGen.blocks.BlockAnchorLogic;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
+import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial.AnchorType;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterialLogic;
 import net.boatcake.MyWorldGen.blocks.BlockPlacementLogic;
 import net.boatcake.MyWorldGen.utils.DirectionUtils;
@@ -198,6 +199,7 @@ public class Schematic {
 
 		if (anchorBlockLocations.isEmpty() && info.name != null) {
 			MyWorldGen.log.log(Level.WARN, "No anchors found in schematic {}", info.name);
+			info.fuzzyMatching = true;
 		}
 
 		info.readFromNBT(tag);
@@ -423,19 +425,42 @@ public class Schematic {
 	}
 
 	public BlockPos getFuzzyMatchingLocation(Chunk chunk, Rotation rotation, Random rand) {
-		ArrayList<BlockPos> shuffledAnchors = (ArrayList<BlockPos>) anchorBlockLocations.clone();
-		Collections.shuffle(shuffledAnchors, rand);
-		for (BlockPos anchorPos : shuffledAnchors) {
-			BlockAnchorLogic matching = matchingMap.get(blocks[anchorPos.getX()][anchorPos.getY()][anchorPos.getZ()]);
-			int anchorMeta = meta[anchorPos.getX()][anchorPos.getY()][anchorPos.getZ()];
-			TileEntity anchorEntity = getTileEntityAt(chunk.getWorld().getMinecraftServer(), anchorPos);
-			BlockPos worldAnchorPos = matching.getQuickMatchingBlockInChunk(anchorMeta, anchorEntity, chunk, rand);
+		if (anchorBlockLocations.isEmpty()) {
+			// Now, this is a tough situation. Structures without anchors
+			// should probably be able to fit anywhere on the ground, and
+			// fuzzy/quick matching is a great way to make that happen.
+			// Unfortunately, that means the generation rate is way too high,
+			// and we can't just modify the base generation rate. For now, just
+			// add in an additional chance to fail.
+			if (rand.nextInt(64) <= 62) { // 1/64 chance to place
+				return null;
+			}
+			BlockPos middleBottomOfSchematic = new BlockPos(width/2, 0, height/2);
+			BlockPos worldAnchorPos = BlockAnchorMaterialLogic.getQuickMatchingBlockInChunkStatic(AnchorType.GROUND, chunk, rand);
 			if (worldAnchorPos != null) {
-				Vec3d worldSchematicPos = DirectionUtils.rotateCoords(new BlockPos(0, 0, 0).subtract(anchorPos),
+				Vec3d worldSchematicPos = DirectionUtils.rotateCoords(new BlockPos(0, 0, 0).subtract(middleBottomOfSchematic),
 						new Vec3d(worldAnchorPos), rotation);
 				return new BlockPos(worldSchematicPos);
 			}
+			else {
+				return null;
+			}
 		}
-		return null;
+		else {
+			ArrayList<BlockPos> shuffledAnchors = (ArrayList<BlockPos>) anchorBlockLocations.clone();
+			Collections.shuffle(shuffledAnchors, rand);
+			for (BlockPos anchorPos : shuffledAnchors) {
+				BlockAnchorLogic matching = matchingMap.get(blocks[anchorPos.getX()][anchorPos.getY()][anchorPos.getZ()]);
+				int anchorMeta = meta[anchorPos.getX()][anchorPos.getY()][anchorPos.getZ()];
+				TileEntity anchorEntity = getTileEntityAt(chunk.getWorld().getMinecraftServer(), anchorPos);
+				BlockPos worldAnchorPos = matching.getQuickMatchingBlockInChunk(anchorMeta, anchorEntity, chunk, rand);
+				if (worldAnchorPos != null) {
+					Vec3d worldSchematicPos = DirectionUtils.rotateCoords(new BlockPos(0, 0, 0).subtract(anchorPos),
+							new Vec3d(worldAnchorPos), rotation);
+					return new BlockPos(worldSchematicPos);
+				}
+			}
+			return null;
+		}
 	}
 }
