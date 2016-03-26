@@ -26,10 +26,20 @@ import net.minecraftforge.fml.common.IWorldGenerator;
 public class WorldGenerator implements IWorldGenerator {
 	private List<Schematic> worldgenFolderSchemList;
 	public List<Schematic> resourcePackSchemList;
+	
+	// Dumb lock to prevent stack overflow when structures cause chunks to
+	// generate
+	// TODO: Ideally, structures should not ever cause chunks to generate,
+	// instead waiting until all required chunks are loaded to check for a
+	// valid location. However, that's non-trivial, and would probably require
+	// a chunk load handler (though I'd need that for retro-gen anyway)
+	private int currentlyGenerating;
+	private static int GENERATING_STACK_LIMIT = 5;
 
 	public WorldGenerator() {
 		worldgenFolderSchemList = new ArrayList<Schematic>();
 		resourcePackSchemList = new ArrayList<Schematic>();
+		currentlyGenerating = 0;
 	}
 
 	public void addSchematicsFromDirectory(File schemDirectory) {
@@ -55,6 +65,10 @@ public class WorldGenerator implements IWorldGenerator {
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator,
 			IChunkProvider chunkProvider) {
+		if (currentlyGenerating > GENERATING_STACK_LIMIT) {
+			return;
+		}
+		currentlyGenerating++;
 		if (world.getWorldInfo().isMapFeaturesEnabled() && random.nextDouble() < MyWorldGen.baseGenerateChance) {
 			List<WeightedRandom.Item> applicableSchematics = new ArrayList<WeightedRandom.Item>();
 			BlockPos chunkPos = new BlockPos(chunkX * 16, 0, chunkZ * 16);
@@ -104,12 +118,13 @@ public class WorldGenerator implements IWorldGenerator {
 								schemToGenerate.placeInWorld(world, pos, randomRotation, true, true, true, random);
 								MyWorldGen.log.log(Level.DEBUG, "Generated {} at {}, {}, {}; took {} tries",
 										new Object[] { schemToGenerate.info.name, x, y, z, i + 1 });
-								return;
+								break;
 							}
 						}
 					}
 				}
 			}
 		}
+		currentlyGenerating--;
 	}
 }
