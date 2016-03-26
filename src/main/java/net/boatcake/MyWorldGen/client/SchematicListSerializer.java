@@ -3,8 +3,6 @@ package net.boatcake.MyWorldGen.client;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-import net.boatcake.MyWorldGen.SchematicInfo;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -12,11 +10,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import net.boatcake.MyWorldGen.SchematicInfo;
+
 public class SchematicListSerializer implements JsonDeserializer<SchematicInfo> {
 
 	@Override
-	public SchematicInfo deserialize(JsonElement json, Type typeOfT,
-			JsonDeserializationContext context) throws JsonParseException {
+	public SchematicInfo deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+			throws JsonParseException {
 		SchematicInfo info = new SchematicInfo();
 		JsonObject jsonobject = json.getAsJsonObject();
 		if (jsonobject.has("chestType")) {
@@ -48,8 +48,7 @@ public class SchematicListSerializer implements JsonDeserializer<SchematicInfo> 
 		}
 
 		if (jsonobject.has("generateSpawners")) {
-			info.generateSpawners = jsonobject.get("generateSpawners")
-					.getAsBoolean();
+			info.generateSpawners = jsonobject.get("generateSpawners").getAsBoolean();
 		}
 
 		if (jsonobject.has("fuzzyMatching")) {
@@ -57,8 +56,7 @@ public class SchematicListSerializer implements JsonDeserializer<SchematicInfo> 
 		}
 
 		if (jsonobject.has("terrainSmoothing")) {
-			info.terrainSmoothing = jsonobject.get("terrainSmoothing")
-					.getAsBoolean();
+			info.terrainSmoothing = jsonobject.get("terrainSmoothing").getAsBoolean();
 		}
 		return info;
 	}

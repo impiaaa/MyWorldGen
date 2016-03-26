@@ -1,5 +1,9 @@
 package net.boatcake.MyWorldGen.client;
 
+import org.lwjgl.opengl.GL11;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.boatcake.MyWorldGen.ContainerAnchorInventory;
 import net.boatcake.MyWorldGen.blocks.TileEntityAnchorInventory;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -7,26 +11,18 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 
-import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 @SideOnly(Side.CLIENT)
 public class GuiAnchorInventory extends GuiContainer {
-	private static final ResourceLocation guiTextures = new ResourceLocation(
-			"textures/gui/container/dispenser.png");
+	private static final ResourceLocation guiTextures = new ResourceLocation("textures/gui/container/dispenser.png");
 	public TileEntityAnchorInventory tileEntity;
 
-	public GuiAnchorInventory(InventoryPlayer inventoryPlayer,
-			TileEntityAnchorInventory te) {
+	public GuiAnchorInventory(InventoryPlayer inventoryPlayer, TileEntityAnchorInventory te) {
 		super(new ContainerAnchorInventory(inventoryPlayer, te));
 		tileEntity = te;
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float par1, int par2,
-			int par3) {
+	protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3) {
 		// draw your Gui here, only thing you need to change is the path
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		this.mc.getTextureManager().bindTexture(guiTextures);
@@ -39,10 +35,8 @@ public class GuiAnchorInventory extends GuiContainer {
 	protected void drawGuiContainerForegroundLayer(int param1, int param2) {
 		// draw text and stuff here
 		// the parameters for drawString are: string, x, y, color
-		fontRendererObj.drawString(I18n.format(tileEntity.getInventoryName()),
-				8, 6, 0x404040);
+		fontRendererObj.drawString(I18n.format(tileEntity.getInventoryName()), 8, 6, 0x404040);
 		// draws "Inventory" or your regional equivalent
-		fontRendererObj.drawString(I18n.format("container.inventory"), 8,
-				ySize - 96 + 2, 0x404040);
+		fontRendererObj.drawString(I18n.format("container.inventory"), 8, ySize - 96 + 2, 0x404040);
 	}
 }

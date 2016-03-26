@@ -6,8 +6,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class DirectionUtils {
 
-	public static ForgeDirection axisForDirection(
-			ForgeDirection rotationDirection) {
+	public static ForgeDirection axisForDirection(ForgeDirection rotationDirection) {
 		switch (rotationDirection) {
 		case UP:
 			return ForgeDirection.EAST;
@@ -83,8 +82,7 @@ public class DirectionUtils {
 		}
 	}
 
-	public static Vec3 rotateCoords(Vec3 coords, Vec3 at,
-			ForgeDirection rotationAxis, int rotationCount) {
+	public static Vec3 rotateCoords(Vec3 coords, Vec3 at, ForgeDirection rotationAxis, int rotationCount) {
 		double worldX = coords.xCoord;
 		double worldY = coords.yCoord;
 		double worldZ = coords.zCoord;
@@ -125,12 +123,10 @@ public class DirectionUtils {
 		return Vec3.createVectorHelper(worldX, worldY, worldZ);
 	}
 
-	public static ForgeDirection[] cardinalDirections = new ForgeDirection[] {
-			ForgeDirection.NORTH, ForgeDirection.EAST, ForgeDirection.SOUTH,
-			ForgeDirection.WEST };
+	public static ForgeDirection[] cardinalDirections = new ForgeDirection[] { ForgeDirection.NORTH,
+			ForgeDirection.EAST, ForgeDirection.SOUTH, ForgeDirection.WEST };
 
 	public static ForgeDirection getDirectionFromYaw(float yaw) {
-		return cardinalDirections[MathHelper
-				.floor_double(yaw * 4.0F / 360.0F + 0.5D) & 0x3];
+		return cardinalDirections[MathHelper.floor_double(yaw * 4.0F / 360.0F + 0.5D) & 0x3];
 	}
 }

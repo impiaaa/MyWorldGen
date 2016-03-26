@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
+import org.lwjgl.input.Keyboard;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.Schematic;
 import net.minecraft.client.gui.GuiButton;
@@ -12,11 +16,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompressedStreamTools;
-
-import org.lwjgl.input.Keyboard;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiSaveSchematic extends GuiScreen {
@@ -53,8 +52,7 @@ public class GuiSaveSchematic extends GuiScreen {
 		Keyboard.enableRepeatEvents(true);
 		this.buttonList.clear();
 
-		fileNameField = new GuiTextField(this.fontRendererObj,
-				this.width / 2 - 150, 20, 300, 20);
+		fileNameField = new GuiTextField(this.fontRendererObj, this.width / 2 - 150, 20, 300, 20);
 		fileNameField.setMaxStringLength(32767);
 		fileNameField.setFocused(true);
 
@@ -70,40 +68,33 @@ public class GuiSaveSchematic extends GuiScreen {
 			fuzzyMatching = schematicToSave.info.fuzzyMatching;
 			terrainSmoothing = schematicToSave.info.terrainSmoothing;
 		}
-		buttonList.add(lockRotationButton = new GuiButton(2,
-				this.width / 2 + 2, 60, 150, 20, I18n
-						.format("gui.lockRotation." + lockRotation)));
-		buttonList.add(generateSpawnersButton = new GuiButton(3,
-				this.width / 2 - 152, 60, 150, 20, I18n
-						.format("gui.generateSpawners." + generateSpawners)));
-		buttonList.add(fuzzyMatchingButton = new GuiButton(4,
-				this.width / 2 + 2, 84, 150, 20, I18n
-						.format("gui.fuzzyMatching." + fuzzyMatching)));
-		buttonList.add(terrainSmoothingButton = new GuiButton(5,
-				this.width / 2 - 152, 84, 150, 20, I18n
-						.format("gui.terrainSmoothing." + terrainSmoothing)));
+		buttonList.add(lockRotationButton = new GuiButton(2, this.width / 2 + 2, 60, 150, 20,
+				I18n.format("gui.lockRotation." + lockRotation)));
+		buttonList.add(generateSpawnersButton = new GuiButton(3, this.width / 2 - 152, 60, 150, 20,
+				I18n.format("gui.generateSpawners." + generateSpawners)));
+		buttonList.add(fuzzyMatchingButton = new GuiButton(4, this.width / 2 + 2, 84, 150, 20,
+				I18n.format("gui.fuzzyMatching." + fuzzyMatching)));
+		buttonList.add(terrainSmoothingButton = new GuiButton(5, this.width / 2 - 152, 84, 150, 20,
+				I18n.format("gui.terrainSmoothing." + terrainSmoothing)));
 
-		weightField = new GuiTextField(this.fontRendererObj,
-				this.width / 2 - 152, 108, 150, 20);
+		weightField = new GuiTextField(this.fontRendererObj, this.width / 2 - 152, 108, 150, 20);
 		weightField.setMaxStringLength(5);
 
-		chestGenSlot = new GuiSlotChestGenTypes(this.mc, this,
-				this.fontRendererObj, this.width / 2 - 152, 132, 150,
+		chestGenSlot = new GuiSlotChestGenTypes(this.mc, this, this.fontRendererObj, this.width / 2 - 152, 132, 150,
 				this.height - 158);
 		chestGenSlot.registerScrollButtons(6, 7);
 
-		buttonList.add(biomeListTypeButton = new GuiButton(8,
-				this.width / 2 + 2, 108, 150, 20,
+		buttonList.add(biomeListTypeButton = new GuiButton(8, this.width / 2 + 2, 108, 150, 20,
 				I18n.format("gui.biomeListType." + biomeListType.toString())));
 
-		biomeSlot = new GuiSlotBiomes(this.mc, this, this.fontRendererObj,
-				this.width / 2 + 2, 128, 150, this.height - 154);
+		biomeSlot = new GuiSlotBiomes(this.mc, this, this.fontRendererObj, this.width / 2 + 2, 128, 150,
+				this.height - 154);
 		biomeSlot.registerScrollButtons(9, 10);
 
-		buttonList.add(saveBtn = new GuiButton(0, this.width / 2 + 2,
-				this.height - 22, 150, 20, I18n.format("gui.save")));
-		buttonList.add(cancelBtn = new GuiButton(1, this.width / 2 - 152,
-				this.height - 22, 150, 20, I18n.format("gui.cancel")));
+		buttonList.add(
+				saveBtn = new GuiButton(0, this.width / 2 + 2, this.height - 22, 150, 20, I18n.format("gui.save")));
+		buttonList.add(cancelBtn = new GuiButton(1, this.width / 2 - 152, this.height - 22, 150, 20,
+				I18n.format("gui.cancel")));
 
 		updateSaveButton();
 	}
@@ -119,11 +110,9 @@ public class GuiSaveSchematic extends GuiScreen {
 		drawDefaultBackground();
 		chestGenSlot.drawScreen(par1, par2, par3);
 		biomeSlot.drawScreen(par1, par2, par3);
-		drawCenteredString(fontRendererObj, I18n.format("gui.filename"),
-				this.width / 2, 5, 0xFFFFFF);
+		drawCenteredString(fontRendererObj, I18n.format("gui.filename"), this.width / 2, 5, 0xFFFFFF);
 		drawCenteredString(fontRendererObj,
-				I18n.format("selectWorld.resultFolder") + " "
-						+ MyWorldGen.globalSchemDir.getAbsolutePath(),
+				I18n.format("selectWorld.resultFolder") + " " + MyWorldGen.globalSchemDir.getAbsolutePath(),
 				this.width / 2, 45, 0xA0A0A0);
 		fileNameField.drawTextBox();
 		weightField.drawTextBox();
@@ -138,8 +127,7 @@ public class GuiSaveSchematic extends GuiScreen {
 			// entity data, saving it to a file should be trivial.
 			schematicToSave.info.chestType = chestGenSlot.hooks[chestGenSlot.selected];
 
-			ArrayList<String> biomeNames = new ArrayList<String>(
-					biomeSlot.selected.size());
+			ArrayList<String> biomeNames = new ArrayList<String>(biomeSlot.selected.size());
 			for (int i : biomeSlot.selected) {
 				biomeNames.add(biomeSlot.biomeNames.get(i));
 			}
@@ -156,8 +144,7 @@ public class GuiSaveSchematic extends GuiScreen {
 			}
 
 			try {
-				schematicToSave.info.randomWeight = Integer.valueOf(weightField
-						.getText());
+				schematicToSave.info.randomWeight = Integer.valueOf(weightField.getText());
 			} catch (NumberFormatException e) {
 
 			}
@@ -168,13 +155,11 @@ public class GuiSaveSchematic extends GuiScreen {
 			}
 			try {
 				CompressedStreamTools.writeCompressed(schematicToSave.getNBT(),
-						new FileOutputStream(new File(
-								MyWorldGen.globalSchemDir, name)));
+						new FileOutputStream(new File(MyWorldGen.globalSchemDir, name)));
 			} catch (Exception exc) {
 				// File does't exist/can't be written
 				// TODO: make this nicer?
-				mc.displayGuiScreen(new GuiErrorScreen(
-						exc.getClass().getName(), exc.getLocalizedMessage()));
+				mc.displayGuiScreen(new GuiErrorScreen(exc.getClass().getName(), exc.getLocalizedMessage()));
 				exc.printStackTrace();
 				return;
 			}
@@ -184,30 +169,25 @@ public class GuiSaveSchematic extends GuiScreen {
 		} else if (button.id == lockRotationButton.id) {
 			if (schematicToSave != null) {
 				schematicToSave.info.lockRotation = !schematicToSave.info.lockRotation;
-				lockRotationButton.displayString = I18n
-						.format("gui.lockRotation."
-								+ schematicToSave.info.lockRotation);
+				lockRotationButton.displayString = I18n.format("gui.lockRotation." + schematicToSave.info.lockRotation);
 			}
 		} else if (button.id == generateSpawnersButton.id) {
 			if (schematicToSave != null) {
 				schematicToSave.info.generateSpawners = !schematicToSave.info.generateSpawners;
 				generateSpawnersButton.displayString = I18n
-						.format("gui.generateSpawners."
-								+ schematicToSave.info.generateSpawners);
+						.format("gui.generateSpawners." + schematicToSave.info.generateSpawners);
 			}
 		} else if (button.id == fuzzyMatchingButton.id) {
 			if (schematicToSave != null) {
 				schematicToSave.info.fuzzyMatching = !schematicToSave.info.fuzzyMatching;
 				fuzzyMatchingButton.displayString = I18n
-						.format("gui.fuzzyMatching."
-								+ schematicToSave.info.fuzzyMatching);
+						.format("gui.fuzzyMatching." + schematicToSave.info.fuzzyMatching);
 			}
 		} else if (button.id == terrainSmoothingButton.id) {
 			if (schematicToSave != null) {
 				schematicToSave.info.terrainSmoothing = !schematicToSave.info.terrainSmoothing;
 				terrainSmoothingButton.displayString = I18n
-						.format("gui.terrainSmoothing."
-								+ schematicToSave.info.terrainSmoothing);
+						.format("gui.terrainSmoothing." + schematicToSave.info.terrainSmoothing);
 			}
 		} else if (button.id == biomeListTypeButton.id) {
 			switch (biomeListType) {
@@ -220,8 +200,7 @@ public class GuiSaveSchematic extends GuiScreen {
 			default:
 				return;
 			}
-			biomeListTypeButton.displayString = I18n
-					.format("gui.biomeListType." + biomeListType.toString());
+			biomeListTypeButton.displayString = I18n.format("gui.biomeListType." + biomeListType.toString());
 		} else {
 			chestGenSlot.actionPerformed(button);
 			biomeSlot.actionPerformed(button);
@@ -261,9 +240,8 @@ public class GuiSaveSchematic extends GuiScreen {
 	public void updateSaveButton() {
 		// Call this every so often to make sure we have a valid file name and a
 		// valid schematic
-		saveBtn.enabled = fileNameField.getText().trim().length() > 0
-				&& schematicToSave != null && schematicToSave.entities != null
-				&& schematicToSave.tileEntities != null;
+		saveBtn.enabled = fileNameField.getText().trim().length() > 0 && schematicToSave != null
+				&& schematicToSave.entities != null && schematicToSave.tileEntities != null;
 	}
 
 	@Override
@@ -276,6 +254,7 @@ public class GuiSaveSchematic extends GuiScreen {
 		weightField.updateCursorCounter();
 	}
 
+	@Override
 	protected void mouseClicked(int p_73864_1_, int p_73864_2_, int p_73864_3_) {
 		super.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
 		this.fileNameField.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);

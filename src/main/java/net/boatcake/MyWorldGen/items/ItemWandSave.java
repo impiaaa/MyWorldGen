@@ -1,5 +1,10 @@
 package net.boatcake.MyWorldGen.items;
 
+import org.lwjgl.opengl.GL11;
+
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.boatcake.MyWorldGen.network.MessageGetSchemClient;
 import net.boatcake.MyWorldGen.utils.NetUtils;
 import net.boatcake.MyWorldGen.utils.WorldUtils;
@@ -16,12 +21,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 
-import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 public class ItemWandSave extends Item {
 
 	public ItemWandSave() {
@@ -36,9 +35,8 @@ public class ItemWandSave extends Item {
 	}
 
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world,
-			int blockX, int blockY, int blockZ, int side, float hitX,
-			float hitY, float hitZ) {
+	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int blockX, int blockY, int blockZ,
+			int side, float hitX, float hitY, float hitZ) {
 		if (!world.isRemote) {
 			if (stack.hasTagCompound()) {
 				/*
@@ -73,11 +71,9 @@ public class ItemWandSave extends Item {
 					message.x2 = blockX;
 					message.y2 = blockY;
 					message.z2 = blockZ;
-					message.entitiesTag = WorldUtils.getEntities(
-							playerMP.worldObj, message.x1, message.y1,
-							message.z1, message.x2, message.y2, message.z2);
-					message.tileEntitiesTag = WorldUtils.getTileEntities(
-							playerMP.worldObj, message.x1, message.y1,
+					message.entitiesTag = WorldUtils.getEntities(playerMP.worldObj, message.x1, message.y1, message.z1,
+							message.x2, message.y2, message.z2);
+					message.tileEntitiesTag = WorldUtils.getTileEntities(playerMP.worldObj, message.x1, message.y1,
 							message.z1, message.x2, message.y2, message.z2);
 					NetUtils.sendTo(message, playerMP);
 				}
@@ -100,12 +96,9 @@ public class ItemWandSave extends Item {
 
 	@SideOnly(Side.CLIENT)
 	public static void translateToWorldCoords(Entity entity, float frame) {
-		double interpPosX = entity.lastTickPosX
-				+ (entity.posX - entity.lastTickPosX) * frame;
-		double interpPosY = entity.lastTickPosY
-				+ (entity.posY - entity.lastTickPosY) * frame;
-		double interpPosZ = entity.lastTickPosZ
-				+ (entity.posZ - entity.lastTickPosZ) * frame;
+		double interpPosX = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * frame;
+		double interpPosY = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * frame;
+		double interpPosZ = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * frame;
 		GL11.glTranslated(-interpPosX, -interpPosY, -interpPosZ);
 	}
 
@@ -116,8 +109,7 @@ public class ItemWandSave extends Item {
 		EntityPlayerSP player = mc.thePlayer;
 		if (player != null && mc.objectMouseOver != null) {
 			ItemStack stack = player.getHeldItem();
-			if (stack != null && stack.getItem() == this
-					&& stack.hasTagCompound()) {
+			if (stack != null && stack.getItem() == this && stack.hasTagCompound()) {
 				NBTTagCompound tag = stack.getTagCompound();
 				double x1 = tag.getInteger("x");
 				double y1 = tag.getInteger("y");
@@ -153,8 +145,7 @@ public class ItemWandSave extends Item {
 				}
 
 				GL11.glEnable(GL11.GL_BLEND);
-				GL11.glBlendFunc(GL11.GL_SRC_ALPHA,
-						GL11.GL_ONE_MINUS_SRC_ALPHA);
+				GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 				GL11.glDisable(GL11.GL_LIGHTING);
 				GL11.glDisable(GL11.GL_TEXTURE_2D);
 				GL11.glColor4f(0.5F, 0.75F, 1.0F, 0.5F);

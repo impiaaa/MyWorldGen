@@ -5,16 +5,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.ChestGenHooks;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.lwjgl.opengl.GL11;
 
 public class GuiSlotChestGenTypes extends GuiSlotResizable {
 	public FontRenderer fr;
@@ -23,22 +21,19 @@ public class GuiSlotChestGenTypes extends GuiSlotResizable {
 	public String[] hooksTranslated;
 	public GuiScreen parent;
 
-	public GuiSlotChestGenTypes(Minecraft minecraft, GuiScreen parent,
-			FontRenderer fr, int x, int y, int width, int height) {
+	public GuiSlotChestGenTypes(Minecraft minecraft, GuiScreen parent, FontRenderer fr, int x, int y, int width,
+			int height) {
 		super(minecraft, x, y, width, height, 18);
 		selected = 0;
 		this.fr = fr;
 		this.parent = parent;
 
 		try {
-			Field chestInfoField = ChestGenHooks.class
-					.getDeclaredField("chestInfo");
+			Field chestInfoField = ChestGenHooks.class.getDeclaredField("chestInfo");
 			chestInfoField.setAccessible(true);
-			HashMap<String, ChestGenHooks> chestInfo = (HashMap<String, ChestGenHooks>) chestInfoField
-					.get(null);
+			HashMap<String, ChestGenHooks> chestInfo = (HashMap<String, ChestGenHooks>) chestInfoField.get(null);
 			Set<String> keySet = chestInfo.keySet();
-			hooks = ArrayUtils.add(Arrays.copyOf(keySet.toArray(),
-					keySet.size(), String[].class), "");
+			hooks = ArrayUtils.add(Arrays.copyOf(keySet.toArray(), keySet.size(), String[].class), "");
 		} catch (ReflectiveOperationException e) {
 			hooks = new String[] { "" };
 			e.printStackTrace();
@@ -65,8 +60,7 @@ public class GuiSlotChestGenTypes extends GuiSlotResizable {
 	}
 
 	@Override
-	protected void elementClicked(int slotIndex, boolean isDoubleClick,
-			int mouseX, int mouseY) {
+	protected void elementClicked(int slotIndex, boolean isDoubleClick, int mouseX, int mouseY) {
 		selected = slotIndex;
 	}
 
@@ -76,8 +70,7 @@ public class GuiSlotChestGenTypes extends GuiSlotResizable {
 	}
 
 	@Override
-	public void drawSlot(int i, int j, int k, int l, Tessellator tessellator,
-			int var6, int var7) {
+	public void drawSlot(int i, int j, int k, int l, Tessellator tessellator, int var6, int var7) {
 		parent.drawString(fr, hooksTranslated[i], j + 2, k + 1, 0xFFFFFF);
 	}
 }

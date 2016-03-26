@@ -24,9 +24,8 @@ public abstract class BlockAnchorLogic {
 		blockNameToLogic.put(blockName.toLowerCase(Locale.ROOT), this);
 	}
 
-	public abstract boolean matches(int myMeta, TileEntity myTileEntity,
-			World world, int x, int y, int z);
+	public abstract boolean matches(int myMeta, TileEntity myTileEntity, World world, int x, int y, int z);
 
-	public abstract Integer[] getQuickMatchingBlockInChunk(int myMeta,
-			TileEntity myTileEntity, Chunk chunk, Random rand);
+	public abstract Integer[] getQuickMatchingBlockInChunk(int myMeta, TileEntity myTileEntity, Chunk chunk,
+			Random rand);
 }

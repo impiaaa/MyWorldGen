@@ -17,8 +17,7 @@ public class GuiSlotBiomes extends GuiSlotResizable {
 	public ArrayList<String> biomeNames;
 	public GuiScreen parent;
 
-	public GuiSlotBiomes(Minecraft mc, GuiScreen parent, FontRenderer fr,
-			int x, int y, int width, int height) {
+	public GuiSlotBiomes(Minecraft mc, GuiScreen parent, FontRenderer fr, int x, int y, int width, int height) {
 		super(mc, x, y, width, height, 18);
 		selected = new HashSet<Integer>(2);
 		this.fr = fr;
@@ -44,8 +43,7 @@ public class GuiSlotBiomes extends GuiSlotResizable {
 	}
 
 	@Override
-	protected void elementClicked(int slotIndex, boolean isDoubleClick,
-			int mouseX, int mouseY) {
+	protected void elementClicked(int slotIndex, boolean isDoubleClick, int mouseX, int mouseY) {
 		if (selected.contains(slotIndex)) {
 			selected.remove(slotIndex);
 		} else {
@@ -59,8 +57,7 @@ public class GuiSlotBiomes extends GuiSlotResizable {
 	}
 
 	@Override
-	protected void drawSlot(int i, int j, int k, int l, Tessellator tessellator,
-			int var6, int var7) {
+	protected void drawSlot(int i, int j, int k, int l, Tessellator tessellator, int var6, int var7) {
 		parent.drawString(fr, biomeNames.get(i), j + 2, k + 1, 0xFFFFFF);
 	}
 }

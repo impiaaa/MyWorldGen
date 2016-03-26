@@ -10,8 +10,7 @@ import net.minecraft.world.World;
 
 public class WorldUtils {
 
-	public static NBTTagList getEntities(World world, int x1, int y1, int z1,
-			int x2, int y2, int z2) {
+	public static NBTTagList getEntities(World world, int x1, int y1, int z1, int x2, int y2, int z2) {
 		assert !world.isRemote;
 		if (x1 > x2) {
 			int t = x1;
@@ -29,28 +28,23 @@ public class WorldUtils {
 			z2 = t;
 		}
 		NBTTagList entities = new NBTTagList();
-		for (Object o : world.getEntitiesWithinAABB(Entity.class, AxisAlignedBB
-				.getBoundingBox(x1 - 0.5, y1 - 0.5, z1 - 0.5, x2 + 0.5,
-						y2 + 0.5, z2 + 0.5))) {
+		for (Object o : world.getEntitiesWithinAABB(Entity.class,
+				AxisAlignedBB.getBoundingBox(x1 - 0.5, y1 - 0.5, z1 - 0.5, x2 + 0.5, y2 + 0.5, z2 + 0.5))) {
 			NBTTagCompound enbt = new NBTTagCompound();
 			((Entity) o).writeToNBTOptional(enbt);
 			if (enbt.hasNoTags()) {
 				continue;
 			}
 			NBTTagList posNBT = (NBTTagList) enbt.getTag("Pos");
-			posNBT.func_150304_a(0, new NBTTagDouble(posNBT.func_150309_d(0)
-					- x1));
-			posNBT.func_150304_a(1, new NBTTagDouble(posNBT.func_150309_d(1)
-					- y1));
-			posNBT.func_150304_a(2, new NBTTagDouble(posNBT.func_150309_d(2)
-					- z1));
+			posNBT.func_150304_a(0, new NBTTagDouble(posNBT.func_150309_d(0) - x1));
+			posNBT.func_150304_a(1, new NBTTagDouble(posNBT.func_150309_d(1) - y1));
+			posNBT.func_150304_a(2, new NBTTagDouble(posNBT.func_150309_d(2) - z1));
 			entities.appendTag(enbt);
 		}
 		return entities;
 	}
 
-	public static NBTTagList getTileEntities(World world, int x1, int y1,
-			int z1, int x2, int y2, int z2) {
+	public static NBTTagList getTileEntities(World world, int x1, int y1, int z1, int x2, int y2, int z2) {
 		assert !world.isRemote;
 		if (x1 > x2) {
 			int t = x1;

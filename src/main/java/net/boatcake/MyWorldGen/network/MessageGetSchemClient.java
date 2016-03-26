@@ -1,11 +1,13 @@
 package net.boatcake.MyWorldGen.network;
 
+import java.io.IOException;
+
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
-
-import java.io.IOException;
-
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.Schematic;
 import net.boatcake.MyWorldGen.client.GuiSaveSchematic;
@@ -15,12 +17,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageGetSchemClient implements IMessage,
-		IMessageHandler<MessageGetSchemClient, IMessage> {
+public class MessageGetSchemClient implements IMessage, IMessageHandler<MessageGetSchemClient, IMessage> {
 	public NBTTagList entitiesTag;
 	public NBTTagList tileEntitiesTag;
 	public int x1, y1, z1;
@@ -64,9 +62,8 @@ public class MessageGetSchemClient implements IMessage,
 		if (currentScreen instanceof GuiSaveSchematic) {
 			GuiSaveSchematic guiSchematic = (GuiSaveSchematic) currentScreen;
 
-			guiSchematic.schematicToSave = new Schematic(playerMP.worldObj,
-					message.x1, message.y1, message.z1, message.x2, message.y2,
-					message.z2);
+			guiSchematic.schematicToSave = new Schematic(playerMP.worldObj, message.x1, message.y1, message.z1,
+					message.x2, message.y2, message.z2);
 			guiSchematic.schematicToSave.entities = message.entitiesTag;
 			guiSchematic.schematicToSave.tileEntities = message.tileEntitiesTag;
 			guiSchematic.updateSaveButton();

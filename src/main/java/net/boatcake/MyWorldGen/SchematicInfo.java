@@ -32,12 +32,10 @@ public class SchematicInfo {
 	}
 
 	public boolean matchesBiome(BiomeGenBase biome) {
-		if ((excludeBiomes != null)
-				&& (containsIgnoreCase(excludeBiomes, biome.biomeName))) {
+		if ((excludeBiomes != null) && (containsIgnoreCase(excludeBiomes, biome.biomeName))) {
 			return false;
 		}
-		if ((onlyIncludeBiomes != null)
-				&& (!containsIgnoreCase(onlyIncludeBiomes, biome.biomeName))) {
+		if ((onlyIncludeBiomes != null) && (!containsIgnoreCase(onlyIncludeBiomes, biome.biomeName))) {
 			return false;
 		}
 		return true;

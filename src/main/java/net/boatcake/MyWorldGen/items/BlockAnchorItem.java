@@ -19,9 +19,7 @@ public class BlockAnchorItem extends ItemBlock {
 
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
-		return super.getUnlocalizedName()
-				+ "."
-				+ BlockAnchorMaterial.AnchorType.get(stack.getItemDamage()).name
-						.toLowerCase();
+		return super.getUnlocalizedName() + "."
+				+ BlockAnchorMaterial.AnchorType.get(stack.getItemDamage()).name.toLowerCase();
 	}
 }

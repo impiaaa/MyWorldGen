@@ -2,6 +2,8 @@ package net.boatcake.MyWorldGen.client;
 
 import java.io.FileInputStream;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.boatcake.MyWorldGen.BlockPlacementOption;
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.network.MessagePlaceSchem;
@@ -15,8 +17,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiLoadSchematic extends GuiScreen {
@@ -30,8 +30,7 @@ public class GuiLoadSchematic extends GuiScreen {
 	private EntityClientPlayerMP player;
 	private BlockPlacementOption placementOption;
 
-	public GuiLoadSchematic(World world, int x, int y, int z,
-			ForgeDirection direction, EntityClientPlayerMP player) {
+	public GuiLoadSchematic(World world, int x, int y, int z, ForgeDirection direction, EntityClientPlayerMP player) {
 		super();
 		this.world = world;
 		this.x = x;
@@ -56,11 +55,9 @@ public class GuiLoadSchematic extends GuiScreen {
 				// better to make sure that it's valid NBT first.
 				try {
 					message.schematicTag = CompressedStreamTools
-							.readCompressed(new FileInputStream(
-									slot.files[slot.selected]));
+							.readCompressed(new FileInputStream(slot.files[slot.selected]));
 				} catch (Exception exc) {
-					this.mc.displayGuiScreen(new GuiErrorScreen(exc.getClass()
-							.getName(), exc.getLocalizedMessage()));
+					this.mc.displayGuiScreen(new GuiErrorScreen(exc.getClass().getName(), exc.getLocalizedMessage()));
 					exc.printStackTrace();
 					return;
 				}
@@ -68,8 +65,7 @@ public class GuiLoadSchematic extends GuiScreen {
 				this.mc.displayGuiScreen(null);
 			} else if (button.id == placementButton.id) {
 				placementOption = placementOption.next;
-				placementButton.displayString = I18n
-						.format(placementOption.text);
+				placementButton.displayString = I18n.format(placementOption.text);
 			} else {
 				slot.actionPerformed(button);
 			}
@@ -85,12 +81,12 @@ public class GuiLoadSchematic extends GuiScreen {
 
 	@Override
 	public void initGui() {
-		buttonList.add(placementButton = new GuiButton(0, this.width / 2 - 154,
-				this.height - 52, 150, 20, I18n.format(placementOption.text)));
-		buttonList.add(doneButton = new GuiButton(1, this.width / 2 + 4,
-				this.height - 52, 150, 20, I18n.format("gui.done")));
-		slot = new GuiSlotFile(this.mc, this, MyWorldGen.globalSchemDir,
-				this.fontRendererObj, new SchematicFilenameFilter());
+		buttonList.add(placementButton = new GuiButton(0, this.width / 2 - 154, this.height - 52, 150, 20,
+				I18n.format(placementOption.text)));
+		buttonList.add(
+				doneButton = new GuiButton(1, this.width / 2 + 4, this.height - 52, 150, 20, I18n.format("gui.done")));
+		slot = new GuiSlotFile(this.mc, this, MyWorldGen.globalSchemDir, this.fontRendererObj,
+				new SchematicFilenameFilter());
 		slot.registerScrollButtons(2, 3);
 	}
 }

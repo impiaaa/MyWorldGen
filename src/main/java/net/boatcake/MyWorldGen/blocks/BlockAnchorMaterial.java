@@ -2,6 +2,8 @@ package net.boatcake.MyWorldGen.blocks;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -9,16 +11,12 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 	public enum AnchorType {
-		GROUND(0, "Ground", null), AIR(1, "Air", null), STONE(2, "Stone",
-				Material.rock), WATER(3, "Water", Material.water), LAVA(4,
-				"Lava", Material.lava), DIRT(5, "Dirt", Material.ground), WOOD(
-				6, "Wood", Material.wood), LEAVES(7, "Leaves", Material.leaves), SAND(
-				8, "Sand", Material.sand);
+		GROUND(0, "Ground", null), AIR(1, "Air", null), STONE(2, "Stone", Material.rock), WATER(3, "Water",
+				Material.water), LAVA(4, "Lava", Material.lava), DIRT(5, "Dirt", Material.ground), WOOD(6, "Wood",
+						Material.wood), LEAVES(7, "Leaves", Material.leaves), SAND(8, "Sand", Material.sand);
 
 		public static AnchorType get(int id) {
 			for (AnchorType a : AnchorType.values()) {
@@ -61,8 +59,7 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTabs,
-			List subBlockList) {
+	public void getSubBlocks(Item item, CreativeTabs creativeTabs, List subBlockList) {
 		for (AnchorType a : AnchorType.values()) {
 			subBlockList.add(new ItemStack(item, 1, a.id));
 		}
@@ -73,8 +70,7 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 	public void registerBlockIcons(IIconRegister iconRegister) {
 		icons = new IIcon[16];
 		for (AnchorType a : AnchorType.values()) {
-			this.icons[a.id] = iconRegister.registerIcon(this.getTextureName()
-					+ a.name);
+			this.icons[a.id] = iconRegister.registerIcon(this.getTextureName() + a.name);
 		}
 	}
 }

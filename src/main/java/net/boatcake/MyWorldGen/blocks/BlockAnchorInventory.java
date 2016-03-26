@@ -8,8 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockAnchorInventory extends BlockContainer implements
-		BlockAnchorBase, ITileEntityProvider {
+public class BlockAnchorInventory extends BlockContainer implements BlockAnchorBase, ITileEntityProvider {
 
 	public BlockAnchorInventory(Material par2Material) {
 		super(par2Material);
@@ -23,8 +22,8 @@ public class BlockAnchorInventory extends BlockContainer implements
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z,
-			EntityPlayer player, int par6, float par7, float par8, float par9) {
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7,
+			float par8, float par9) {
 		TileEntity tileEntity = world.getTileEntity(x, y, z);
 		if (tileEntity == null || player.isSneaking()) {
 			return false;

@@ -2,6 +2,20 @@ package net.boatcake.MyWorldGen;
 
 import java.io.File;
 
+import org.apache.logging.log4j.Logger;
+
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameData;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorInventory;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorInventoryLogic;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorLogic;
@@ -24,21 +38,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-
-import org.apache.logging.log4j.Logger;
-
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.4", dependencies = "after:OpenBlocks")
 public class MyWorldGen {
@@ -81,11 +80,8 @@ public class MyWorldGen {
 			FileUtils.extractSchematics(sourceFile);
 		}
 
-		FMLInterModComms
-				.sendMessage(
-						"OpenBlocks",
-						"donateUrl",
-						"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=UHDDACLRN2T46&lc=US&item_name=MyWorldGen&currency_code=USD&bn=PP-DonationsBF:btn_donate_SM.gif:NonHosted");
+		FMLInterModComms.sendMessage("OpenBlocks", "donateUrl",
+				"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=UHDDACLRN2T46&lc=US&item_name=MyWorldGen&currency_code=USD&bn=PP-DonationsBF:btn_donate_SM.gif:NonHosted");
 
 		sidedProxy.registerResourceHandler(worldGen);
 	}
@@ -102,9 +98,7 @@ public class MyWorldGen {
 		cfg.load();
 
 		enableItemsAndBlocks = cfg
-				.get("configuration",
-						"enableItemsAndBlocks",
-						true,
+				.get("configuration", "enableItemsAndBlocks", true,
 						"Turn this off if you're running a server and the clients don't have the mod installed")
 				.getBoolean(true);
 		if (!enableItemsAndBlocks) {
@@ -115,17 +109,14 @@ public class MyWorldGen {
 			creativeTab = new CreativeTabs("tabMyWorldGen") {
 				@Override
 				public Item getTabIconItem() {
-					return Item
-							.getItemFromBlock(materialAnchorBlock == null ? Blocks.grass
-									: materialAnchorBlock);
+					return Item.getItemFromBlock(materialAnchorBlock == null ? Blocks.grass : materialAnchorBlock);
 				}
 			};
 		}
 
 		try {
 			Property prop;
-			materialAnchorBlock = registerBlock("anchor",
-					BlockAnchorMaterial.class, BlockAnchorItem.class,
+			materialAnchorBlock = registerBlock("anchor", BlockAnchorMaterial.class, BlockAnchorItem.class,
 					BlockAnchorMaterialLogic.class);
 			new BlockPlacementMaterialAnchor(MODID + ":anchor");
 
@@ -133,12 +124,10 @@ public class MyWorldGen {
 			if (materialAnchorBlock == null) {
 				defaultId = 1575;
 			} else {
-				defaultId = GameData.getBlockRegistry().getId(
-						materialAnchorBlock);
+				defaultId = GameData.getBlockRegistry().getId(materialAnchorBlock);
 			}
-			prop = cfg
-					.get("blocks", "materialAnchorBlock",
-							"Default ID for when an ID map is not found in a schematic");
+			prop = cfg.get("blocks", "materialAnchorBlock",
+					"Default ID for when an ID map is not found in a schematic");
 			materialAnchorBlockId = prop.getInt(defaultId);
 
 			ignoreBlock = registerBlock("ignore", BlockIgnore.class);
@@ -148,24 +137,19 @@ public class MyWorldGen {
 			} else {
 				defaultId = GameData.getBlockRegistry().getId(ignoreBlock);
 			}
-			prop = cfg
-					.get("blocks", "ignoreBlock",
-							"Default ID for when an ID map is not found in a schematic");
+			prop = cfg.get("blocks", "ignoreBlock", "Default ID for when an ID map is not found in a schematic");
 			ignoreBlockId = prop.getInt(defaultId);
 
-			inventoryAnchorBlock = registerBlock("anchorInventory",
-					BlockAnchorInventory.class, ItemBlock.class,
+			inventoryAnchorBlock = registerBlock("anchorInventory", BlockAnchorInventory.class, ItemBlock.class,
 					BlockAnchorInventoryLogic.class);
 			new BlockPlacementIgnore(MODID + ":anchorInventory");
 			if (inventoryAnchorBlock == null) {
 				defaultId = 1577;
 			} else {
-				defaultId = GameData.getBlockRegistry().getId(
-						inventoryAnchorBlock);
+				defaultId = GameData.getBlockRegistry().getId(inventoryAnchorBlock);
 			}
-			prop = cfg
-					.get("blocks", "inventoryAnchorBlock",
-							"Default ID for when an ID map is not found in a schematic");
+			prop = cfg.get("blocks", "inventoryAnchorBlock",
+					"Default ID for when an ID map is not found in a schematic");
 			inventoryAnchorBlockId = prop.getInt(defaultId);
 
 			wandSave = registerItem("wandSave", ItemWandSave.class, cfg);
@@ -176,27 +160,21 @@ public class MyWorldGen {
 			throw new Exception("Self-reflection failed. Is the mod intact?", e);
 		}
 
-		String worldGenDir = cfg.get("configuration", "schematicDirectory",
-				"worldgen", "Subdirectory of .minecraft").getString();
+		String worldGenDir = cfg.get("configuration", "schematicDirectory", "worldgen", "Subdirectory of .minecraft")
+				.getString();
 		globalSchemDir = sidedProxy.getGlobalSchemDir(worldGenDir);
 
-		generateNothingWeight = cfg
-				.get("configuration", "generateNothingWeight", 10,
-						"Increase this number to generate fewer structures, decrease to generate more.")
-				.getInt(10);
+		generateNothingWeight = cfg.get("configuration", "generateNothingWeight", 10,
+				"Increase this number to generate fewer structures, decrease to generate more.").getInt(10);
 		generateTries = cfg
-				.get("configuration",
-						"generateTries",
-						128,
+				.get("configuration", "generateTries", 128,
 						"Increase this if you have structures with complex anchor block layouts. Higher numbers will make longer load times.")
 				.getInt(128);
 
 		baseGenerateChance = cfg
-				.get("configuration",
-						"baseGenerateChance",
-						1.0,
-						"Base chance for generating in a given chunk. Compounds with generateNothingWeight.",
-						0.0, 1.0).getDouble(1.0);
+				.get("configuration", "baseGenerateChance", 1.0,
+						"Base chance for generating in a given chunk. Compounds with generateNothingWeight.", 0.0, 1.0)
+				.getDouble(1.0);
 
 		if (cfg.hasChanged()) {
 			cfg.save();
@@ -204,41 +182,33 @@ public class MyWorldGen {
 
 		worldGen = new WorldGenerator();
 
-		GameRegistry.registerTileEntity(TileEntityAnchorInventory.class,
-				"anchorInventory");
+		GameRegistry.registerTileEntity(TileEntityAnchorInventory.class, "anchorInventory");
 		GameRegistry.registerWorldGenerator(worldGen, 0);
 	}
 
 	private Block registerBlock(String name, Class<? extends Block> blockClass,
-			Class<? extends ItemBlock> itemBlockClass,
-			Class<? extends BlockAnchorLogic> matching, Object... itemCtorArgs)
-			throws Exception {
+			Class<? extends ItemBlock> itemBlockClass, Class<? extends BlockAnchorLogic> matching,
+			Object... itemCtorArgs) throws Exception {
 		Block block = null;
 		if (enableItemsAndBlocks) {
 			block = blockClass.getConstructor(Material.class).newInstance(Material.iron);
 			block.setBlockName(name);
 			block.setBlockTextureName(MyWorldGen.MODID + ":" + name);
 			block.setCreativeTab(creativeTab);
-			GameRegistry
-					.registerBlock(block,
-							(itemBlockClass == null) ? ItemBlock.class
-									: itemBlockClass, name, itemCtorArgs);
+			GameRegistry.registerBlock(block, (itemBlockClass == null) ? ItemBlock.class : itemBlockClass, name,
+					itemCtorArgs);
 		}
 		if (matching != null) {
-			matching.getConstructor(String.class).newInstance(
-					MyWorldGen.MODID + ":" + name);
+			matching.getConstructor(String.class).newInstance(MyWorldGen.MODID + ":" + name);
 		}
 		return block;
 	}
 
-	private Block registerBlock(String name, Class<? extends Block> blockClass)
-			throws Exception {
-		return registerBlock(name, blockClass, ItemBlock.class, null,
-				new Object[] {});
+	private Block registerBlock(String name, Class<? extends Block> blockClass) throws Exception {
+		return registerBlock(name, blockClass, ItemBlock.class, null, new Object[] {});
 	}
 
-	private Item registerItem(String name, Class<? extends Item> itemClass,
-			Configuration cfg) throws Exception {
+	private Item registerItem(String name, Class<? extends Item> itemClass, Configuration cfg) throws Exception {
 		Item item = null;
 		if (enableItemsAndBlocks) {
 			item = itemClass.getConstructor().newInstance();

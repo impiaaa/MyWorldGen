@@ -15,14 +15,12 @@ public class BlockIgnore extends Block {
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World,
-			int par2, int par3, int par4) {
+	public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4) {
 		return null;
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z,
-			ForgeDirection side) {
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 		return true;
 	}
 
