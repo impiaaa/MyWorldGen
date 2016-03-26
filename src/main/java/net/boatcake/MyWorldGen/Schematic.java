@@ -354,14 +354,14 @@ public class Schematic {
 		}
 
 		// late update
-		for (int x = -1; x < width+1; x++) {
-			for (int y = -1; y < height+1; y++) {
-				for (int z = -1; z < length+1; z++) {
+		for (int x = -1; x < width + 1; x++) {
+			for (int y = -1; y < height + 1; y++) {
+				for (int z = -1; z < length + 1; z++) {
 					BlockPos pos = new BlockPos(x, y, z);
 					Vec3d rotatedCoords = DirectionUtils.rotateCoords(pos, offset, rot);
 					BlockPos rotatedPos = new BlockPos(rotatedCoords);
-					
-                    world.notifyBlockOfStateChange(rotatedPos, world.getBlockState(rotatedPos).getBlock());
+
+					world.notifyBlockOfStateChange(rotatedPos, world.getBlockState(rotatedPos).getBlock());
 				}
 			}
 		}
@@ -435,22 +435,22 @@ public class Schematic {
 			if (rand.nextInt(64) <= 62) { // 1/64 chance to place
 				return null;
 			}
-			BlockPos middleBottomOfSchematic = new BlockPos(width/2, 0, height/2);
-			BlockPos worldAnchorPos = BlockAnchorMaterialLogic.getQuickMatchingBlockInChunkStatic(AnchorType.GROUND, chunk, rand);
+			BlockPos middleBottomOfSchematic = new BlockPos(width / 2, 0, height / 2);
+			BlockPos worldAnchorPos = BlockAnchorMaterialLogic.getQuickMatchingBlockInChunkStatic(AnchorType.GROUND,
+					chunk, rand);
 			if (worldAnchorPos != null) {
-				Vec3d worldSchematicPos = DirectionUtils.rotateCoords(new BlockPos(0, 0, 0).subtract(middleBottomOfSchematic),
-						new Vec3d(worldAnchorPos), rotation);
+				Vec3d worldSchematicPos = DirectionUtils.rotateCoords(
+						new BlockPos(0, 0, 0).subtract(middleBottomOfSchematic), new Vec3d(worldAnchorPos), rotation);
 				return new BlockPos(worldSchematicPos);
-			}
-			else {
+			} else {
 				return null;
 			}
-		}
-		else {
+		} else {
 			ArrayList<BlockPos> shuffledAnchors = (ArrayList<BlockPos>) anchorBlockLocations.clone();
 			Collections.shuffle(shuffledAnchors, rand);
 			for (BlockPos anchorPos : shuffledAnchors) {
-				BlockAnchorLogic matching = matchingMap.get(blocks[anchorPos.getX()][anchorPos.getY()][anchorPos.getZ()]);
+				BlockAnchorLogic matching = matchingMap
+						.get(blocks[anchorPos.getX()][anchorPos.getY()][anchorPos.getZ()]);
 				int anchorMeta = meta[anchorPos.getX()][anchorPos.getY()][anchorPos.getZ()];
 				TileEntity anchorEntity = getTileEntityAt(chunk.getWorld().getMinecraftServer(), anchorPos);
 				BlockPos worldAnchorPos = matching.getQuickMatchingBlockInChunk(anchorMeta, anchorEntity, chunk, rand);

@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.IWorldGenerator;
 public class WorldGenerator implements IWorldGenerator {
 	private List<Schematic> worldgenFolderSchemList;
 	public List<Schematic> resourcePackSchemList;
-	
+
 	// Dumb lock to prevent stack overflow when structures cause chunks to
 	// generate
 	// TODO: Ideally, structures should not ever cause chunks to generate,

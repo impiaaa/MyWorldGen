@@ -39,7 +39,7 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 	public BlockPos getQuickMatchingBlockInChunk(int myMeta, TileEntity myTileEntity, Chunk chunk, Random rand) {
 		return getQuickMatchingBlockInChunkStatic(AnchorType.get(myMeta), chunk, rand);
 	}
-	
+
 	public static BlockPos getQuickMatchingBlockInChunkStatic(AnchorType myType, Chunk chunk, Random rand) {
 		int xPosInChunk = rand.nextInt(16);
 		int zPosInChunk = rand.nextInt(16);
