@@ -33,7 +33,7 @@ public class BlockIgnore extends Block {
 	}
 
 	@Override
-	public boolean isFullBlock(IBlockState state) {
+	public boolean isFullCube(IBlockState state) {
 		return false;
 	}
 
