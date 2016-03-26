@@ -15,39 +15,32 @@ import net.minecraft.util.EnumFacing.Axis;
 
 public class BlockRotation {
 	public interface IBlockRotater {
-		public IBlockState getRotatedState(IBlockState initialState,
-				int rotationCount, Axis rotationAxis, IProperty prop);
+		public IBlockState getRotatedState(IBlockState initialState, int rotationCount, Axis rotationAxis,
+				IProperty prop);
 	}
 
 	public static Map<Class, IBlockRotater> rotationMap = new HashMap<Class, IBlockRotater>();
 	static {
 		rotationMap.put(EnumFacing.class, new FacingRotater());
 		rotationMap.put(EnumFacing.Axis.class, new AxisRotater());
-		rotationMap.put(BlockRailBase.EnumRailDirection.class,
-				new RailRotater());
-		rotationMap
-				.put(BlockHugeMushroom.EnumType.class, new MushroomRotater());
+		rotationMap.put(BlockRailBase.EnumRailDirection.class, new RailRotater());
+		rotationMap.put(BlockHugeMushroom.EnumType.class, new MushroomRotater());
 		rotationMap.put(BlockQuartz.EnumType.class, new QuartzRotater());
 		rotationMap.put(BlockLog.EnumAxis.class, new LogRotater());
 	}
 
-	public static IBlockState getRotatedState(IBlockState initialState,
-			int rotationCount, Axis rotationAxis) {
-		for (IProperty prop : (java.util.Set<IProperty>) initialState
-				.getProperties().keySet()) {
+	public static IBlockState getRotatedState(IBlockState initialState, int rotationCount, Axis rotationAxis) {
+		for (IProperty prop : (java.util.Set<IProperty>) initialState.getProperties().keySet()) {
 			IBlockState rotatedState = null;
 			IBlockRotater rotater = null;
 			if (rotationMap.containsKey(prop.getValueClass())) {
 				rotater = rotationMap.get(prop.getValueClass());
-				rotatedState = rotater.getRotatedState(initialState,
-						rotationCount, rotationAxis, prop);
+				rotatedState = rotater.getRotatedState(initialState, rotationCount, rotationAxis, prop);
 			} else {
-				for (Map.Entry<Class, IBlockRotater> entry : rotationMap
-						.entrySet()) {
+				for (Map.Entry<Class, IBlockRotater> entry : rotationMap.entrySet()) {
 					if (entry.getKey().isAssignableFrom(prop.getValueClass())) {
 						rotater = entry.getValue();
-						rotatedState = rotater.getRotatedState(initialState,
-								rotationCount, rotationAxis, prop);
+						rotatedState = rotater.getRotatedState(initialState, rotationCount, rotationAxis, prop);
 						break;
 					}
 				}
@@ -63,8 +56,8 @@ public class BlockRotation {
 
 	private static class FacingRotater implements IBlockRotater {
 		@Override
-		public IBlockState getRotatedState(IBlockState initialState,
-				int rotationCount, Axis rotationAxis, IProperty prop) {
+		public IBlockState getRotatedState(IBlockState initialState, int rotationCount, Axis rotationAxis,
+				IProperty prop) {
 			EnumFacing facing = (EnumFacing) initialState.getValue(prop);
 			for (int i = 0; i < rotationCount; i++) {
 				facing = DirectionUtils.rotateAround(facing, rotationAxis);
@@ -75,14 +68,13 @@ public class BlockRotation {
 
 	private static class AxisRotater implements IBlockRotater {
 		@Override
-		public IBlockState getRotatedState(IBlockState initialState,
-				int rotationCount, Axis rotationAxis, IProperty prop) {
+		public IBlockState getRotatedState(IBlockState initialState, int rotationCount, Axis rotationAxis,
+				IProperty prop) {
 			if (rotationCount % 2 == 0) {
 				// "valid," but identity, rotation
 				return null;
 			}
-			EnumFacing.Axis initialAxis = (EnumFacing.Axis) initialState
-					.getValue(prop);
+			EnumFacing.Axis initialAxis = (EnumFacing.Axis) initialState.getValue(prop);
 			EnumFacing.Axis rotatedAxis;
 			switch (initialAxis) {
 			case X:
@@ -137,13 +129,12 @@ public class BlockRotation {
 	private static class RailRotater implements IBlockRotater {
 
 		@Override
-		public IBlockState getRotatedState(IBlockState initialState,
-				int rotationCount, Axis rotationAxis, IProperty prop) {
+		public IBlockState getRotatedState(IBlockState initialState, int rotationCount, Axis rotationAxis,
+				IProperty prop) {
 			if (rotationAxis != Axis.Y) {
 				return null;
 			}
-			BlockRailBase.EnumRailDirection direction = (BlockRailBase.EnumRailDirection) initialState
-					.getValue(prop);
+			BlockRailBase.EnumRailDirection direction = (BlockRailBase.EnumRailDirection) initialState.getValue(prop);
 			for (int i = 0; i < rotationCount; i++) {
 				switch (direction) {
 				case ASCENDING_EAST:
@@ -187,13 +178,12 @@ public class BlockRotation {
 	private static class MushroomRotater implements IBlockRotater {
 
 		@Override
-		public IBlockState getRotatedState(IBlockState initialState,
-				int rotationCount, Axis rotationAxis, IProperty prop) {
+		public IBlockState getRotatedState(IBlockState initialState, int rotationCount, Axis rotationAxis,
+				IProperty prop) {
 			if (rotationAxis != Axis.Y) {
 				return null;
 			}
-			BlockHugeMushroom.EnumType direction = (BlockHugeMushroom.EnumType) initialState
-					.getValue(prop);
+			BlockHugeMushroom.EnumType direction = (BlockHugeMushroom.EnumType) initialState.getValue(prop);
 			for (int i = 0; i < rotationCount; i++) {
 				switch (direction) {
 				case EAST:
@@ -237,14 +227,13 @@ public class BlockRotation {
 	private static class QuartzRotater implements IBlockRotater {
 
 		@Override
-		public IBlockState getRotatedState(IBlockState initialState,
-				int rotationCount, Axis rotationAxis, IProperty prop) {
+		public IBlockState getRotatedState(IBlockState initialState, int rotationCount, Axis rotationAxis,
+				IProperty prop) {
 			if (rotationCount % 2 == 0) {
 				// "valid," but identity, rotation
 				return null;
 			}
-			BlockQuartz.EnumType type = (BlockQuartz.EnumType) initialState
-					.getValue(prop);
+			BlockQuartz.EnumType type = (BlockQuartz.EnumType) initialState.getValue(prop);
 			switch (rotationAxis) {
 			case X:
 				switch (type) {
@@ -308,14 +297,13 @@ public class BlockRotation {
 	private static class LogRotater implements IBlockRotater {
 
 		@Override
-		public IBlockState getRotatedState(IBlockState initialState,
-				int rotationCount, Axis rotationAxis, IProperty prop) {
+		public IBlockState getRotatedState(IBlockState initialState, int rotationCount, Axis rotationAxis,
+				IProperty prop) {
 			if (rotationCount % 2 == 0) {
 				// "valid," but identity, rotation
 				return null;
 			}
-			BlockLog.EnumAxis type = (BlockLog.EnumAxis) initialState
-					.getValue(prop);
+			BlockLog.EnumAxis type = (BlockLog.EnumAxis) initialState.getValue(prop);
 			switch (rotationAxis) {
 			case X:
 				switch (type) {

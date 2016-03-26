@@ -18,8 +18,7 @@ public class BlockIgnore extends Block {
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(World par1World, BlockPos pos,
-			IBlockState state) {
+	public AxisAlignedBB getCollisionBoundingBox(World par1World, BlockPos pos, IBlockState state) {
 		return null;
 	}
 

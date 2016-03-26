@@ -17,11 +17,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 	public enum AnchorType implements IStringSerializable {
-		GROUND(0, "ground", null), AIR(1, "air", null), STONE(2, "stone",
-				Material.rock), WATER(3, "water", Material.water), LAVA(4,
-				"lava", Material.lava), DIRT(5, "dirt", Material.ground), WOOD(
-				6, "wood", Material.wood), LEAVES(7, "leaves", Material.leaves), SAND(
-				8, "sand", Material.sand);
+		GROUND(0, "ground", null), AIR(1, "air", null), STONE(2, "stone", Material.rock), WATER(3, "water",
+				Material.water), LAVA(4, "lava", Material.lava), DIRT(5, "dirt", Material.ground), WOOD(6, "wood",
+						Material.wood), LEAVES(7, "leaves", Material.leaves), SAND(8, "sand", Material.sand);
 
 		public static AnchorType get(int id) {
 			for (AnchorType a : AnchorType.values()) {
@@ -48,8 +46,7 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 		}
 	}
 
-	public static final PropertyEnum TYPE_PROP = PropertyEnum.create("type",
-			AnchorType.class);
+	public static final PropertyEnum TYPE_PROP = PropertyEnum.create("type", AnchorType.class);
 
 	public BlockAnchorMaterial(Material par2Material) {
 		super(par2Material);
@@ -65,8 +62,7 @@ public class BlockAnchorMaterial extends Block implements BlockAnchorBase {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTabs,
-			List subBlockList) {
+	public void getSubBlocks(Item item, CreativeTabs creativeTabs, List subBlockList) {
 		for (AnchorType a : AnchorType.values()) {
 			subBlockList.add(new ItemStack(item, 1, a.id));
 		}

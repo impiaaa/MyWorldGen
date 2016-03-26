@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.logging.log4j.Level;
+
 import net.boatcake.MyWorldGen.utils.DirectionUtils;
 import net.boatcake.MyWorldGen.utils.SchematicFilenameFilter;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -21,12 +23,10 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
-import org.apache.logging.log4j.Level;
-
 public class WorldGenerator implements IWorldGenerator {
 	private List<Schematic> worldgenFolderSchemList;
 	public List<Schematic> resourcePackSchemList;
-	
+
 	// Dumb lock to prevent stack overflow when structures cause chunks to
 	// generate
 	// TODO: Ideally, structures should not ever cause chunks to generate,
@@ -43,38 +43,33 @@ public class WorldGenerator implements IWorldGenerator {
 	}
 
 	public void addSchematicsFromDirectory(File schemDirectory) {
-		File[] schemFiles = schemDirectory
-				.listFiles(new SchematicFilenameFilter());
+		File[] schemFiles = schemDirectory.listFiles(new SchematicFilenameFilter());
 		Arrays.sort(schemFiles);
 		worldgenFolderSchemList.clear();
 		for (File schemFile : schemFiles) {
 			try {
-				addSchemFromStream(worldgenFolderSchemList,
-						new FileInputStream(schemFile), schemFile.getName());
+				addSchemFromStream(worldgenFolderSchemList, new FileInputStream(schemFile), schemFile.getName());
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}
-		MyWorldGen.log.log(Level.INFO, "Loaded {} schematics from {}",
-				worldgenFolderSchemList.size(), schemDirectory.toString());
+		MyWorldGen.log.log(Level.INFO, "Loaded {} schematics from {}", worldgenFolderSchemList.size(),
+				schemDirectory.toString());
 	}
 
-	public void addSchemFromStream(Collection<Schematic> section,
-			InputStream stream, String name) throws IOException {
-		Schematic newSchem = new Schematic(
-				CompressedStreamTools.readCompressed(stream), name);
+	public void addSchemFromStream(Collection<Schematic> section, InputStream stream, String name) throws IOException {
+		Schematic newSchem = new Schematic(CompressedStreamTools.readCompressed(stream), name);
 		section.add(newSchem);
 	}
 
 	@Override
-	public void generate(Random random, int chunkX, int chunkZ, World world,
-			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
+	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator,
+			IChunkProvider chunkProvider) {
 		if (currentlyGenerating > GENERATING_STACK_LIMIT) {
 			return;
 		}
 		currentlyGenerating++;
-		if (world.getWorldInfo().isMapFeaturesEnabled()
-				&& random.nextDouble() < MyWorldGen.baseGenerateChance) {
+		if (world.getWorldInfo().isMapFeaturesEnabled() && random.nextDouble() < MyWorldGen.baseGenerateChance) {
 			List<WeightedRandom.Item> applicableSchematics = new ArrayList<WeightedRandom.Item>();
 			BlockPos chunkPos = new BlockPos(chunkX * 16, 0, chunkZ * 16);
 			for (Schematic s : worldgenFolderSchemList) {
@@ -88,36 +83,24 @@ public class WorldGenerator implements IWorldGenerator {
 				}
 			}
 			if (!applicableSchematics.isEmpty()) {
-				WeightedRandom.Item noStructureItem = new WeightedRandom.Item(
-						MyWorldGen.generateNothingWeight);
+				WeightedRandom.Item noStructureItem = new WeightedRandom.Item(MyWorldGen.generateNothingWeight);
 				applicableSchematics.add(noStructureItem);
-				WeightedRandom.Item selectedItem = WeightedRandom
-						.getRandomItem(random, applicableSchematics);
+				WeightedRandom.Item selectedItem = WeightedRandom.getRandomItem(random, applicableSchematics);
 				if (selectedItem != noStructureItem) {
 					Schematic schemToGenerate = ((WeightedRandomSchematic) selectedItem).schematic;
 					if (schemToGenerate.info.fuzzyMatching) {
-						Chunk chunk = world.getChunkFromChunkCoords(chunkX,
-								chunkZ);
+						Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 						EnumFacing randomDirection;
 						if (schemToGenerate.info.lockRotation) {
 							randomDirection = EnumFacing.SOUTH;
 						} else {
-							randomDirection = DirectionUtils.cardinalDirections[random
-									.nextInt(4)];
+							randomDirection = DirectionUtils.cardinalDirections[random.nextInt(4)];
 						}
-						BlockPos pos = schemToGenerate
-								.getFuzzyMatchingLocation(chunk,
-										randomDirection, random);
+						BlockPos pos = schemToGenerate.getFuzzyMatchingLocation(chunk, randomDirection, random);
 						if (pos != null) {
-							schemToGenerate.placeInWorld(world, pos,
-									randomDirection, true, true, true, random);
-							MyWorldGen.log
-									.log(Level.DEBUG,
-											"Generated {} at {}, {}, {}",
-											new Object[] {
-													schemToGenerate.info.name,
-													pos.getX(), pos.getY(),
-													pos.getZ() });
+							schemToGenerate.placeInWorld(world, pos, randomDirection, true, true, true, random);
+							MyWorldGen.log.log(Level.DEBUG, "Generated {} at {}, {}, {}",
+									new Object[] { schemToGenerate.info.name, pos.getX(), pos.getY(), pos.getZ() });
 						}
 					} else {
 						for (int i = 0; i < MyWorldGen.generateTries; i++) {
@@ -129,20 +112,12 @@ public class WorldGenerator implements IWorldGenerator {
 							if (schemToGenerate.info.lockRotation) {
 								randomDirection = EnumFacing.SOUTH;
 							} else {
-								randomDirection = DirectionUtils.cardinalDirections[random
-										.nextInt(4)];
+								randomDirection = DirectionUtils.cardinalDirections[random.nextInt(4)];
 							}
-							if (schemToGenerate.fitsIntoWorldAt(world, pos,
-									randomDirection)) {
-								schemToGenerate.placeInWorld(world, pos,
-										randomDirection, true, true, true,
-										random);
-								MyWorldGen.log
-										.log(Level.DEBUG,
-												"Generated {} at {}, {}, {}; took {} tries",
-												new Object[] {
-														schemToGenerate.info.name,
-														x, y, z, i + 1 });
+							if (schemToGenerate.fitsIntoWorldAt(world, pos, randomDirection)) {
+								schemToGenerate.placeInWorld(world, pos, randomDirection, true, true, true, random);
+								MyWorldGen.log.log(Level.DEBUG, "Generated {} at {}, {}, {}; took {} tries",
+										new Object[] { schemToGenerate.info.name, x, y, z, i + 1 });
 								break;
 							}
 						}

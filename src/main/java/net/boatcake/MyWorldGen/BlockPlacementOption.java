@@ -1,8 +1,8 @@
 package net.boatcake.MyWorldGen;
 
 public enum BlockPlacementOption {
-	ASGENERATED("gui.placement.asgenerated", 0, true, true, true), LOSSLESS(
-			"gui.placement.lossless", 1, false, false, false);
+	ASGENERATED("gui.placement.asgenerated", 0, true, true, true), LOSSLESS("gui.placement.lossless", 1, false, false,
+			false);
 
 	public String text;
 	public BlockPlacementOption next;
@@ -16,8 +16,8 @@ public enum BlockPlacementOption {
 		LOSSLESS.next = ASGENERATED;
 	}
 
-	private BlockPlacementOption(String text, int id, boolean generateChests,
-			boolean generateSpawners, boolean followPlacementRules) {
+	private BlockPlacementOption(String text, int id, boolean generateChests, boolean generateSpawners,
+			boolean followPlacementRules) {
 		this.text = text;
 		this.id = id;
 		this.generateChests = generateChests;

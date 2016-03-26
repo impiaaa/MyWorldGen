@@ -1,12 +1,11 @@
 package net.boatcake.MyWorldGen.network;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
-import io.netty.buffer.ByteBufOutputStream;
-
 import java.io.IOException;
 import java.util.Random;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
 import net.boatcake.MyWorldGen.BlockPlacementOption;
 import net.boatcake.MyWorldGen.Schematic;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -18,8 +17,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessagePlaceSchem implements IMessage,
-		IMessageHandler<MessagePlaceSchem, IMessage> {
+public class MessagePlaceSchem implements IMessage, IMessageHandler<MessagePlaceSchem, IMessage> {
 	public EnumFacing direction;
 	public NBTTagCompound schematicTag;
 	public BlockPos pos;
@@ -35,12 +33,10 @@ public class MessagePlaceSchem implements IMessage,
 			e.printStackTrace();
 			return;
 		}
-		pos = new BlockPos(packetTag.getInteger("x"),
-				packetTag.getInteger("y"), packetTag.getInteger("z"));
+		pos = new BlockPos(packetTag.getInteger("x"), packetTag.getInteger("y"), packetTag.getInteger("z"));
 		schematicTag = packetTag.getCompoundTag("schematic");
 		direction = EnumFacing.getFront(packetTag.getInteger("direction"));
-		placementOption = BlockPlacementOption.get(packetTag
-				.getInteger("placementOption"));
+		placementOption = BlockPlacementOption.get(packetTag.getInteger("placementOption"));
 	}
 
 	@Override
@@ -48,10 +44,8 @@ public class MessagePlaceSchem implements IMessage,
 		EntityPlayerMP playerMP = ctx.getServerHandler().playerEntity;
 		// no cheating!
 		if (playerMP.capabilities.isCreativeMode) {
-			new Schematic(message.schematicTag, null).placeInWorld(
-					playerMP.worldObj, message.pos, message.direction,
-					message.placementOption.generateChests,
-					message.placementOption.generateSpawners,
+			new Schematic(message.schematicTag, null).placeInWorld(playerMP.worldObj, message.pos, message.direction,
+					message.placementOption.generateChests, message.placementOption.generateSpawners,
 					message.placementOption.followPlacementRules, new Random());
 		}
 		return null;

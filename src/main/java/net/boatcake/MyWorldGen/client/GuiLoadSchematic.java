@@ -53,11 +53,9 @@ public class GuiLoadSchematic extends GuiScreen {
 				// better to make sure that it's valid NBT first.
 				try {
 					message.schematicTag = CompressedStreamTools
-							.readCompressed(new FileInputStream(
-									slot.files[slot.selected]));
+							.readCompressed(new FileInputStream(slot.files[slot.selected]));
 				} catch (Exception exc) {
-					this.mc.displayGuiScreen(new GuiErrorScreen(exc.getClass()
-							.getName(), exc.getLocalizedMessage()));
+					this.mc.displayGuiScreen(new GuiErrorScreen(exc.getClass().getName(), exc.getLocalizedMessage()));
 					exc.printStackTrace();
 					return;
 				}
@@ -65,8 +63,7 @@ public class GuiLoadSchematic extends GuiScreen {
 				this.mc.displayGuiScreen(null);
 			} else if (button.id == placementButton.id) {
 				placementOption = placementOption.next;
-				placementButton.displayString = I18n
-						.format(placementOption.text);
+				placementButton.displayString = I18n.format(placementOption.text);
 			} else {
 				slot.actionPerformed(button);
 			}
@@ -82,12 +79,12 @@ public class GuiLoadSchematic extends GuiScreen {
 
 	@Override
 	public void initGui() {
-		buttonList.add(placementButton = new GuiButton(0, this.width / 2 - 154,
-				this.height - 52, 150, 20, I18n.format(placementOption.text)));
-		buttonList.add(doneButton = new GuiButton(1, this.width / 2 + 4,
-				this.height - 52, 150, 20, I18n.format("gui.done")));
-		slot = new GuiSlotFile(this.mc, this, MyWorldGen.globalSchemDir,
-				this.fontRendererObj, new SchematicFilenameFilter());
+		buttonList.add(placementButton = new GuiButton(0, this.width / 2 - 154, this.height - 52, 150, 20,
+				I18n.format(placementOption.text)));
+		buttonList.add(
+				doneButton = new GuiButton(1, this.width / 2 + 4, this.height - 52, 150, 20, I18n.format("gui.done")));
+		slot = new GuiSlotFile(this.mc, this, MyWorldGen.globalSchemDir, this.fontRendererObj,
+				new SchematicFilenameFilter());
 		slot.registerScrollButtons(2, 3);
 	}
 }

@@ -5,13 +5,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.ChestGenHooks;
-
-import org.apache.commons.lang3.ArrayUtils;
 
 public class GuiSlotChestGenTypes extends GuiSlotResizable {
 	public FontRenderer fr;
@@ -20,22 +20,18 @@ public class GuiSlotChestGenTypes extends GuiSlotResizable {
 	public String[] hooksTranslated;
 	public GuiScreen parent;
 
-	public GuiSlotChestGenTypes(Minecraft mc, GuiScreen parent,
-			FontRenderer fr, int x, int y, int width, int height) {
+	public GuiSlotChestGenTypes(Minecraft mc, GuiScreen parent, FontRenderer fr, int x, int y, int width, int height) {
 		super(mc, x, y, width, height, 18);
 		selected = 0;
 		this.fr = fr;
 		this.parent = parent;
 
 		try {
-			Field chestInfoField = ChestGenHooks.class
-					.getDeclaredField("chestInfo");
+			Field chestInfoField = ChestGenHooks.class.getDeclaredField("chestInfo");
 			chestInfoField.setAccessible(true);
-			HashMap<String, ChestGenHooks> chestInfo = (HashMap<String, ChestGenHooks>) chestInfoField
-					.get(null);
+			HashMap<String, ChestGenHooks> chestInfo = (HashMap<String, ChestGenHooks>) chestInfoField.get(null);
 			Set<String> keySet = chestInfo.keySet();
-			hooks = ArrayUtils.add(Arrays.copyOf(keySet.toArray(),
-					keySet.size(), String[].class), "");
+			hooks = ArrayUtils.add(Arrays.copyOf(keySet.toArray(), keySet.size(), String[].class), "");
 		} catch (ReflectiveOperationException e) {
 			hooks = new String[] { "" };
 			e.printStackTrace();
@@ -62,8 +58,7 @@ public class GuiSlotChestGenTypes extends GuiSlotResizable {
 	}
 
 	@Override
-	protected void elementClicked(int slotIndex, boolean isDoubleClick,
-			int mouseX, int mouseY) {
+	protected void elementClicked(int slotIndex, boolean isDoubleClick, int mouseX, int mouseY) {
 		selected = slotIndex;
 	}
 

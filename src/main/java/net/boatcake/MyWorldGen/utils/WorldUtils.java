@@ -11,18 +11,14 @@ import net.minecraft.world.World;
 
 public class WorldUtils {
 
-	public static NBTTagList getEntities(World world, BlockPos pos1,
-			BlockPos pos2) {
+	public static NBTTagList getEntities(World world, BlockPos pos1, BlockPos pos2) {
 		assert !world.isRemote;
-		BlockPos min = new BlockPos(Math.min(pos1.getX(), pos2.getX()),
-				Math.min(pos1.getY(), pos2.getY()), Math.min(pos1.getZ(),
-						pos2.getZ()));
-		BlockPos max = new BlockPos(Math.max(pos1.getX(), pos2.getX()),
-				Math.max(pos1.getY(), pos2.getY()), Math.max(pos1.getZ(),
-						pos2.getZ()));
+		BlockPos min = new BlockPos(Math.min(pos1.getX(), pos2.getX()), Math.min(pos1.getY(), pos2.getY()),
+				Math.min(pos1.getZ(), pos2.getZ()));
+		BlockPos max = new BlockPos(Math.max(pos1.getX(), pos2.getX()), Math.max(pos1.getY(), pos2.getY()),
+				Math.max(pos1.getZ(), pos2.getZ()));
 		NBTTagList entities = new NBTTagList();
-		for (Object o : world.getEntitiesWithinAABB(Entity.class,
-				new AxisAlignedBB(min, max))) {
+		for (Object o : world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(min, max))) {
 			NBTTagCompound enbt = new NBTTagCompound();
 			((Entity) o).writeToNBTOptional(enbt);
 			if (enbt.hasNoTags()) {
@@ -37,15 +33,12 @@ public class WorldUtils {
 		return entities;
 	}
 
-	public static NBTTagList getTileEntities(World world, BlockPos pos1,
-			BlockPos pos2) {
+	public static NBTTagList getTileEntities(World world, BlockPos pos1, BlockPos pos2) {
 		assert !world.isRemote;
-		BlockPos min = new BlockPos(Math.min(pos1.getX(), pos2.getX()),
-				Math.min(pos1.getY(), pos2.getY()), Math.min(pos1.getZ(),
-						pos2.getZ()));
-		BlockPos max = new BlockPos(Math.max(pos1.getX(), pos2.getX()),
-				Math.max(pos1.getY(), pos2.getY()), Math.max(pos1.getZ(),
-						pos2.getZ()));
+		BlockPos min = new BlockPos(Math.min(pos1.getX(), pos2.getX()), Math.min(pos1.getY(), pos2.getY()),
+				Math.min(pos1.getZ(), pos2.getZ()));
+		BlockPos max = new BlockPos(Math.max(pos1.getX(), pos2.getX()), Math.max(pos1.getY(), pos2.getY()),
+				Math.max(pos1.getZ(), pos2.getZ()));
 		NBTTagList tileEntities = new NBTTagList();
 		for (Object o : BlockPos.getAllInBox(min, max)) {
 			BlockPos pos = (BlockPos) o;
