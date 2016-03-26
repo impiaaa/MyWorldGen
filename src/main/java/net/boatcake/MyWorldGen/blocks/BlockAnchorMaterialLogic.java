@@ -43,6 +43,10 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 	@Override
 	public Integer[] getQuickMatchingBlockInChunk(int myMeta,
 			TileEntity myTileEntity, Chunk chunk, Random rand) {
+		return getQuickMatchingBlockInChunkStatic(AnchorType.get(myMeta), chunk, rand);
+	}
+	
+	public static Integer[] getQuickMatchingBlockInChunkStatic(AnchorType myType, Chunk chunk, Random rand) {
 		int xPosInChunk = rand.nextInt(16);
 		int zPosInChunk = rand.nextInt(16);
 		int height = chunk.getHeightValue(xPosInChunk, zPosInChunk);
@@ -51,11 +55,10 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 		World world = chunk.worldObj;
 		int yPos;
 		BiomeGenBase currentBiome = world.getBiomeGenForCoords(zPos, zPos);
-		AnchorType type = AnchorType.get(myMeta);
 		boolean isHell = world.getChunkProvider().makeString()
 				.equals("HellRandomLevelSource");
 		do {
-			switch (type) {
+			switch (myType) {
 			case AIR:
 				// Anywhere between the ground and the top of the world
 				yPos = rand.nextInt(world.getActualHeight() - height) + height;
@@ -89,7 +92,7 @@ public class BlockAnchorMaterialLogic extends BlockAnchorLogic {
 			default:
 				return null;
 			}
-			if (BlockAnchorMaterialLogic.matchesStatic(type,
+			if (BlockAnchorMaterialLogic.matchesStatic(myType,
 					chunk.getBlock(xPosInChunk, yPos, zPosInChunk),
 					chunk.getBlockMetadata(xPosInChunk, yPos, zPosInChunk),
 					currentBiome)) {

@@ -9,6 +9,7 @@ import java.util.Random;
 
 import net.boatcake.MyWorldGen.blocks.BlockAnchorLogic;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial;
+import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterial.AnchorType;
 import net.boatcake.MyWorldGen.blocks.BlockAnchorMaterialLogic;
 import net.boatcake.MyWorldGen.blocks.BlockPlacementLogic;
 import net.boatcake.MyWorldGen.utils.DirectionUtils;
@@ -223,6 +224,7 @@ public class Schematic {
 		if (anchorBlockLocations.isEmpty() && info.name != null) {
 			MyWorldGen.log.log(Level.WARN, "No anchors found in schematic {}",
 					info.name);
+			info.fuzzyMatching = true;
 		}
 
 		info.readFromNBT(tag);
@@ -557,25 +559,26 @@ public class Schematic {
 
 	public Integer[] getFuzzyMatchingLocation(Chunk chunk,
 			ForgeDirection rotationDirection, Random rand) {
-		ArrayList<Integer[]> shuffledAnchors = (ArrayList<Integer[]>) anchorBlockLocations
-				.clone();
-		Collections.shuffle(shuffledAnchors, rand);
 		ForgeDirection rotationAxis = DirectionUtils
 				.axisForDirection(rotationDirection);
 		int rotationCount = DirectionUtils
 				.rotationCountForDirection(rotationDirection);
-		for (Integer[] anchorPos : shuffledAnchors) {
-			BlockAnchorLogic matching = matchingMap
-					.get(blocks[anchorPos[0]][anchorPos[1]][anchorPos[2]]);
-			int anchorMeta = meta[anchorPos[0]][anchorPos[1]][anchorPos[2]];
-			TileEntity anchorEntity = getTileEntityAt(anchorPos[0],
-					anchorPos[1], anchorPos[2]);
-			Integer[] worldAnchorPos = matching.getQuickMatchingBlockInChunk(
-					anchorMeta, anchorEntity, chunk, rand);
+		if (anchorBlockLocations.isEmpty()) {
+			// Now, this is a tough situation. Structures without anchors
+			// should probably be able to fit anywhere on the ground, and
+			// fuzzy/quick matching is a great way to make that happen.
+			// Unfortunately, that means the generation rate is way too high,
+			// and we can't just modify the base generation rate. For now, just
+			// add in an additional chance to fail.
+			if (rand.nextInt(64) <= 62) { // 1/64 chance to place
+				return null;
+			}
+			Integer[] middleBottomOfSchematic = { width/2, 0, height/2 };
+			Integer[] worldAnchorPos = BlockAnchorMaterialLogic.getQuickMatchingBlockInChunkStatic(AnchorType.GROUND, chunk, rand);
 			if (worldAnchorPos != null) {
 				Vec3 worldSchematicPos = DirectionUtils.rotateCoords(Vec3
-						.createVectorHelper(-anchorPos[0], -anchorPos[1],
-								-anchorPos[2]), Vec3
+						.createVectorHelper(-middleBottomOfSchematic[0], -middleBottomOfSchematic[1],
+								-middleBottomOfSchematic[2]), Vec3
 						.createVectorHelper(worldAnchorPos[0],
 								worldAnchorPos[1], worldAnchorPos[2]),
 						rotationAxis, rotationCount);
@@ -583,7 +586,35 @@ public class Schematic {
 						(int) worldSchematicPos.yCoord,
 						(int) worldSchematicPos.zCoord };
 			}
+			else {
+				return null;
+			}
 		}
-		return null;
+		else {
+			ArrayList<Integer[]> shuffledAnchors = (ArrayList<Integer[]>) anchorBlockLocations
+					.clone();
+			Collections.shuffle(shuffledAnchors, rand);
+			for (Integer[] anchorPos : shuffledAnchors) {
+				BlockAnchorLogic matching = matchingMap
+						.get(blocks[anchorPos[0]][anchorPos[1]][anchorPos[2]]);
+				int anchorMeta = meta[anchorPos[0]][anchorPos[1]][anchorPos[2]];
+				TileEntity anchorEntity = getTileEntityAt(anchorPos[0],
+						anchorPos[1], anchorPos[2]);
+				Integer[] worldAnchorPos = matching.getQuickMatchingBlockInChunk(
+						anchorMeta, anchorEntity, chunk, rand);
+				if (worldAnchorPos != null) {
+					Vec3 worldSchematicPos = DirectionUtils.rotateCoords(Vec3
+							.createVectorHelper(-anchorPos[0], -anchorPos[1],
+									-anchorPos[2]), Vec3
+							.createVectorHelper(worldAnchorPos[0],
+									worldAnchorPos[1], worldAnchorPos[2]),
+							rotationAxis, rotationCount);
+					return new Integer[] { (int) worldSchematicPos.xCoord,
+							(int) worldSchematicPos.yCoord,
+							(int) worldSchematicPos.zCoord };
+				}
+			}
+			return null;
+		}
 	}
 }
