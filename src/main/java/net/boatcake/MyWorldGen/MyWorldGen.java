@@ -39,7 +39,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.4", dependencies = "after:OpenBlocks")
+@Mod(modid = MyWorldGen.MODID, name = "MyWorldGen", version = "1.4.1", dependencies = "after:OpenBlocks")
 public class MyWorldGen {
 	@Instance("MyWorldGen")
 	public static MyWorldGen instance;
