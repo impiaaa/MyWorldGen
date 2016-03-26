@@ -93,8 +93,7 @@ public class DirectionUtils {
 		}
 	}
 
-	public static Vec3 rotateCoords(Vec3 coords, Vec3 at, Axis rotationAxis,
-			int rotationCount) {
+	public static Vec3 rotateCoords(Vec3 coords, Vec3 at, Axis rotationAxis, int rotationCount) {
 		double worldX = coords.xCoord;
 		double worldY = coords.yCoord;
 		double worldZ = coords.zCoord;
@@ -128,26 +127,20 @@ public class DirectionUtils {
 		return new Vec3(worldX, worldY, worldZ);
 	}
 
-	public static Vec3 rotateCoords(Vec3i coords, Vec3 at, Axis rotationAxis,
-			int rotationCount) {
-		return rotateCoords(
-				new Vec3(coords.getX(), coords.getY(), coords.getZ()), at,
-				rotationAxis, rotationCount);
+	public static Vec3 rotateCoords(Vec3i coords, Vec3 at, Axis rotationAxis, int rotationCount) {
+		return rotateCoords(new Vec3(coords.getX(), coords.getY(), coords.getZ()), at, rotationAxis, rotationCount);
 	}
 
-	public static EnumFacing[] cardinalDirections = new EnumFacing[] {
-			EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.SOUTH,
-			EnumFacing.WEST };
+	public static EnumFacing[] cardinalDirections = new EnumFacing[] { EnumFacing.NORTH, EnumFacing.EAST,
+			EnumFacing.SOUTH, EnumFacing.WEST };
 
 	public static EnumFacing getDirectionFromYaw(float yaw) {
-		return cardinalDirections[MathHelper
-				.floor_double(yaw * 4.0F / 360.0F + 0.5D) & 0x3];
+		return cardinalDirections[MathHelper.floor_double(yaw * 4.0F / 360.0F + 0.5D) & 0x3];
 	}
 
 	// This method already exists in EnumFacing, but it's SideOnly(CLIENT) for
 	// some reason >:(
-	public static EnumFacing rotateAround(EnumFacing facing,
-			EnumFacing.Axis axis) {
+	public static EnumFacing rotateAround(EnumFacing facing, EnumFacing.Axis axis) {
 		switch (axis) {
 		case X:
 			switch (facing) {
@@ -188,8 +181,7 @@ public class DirectionUtils {
 			}
 
 		default:
-			throw new IllegalStateException("Unable to get CW facing for axis "
-					+ axis);
+			throw new IllegalStateException("Unable to get CW facing for axis " + axis);
 		}
 	}
 }

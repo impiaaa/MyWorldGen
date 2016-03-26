@@ -15,8 +15,7 @@ public class BlockPlacementMaterialAnchor extends BlockPlacementLogic {
 	}
 
 	@Override
-	public void affectWorld(int myMeta, TileEntity myTileEntity, World world,
-			BlockPos pos, boolean matchTerrain) {
+	public void affectWorld(int myMeta, TileEntity myTileEntity, World world, BlockPos pos, boolean matchTerrain) {
 		if (matchTerrain) {
 			switch (AnchorType.get(myMeta)) {
 			case AIR:
@@ -50,8 +49,7 @@ public class BlockPlacementMaterialAnchor extends BlockPlacementLogic {
 		}
 	}
 
-	private void setBlocksDownward(World world, BlockPos pos,
-			IBlockState blockState) {
+	private void setBlocksDownward(World world, BlockPos pos, IBlockState blockState) {
 		while (!world.getBlockState(pos).getBlock().isFullCube()) {
 			world.setBlockState(pos, blockState);
 			pos = pos.down();

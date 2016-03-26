@@ -29,12 +29,8 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void registerItem(Item item, int metadata, String itemName) {
-		Minecraft
-				.getMinecraft()
-				.getRenderItem()
-				.getItemModelMesher()
-				.register(item, metadata,
-						new ModelResourceLocation(itemName, "inventory"));
+		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, metadata,
+				new ModelResourceLocation(itemName, "inventory"));
 	}
 
 	@Override
@@ -46,12 +42,10 @@ public class ClientProxy extends CommonProxy {
 	public void registerVariants(Block block, PropertyEnum prop, String postfix) {
 		String[] names = new String[BlockAnchorMaterial.AnchorType.values().length];
 		for (int i = 0; i < names.length; i++) {
-			names[i] = MyWorldGen.MODID + ":"
-					+ BlockAnchorMaterial.AnchorType.get(i).name + postfix;
+			names[i] = MyWorldGen.MODID + ":" + BlockAnchorMaterial.AnchorType.get(i).name + postfix;
 		}
 		ModelBakery.addVariantName(Item.getItemFromBlock(block), names);
-		Minecraft.getMinecraft().getRenderItem().getItemModelMesher()
-				.getModelManager().getBlockModelShapes()
+		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getModelManager().getBlockModelShapes()
 				.registerBlockWithStateMapper(block, new NamespacedStateMap(prop, postfix));
 	}
 }

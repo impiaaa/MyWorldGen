@@ -23,6 +23,6 @@ public abstract class BlockPlacementLogic {
 		blockNameToLogic.put(blockName.toLowerCase(Locale.ROOT), this);
 	}
 
-	public abstract void affectWorld(int myMeta, TileEntity myTileEntity,
-			World world, BlockPos pos, boolean matchTerrain);
+	public abstract void affectWorld(int myMeta, TileEntity myTileEntity, World world, BlockPos pos,
+			boolean matchTerrain);
 }

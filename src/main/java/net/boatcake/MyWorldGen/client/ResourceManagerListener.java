@@ -9,6 +9,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.logging.log4j.Level;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+
 import net.boatcake.MyWorldGen.MyWorldGen;
 import net.boatcake.MyWorldGen.Schematic;
 import net.boatcake.MyWorldGen.WorldGenerator;
@@ -22,18 +28,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import org.apache.logging.log4j.Level;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-
 @SideOnly(Side.CLIENT)
 public class ResourceManagerListener implements IResourceManagerReloadListener {
 	private WorldGenerator worldGen;
 	private static final Gson gsonReader = (new GsonBuilder())
-			.registerTypeAdapter(JsonObject.class, new StupidDeserializer())
-			.create();
+			.registerTypeAdapter(JsonObject.class, new StupidDeserializer()).create();
 	private static final ParameterizedType paramType = new ParameterizedType() {
 		@Override
 		public Type[] getActualTypeArguments() {
@@ -56,8 +55,7 @@ public class ResourceManagerListener implements IResourceManagerReloadListener {
 	}
 
 	public void register() {
-		((SimpleReloadableResourceManager) Minecraft.getMinecraft()
-				.getResourceManager()).registerReloadListener(this);
+		((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(this);
 	}
 
 	@Override
@@ -66,26 +64,21 @@ public class ResourceManagerListener implements IResourceManagerReloadListener {
 		Set<String> domains = manager.getResourceDomains();
 		for (String domain : domains) {
 			try {
-				List<IResource> indexes = manager
-						.getAllResources(new ResourceLocation(domain,
-								"worldgen.json"));
+				List<IResource> indexes = manager.getAllResources(new ResourceLocation(domain, "worldgen.json"));
 				int count = 0;
 				for (IResource jsonResource : indexes) {
 					try {
 						Map<String, JsonObject> indexJson = gsonReader
-								.fromJson(
-										new InputStreamReader(jsonResource
-												.getInputStream()), paramType);
-						Set<Entry<String, JsonObject>> indexEntries = indexJson
-								.entrySet();
+								.fromJson(new InputStreamReader(jsonResource.getInputStream()), paramType);
+						Set<Entry<String, JsonObject>> indexEntries = indexJson.entrySet();
 
 						for (Entry<String, JsonObject> entry : indexEntries) {
 							ResourceLocation loc = new ResourceLocation(domain,
 									"worldgen/" + entry.getKey() + ".schematic");
 							IResource schemResource = manager.getResource(loc);
 							Schematic newSchem = new Schematic(
-									CompressedStreamTools.readCompressed(schemResource
-											.getInputStream()), entry.getKey());
+									CompressedStreamTools.readCompressed(schemResource.getInputStream()),
+									entry.getKey());
 							// Read the JSON *after* the NBT so that it
 							// overrides properly
 							newSchem.info.readFromJson(entry.getValue());
@@ -93,12 +86,9 @@ public class ResourceManagerListener implements IResourceManagerReloadListener {
 							count++;
 						}
 					} catch (RuntimeException runtimeexception) {
-						MyWorldGen.log.warn("Invalid worldgen.json",
-								runtimeexception);
+						MyWorldGen.log.warn("Invalid worldgen.json", runtimeexception);
 					}
-					MyWorldGen.log.log(Level.INFO,
-							"Loaded {} schematics from {}", count,
-							jsonResource);
+					MyWorldGen.log.log(Level.INFO, "Loaded {} schematics from {}", count, jsonResource);
 				}
 			} catch (IOException ioexception) {
 				;

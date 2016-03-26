@@ -3,15 +3,15 @@ package net.boatcake.MyWorldGen;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.ChestGenHooks;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 public class SchematicInfo {
 	public ArrayList<String> excludeBiomes;
@@ -36,12 +36,10 @@ public class SchematicInfo {
 	}
 
 	public boolean matchesBiome(BiomeGenBase biome) {
-		if ((excludeBiomes != null)
-				&& (containsIgnoreCase(excludeBiomes, biome.biomeName))) {
+		if ((excludeBiomes != null) && (containsIgnoreCase(excludeBiomes, biome.biomeName))) {
 			return false;
 		}
-		if ((onlyIncludeBiomes != null)
-				&& (!containsIgnoreCase(onlyIncludeBiomes, biome.biomeName))) {
+		if ((onlyIncludeBiomes != null) && (!containsIgnoreCase(onlyIncludeBiomes, biome.biomeName))) {
 			return false;
 		}
 		return true;
@@ -154,8 +152,7 @@ public class SchematicInfo {
 		}
 
 		if (jsonobject.has("generateSpawners")) {
-			this.generateSpawners = jsonobject.get("generateSpawners")
-					.getAsBoolean();
+			this.generateSpawners = jsonobject.get("generateSpawners").getAsBoolean();
 		}
 
 		if (jsonobject.has("fuzzyMatching")) {
@@ -163,8 +160,7 @@ public class SchematicInfo {
 		}
 
 		if (jsonobject.has("terrainSmoothing")) {
-			this.terrainSmoothing = jsonobject.get("terrainSmoothing")
-					.getAsBoolean();
+			this.terrainSmoothing = jsonobject.get("terrainSmoothing").getAsBoolean();
 		}
 	}
 }

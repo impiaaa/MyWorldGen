@@ -15,13 +15,11 @@ public class ItemWandLoad extends Item {
 	}
 
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world,
-			BlockPos blockPos, EnumFacing side, float hitX, float hitY,
-			float hitZ) {
+	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos blockPos, EnumFacing side,
+			float hitX, float hitY, float hitZ) {
 		if (world.isRemote) {
 			BlockPos newPos = blockPos.offset(side);
-			player.openGui(MyWorldGen.instance, 1, world, newPos.getX(),
-					newPos.getY(), newPos.getZ());
+			player.openGui(MyWorldGen.instance, 1, world, newPos.getX(), newPos.getY(), newPos.getZ());
 		}
 		return true;
 	}
