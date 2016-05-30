@@ -32,7 +32,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ResourceManagerListener implements IResourceManagerReloadListener {
 	private WorldGenerator worldGen;
 	private static final Gson gsonReader = (new GsonBuilder())
-			.registerTypeAdapter(JsonObject.class, new StupidDeserializer()).create();
+			.registerTypeAdapter(JsonObject.class, new DumbDeserializer()).create();
 	private static final ParameterizedType paramType = new ParameterizedType() {
 		@Override
 		public Type[] getActualTypeArguments() {
